@@ -1,8 +1,8 @@
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-package dev.debanshu.speech
+package com.debanshu777.speech
 
-import dev.debanshu.speech.native.*
+import com.debanshu777.speech.native.*
 import kotlinx.cinterop.*
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers

@@ -4,6 +4,8 @@ The shared Kotlin UI calls `IosSpeechPlatform`. Recognition and synthesis call t
 pinned sherpa-onnx C API through Kotlin/Native cinterop. The small Objective-C++
 file only captures and plays audio using AVFoundation; it contains no model logic.
 
+Kotlin sources use `com.debanshu777.speech`; `speech.def` generates bindings in `com.debanshu777.speech.native`, which the adapter imports. The exported Swift framework remains `SpeechApp` with `MainViewControllerKt.MainViewController()` as its entry point. The host bundle ID remains `dev.debanshu.offlinespeech`; see [package and installation identities](architecture.md#packages-and-installation-identities).
+
 The Gradle tasks `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64`
 compile that audio file using full Xcode. They depend on `prepareIosSpeech`, which
 prepares the pinned frameworks and models. Native cinterop and linking invoke the
@@ -67,6 +69,4 @@ without it the executable uses `models` relative to its working directory.
 
 ## Recent Changes
 
-- Added a direct C API iOS adapter, bounded AVFoundation capture and playback, and
-  a runnable SwiftUI host independent of CaraML, with Gradle preparing native
-  inputs automatically and a reproducible simulator TTS-to-STT smoke test.
+- Renamed the shared Kotlin code and C interop bindings to `com.debanshu777.speech`, keeping the exported Swift entry point and host installation identity stable.

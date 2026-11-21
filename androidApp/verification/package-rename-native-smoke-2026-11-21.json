@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-21",
+  "device": "Pixel 9",
+  "android_version": "17",
+  "test": "com.debanshu777.speech.android.NativeSpeechSmokeTest.kittenAudioCanBeTranscribedByWhisper",
+  "command": "ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.debanshu777.speech.android.NativeSpeechSmokeTest --offline --console=plain",
+  "tests": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "sample_rate": 24000,
+  "samples": 60009,
+  "recognized_text": "The quick brown fox jumps over the lazy dog.",
+  "scope": "Post-rename native model compatibility check using generated PCM. No microphone capture or speaker playback was performed by this test. The historical acoustic and UI evidence remains unchanged."
+}

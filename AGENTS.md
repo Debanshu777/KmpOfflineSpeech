@@ -2,6 +2,8 @@
 
 This project teaches local speech recognition and synthesis on Android and iOS. Keep it independent of CaraML and avoid adding model hubs, storage frameworks, dependency injection or chat infrastructure.
 
+Use `com.debanshu777.speech` for first-party Kotlin packages and mirror package declarations in source directories. Keep the iOS cinterop package and imports aligned. Preserve Android application ID `dev.debanshu.speech.sample` and iOS bundle ID `dev.debanshu.offlinespeech` so installed app identities remain stable. Recorded verification JSON retains the identifiers from its original run.
+
 - `composeApp/commonMain`: shared contract, controller, Compose UI.
 - `composeApp/androidMain`: official sherpa Kotlin wrapper + Android audio.
 - `composeApp/iosMain`: direct C API + small AVFoundation bridge.
@@ -13,4 +15,4 @@ Run `./gradlew checkSpeechSetup :composeApp:jvmTest :androidApp:assembleDebug` f
 
 Keep root/module READMEs and the tutorial reconciled with code changes, and update concise Recent Changes entries. Report checks actually run. Do not claim microphone/speaker verification or performance from compilation or a synthetic model roundtrip. Every native allocation needs clear ownership and paired destruction; cancellation must wait for synchronous native work before teardown.
 
-The real-screen Android journey is opt-in: add `-Pandroid.testInstrumentationRunnerArguments.demo=true -Pandroid.testInstrumentationRunnerArguments.class=dev.debanshu.speech.android.SpeechUiDemoTest` to the connected-test command. It emits sound and records the microphone, requires an unlocked device, restores media volume, and never injects transcript text or UI phases. Preserve actual captures and measured results; see `docs/demo.md`.
+The real-screen Android journey is opt-in: add `-Pandroid.testInstrumentationRunnerArguments.demo=true -Pandroid.testInstrumentationRunnerArguments.class=com.debanshu777.speech.android.SpeechUiDemoTest` to the connected-test command. It emits sound and records the microphone, requires an unlocked device, restores media volume, and never injects transcript text or UI phases. Preserve actual captures and measured results; see `docs/demo.md`.

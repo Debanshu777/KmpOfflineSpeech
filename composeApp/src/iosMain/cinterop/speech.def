@@ -1,2 +1,2 @@
 headers = speech_audio.h
-package = dev.debanshu.speech.native
+package = com.debanshu777.speech.native

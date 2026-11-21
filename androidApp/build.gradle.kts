@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.debanshu.speech.android"
+    namespace = "com.debanshu777.speech.android"
     compileSdk = 37
     defaultConfig {
         applicationId = "dev.debanshu.speech.sample"

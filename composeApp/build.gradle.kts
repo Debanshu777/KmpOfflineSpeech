@@ -16,7 +16,7 @@ extensions.configure<com.android.build.api.variant.KotlinMultiplatformAndroidCom
 
 kotlin {
     android {
-        namespace = "dev.debanshu.speech.shared"
+        namespace = "com.debanshu777.speech.shared"
         compileSdk = 37
         minSdk = 26
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
@@ -37,7 +37,7 @@ kotlin {
         target.binaries.framework {
             baseName = "SpeechApp"
             isStatic = true
-            binaryOption("bundleId", "dev.debanshu.speech.shared")
+            binaryOption("bundleId", "com.debanshu777.speech.shared")
             linkerOpts("-F$sherpa", "-framework", "SherpaOnnxC", "-F$ort", "-framework", "onnxruntime",
                 "-L$audio", "-lspeech_audio", "-lc++", "-framework", "AVFoundation",
                 "-framework", "AudioToolbox", "-framework", "Foundation", "-framework", "CoreML",

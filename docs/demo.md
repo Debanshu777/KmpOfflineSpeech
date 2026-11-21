@@ -35,7 +35,7 @@ With an unlocked phone and its built-in speaker/microphone available:
 ```bash
 ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.demo=true \
-  -Pandroid.testInstrumentationRunnerArguments.class=dev.debanshu.speech.android.SpeechUiDemoTest
+  -Pandroid.testInstrumentationRunnerArguments.class=com.debanshu777.speech.android.SpeechUiDemoTest
 ```
 
 The explicit flag permits sound and microphone access. The test temporarily raises media volume and restores it in `finally`. Capture the app with Android's `screenrecord`, then export the verified UI interval as an animated GIF. The shipped GIF uses 480 × 960 pixels, 8 fps, and a repeating loop. See the [Android host notes](../androidApp/README.md) for the separate acoustic test and exact recognition results.

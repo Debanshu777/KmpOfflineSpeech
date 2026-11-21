@@ -1,4 +1,4 @@
-package dev.debanshu.speech.android
+package com.debanshu777.speech.android
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityServiceInfo
@@ -13,8 +13,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import dev.debanshu.speech.PcmAudio
-import dev.debanshu.speech.SpeechPlatform
+import com.debanshu777.speech.PcmAudio
+import com.debanshu777.speech.SpeechPlatform
 import java.util.Locale
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue

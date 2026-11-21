@@ -1,4 +1,4 @@
-package dev.debanshu.speech
+package com.debanshu777.speech
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

@@ -9,3 +9,5 @@ Start with the [model integration tutorial](medium-draft.md), which assumes an e
 - [Third-party components and licenses](../THIRD_PARTY_NOTICES.md)
 
 The Android and iOS apps share Kotlin interaction logic and UI. Whisper and Kitten execute locally through sherpa-onnx; generated weights and runtimes stay outside Git.
+
+Source packages use `com.debanshu777.speech`; see the [package map and installation identities](architecture.md#packages-and-installation-identities).

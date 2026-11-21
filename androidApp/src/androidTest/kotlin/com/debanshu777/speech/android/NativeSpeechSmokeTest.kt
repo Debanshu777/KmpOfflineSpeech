@@ -1,4 +1,4 @@
-package dev.debanshu.speech.android
+package com.debanshu777.speech.android
 
 import android.content.Context
 import android.util.Log

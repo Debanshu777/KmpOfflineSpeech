@@ -1,4 +1,4 @@
-# Run Speech-to-Text and Text-to-Speech Models in Kotlin Multiplatform
+# Run Speech-to-Text and Text-to-Speech Models on device in Kotlin Multiplatform
 
 Load Whisper and KittenTTS on Android and iOS, then connect them to a small Compose screen.
 
@@ -149,7 +149,7 @@ try {
 } finally { tts.release() }
 ```
 
-Use the generated sample rate for playback. This demo creates a session per call, trading repeated loading for straightforward cleanup. The [Android adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/androidMain/kotlin/dev/debanshu/speech/AndroidSpeechPlatform.kt) contains the complete functions.
+Use the generated sample rate for playback. This demo creates a session per call, trading repeated loading for straightforward cleanup. The [Android adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/androidMain/kotlin/com/debanshu777/speech/AndroidSpeechPlatform.kt) contains the complete functions.
 
 ## 5. Call the same models from iOS
 
@@ -157,7 +157,7 @@ On iOS, Kotlin/Native calls sherpa’s C API. The sample’s `speech_audio.h` in
 
 ```properties
 headers = speech_audio.h
-package = dev.debanshu.speech.native
+package = com.debanshu777.speech.native
 ```
 
 Choose the device or simulator slice in the shared Gradle build:
@@ -233,7 +233,7 @@ config.max_num_sentences = 1
 config.silence_scale = 0.2f
 ```
 
-Create the TTS handle with `SherpaOnnxCreateOfflineTts`. Zero a `SherpaOnnxGenerationConfig`, set `sid = 0` and `speed = 1f`, then call `SherpaOnnxOfflineTtsGenerateWithConfig`. Copy the returned samples into a Kotlin `FloatArray` and retain their sample rate before destroying the generated audio and TTS handle. The [iOS adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/dev/debanshu/speech/IosSpeechPlatform.kt) shows the full allocation and cleanup sequence.
+Create the TTS handle with `SherpaOnnxCreateOfflineTts`. Zero a `SherpaOnnxGenerationConfig`, set `sid = 0` and `speed = 1f`, then call `SherpaOnnxOfflineTtsGenerateWithConfig`. Copy the returned samples into a Kotlin `FloatArray` and retain their sample rate before destroying the generated audio and TTS handle. The [iOS adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/com/debanshu777/speech/IosSpeechPlatform.kt) shows the full allocation and cleanup sequence.
 
 ## 6. Connect the microphone and speaker
 
@@ -250,7 +250,7 @@ Android needs `RECORD_AUDIO` in the manifest and a runtime permission request. i
 
 ## 7. Add a small Compose screen
 
-The UI only needs a Record button, an editable transcript, and Speak. A shared [SpeechController](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/commonMain/kotlin/dev/debanshu/speech/SpeechController.kt) owns the current operation and exposes a `StateFlow<SpeechUiState>`.
+The UI only needs a Record button, an editable transcript, and Speak. A shared [SpeechController](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/commonMain/kotlin/com/debanshu777/speech/SpeechController.kt) owns the current operation and exposes a `StateFlow<SpeechUiState>`.
 
 Here’s the wiring using that controller. This is a smaller view of the same interaction shown in the GIF; the finished app adds the circular control and elapsed timer.
 
@@ -298,7 +298,7 @@ fun SpeechScreen(platform: SpeechPlatform) {
 
 The disabled controls prevent overlapping actions. The controller stops recordings at 20 seconds and limits TTS input to 500 characters. It serializes operations and cleanup because cancelling a coroutine doesn’t instantly stop a native decode. `ON_STOP` stops audio when the app leaves the foreground; disposal closes the adapter.
 
-Pass an `AndroidSpeechPlatform` from the Android activity or an `IosSpeechPlatform` from the iOS entry point. Both implement the contract above, so this Compose code stays in `commonMain`. See the [Android host](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/src/main/kotlin/dev/debanshu/speech/android/MainActivity.kt) for permission callback registration and the [iOS entry point](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/dev/debanshu/speech/MainViewController.kt) for its adapter creation.
+Pass an `AndroidSpeechPlatform` from the Android activity or an `IosSpeechPlatform` from the iOS entry point. Both implement the contract above, so this Compose code stays in `commonMain`. See the [Android host](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/src/main/kotlin/com/debanshu777/speech/android/MainActivity.kt) for permission callback registration and the [iOS entry point](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/com/debanshu777/speech/MainViewController.kt) for its adapter creation.
 
 ## Try the complete flow
 

@@ -29,7 +29,7 @@ Open the project in Android Studio and run `androidApp`, or install and launch t
 
 ```bash
 android run --apks=androidApp/build/outputs/apk/debug/androidApp-debug.apk \
-  --activity=dev.debanshu.speech.android.MainActivity
+  --activity=com.debanshu777.speech.android.MainActivity
 ```
 
 Gradle prepares the pinned runtime and model assets before compilation. Grant microphone permission when tapping **Record**. Tap **Stop & transcribe**, then **Speak**. For an initial TTS check, simply speak the prefilled text. The app has no Internet permission: downloads happen only in the development build.
@@ -61,6 +61,8 @@ scripts/                    pinned artifact manifest + optional native smoke sou
 
 The generated `models/`, runtime binaries and model assets are ignored by Git. Typed Gradle tasks handle downloads, checksum verification, extraction and native audio compilation. Initial downloads require Internet and several hundred MB of disk space. Gradle declares the inputs and outputs; cached downloads are verified before reuse. Model files are bundled for this teaching sample, so the app package is intentionally large.
 
+First-party Kotlin code uses `com.debanshu777.speech`; the Android launcher and tests use its `.android` subpackage. See [package and installation identities](docs/architecture.md#packages-and-installation-identities) for the retained app IDs.
+
 ## Deliberate limits
 
 - Foreground operation, one task at a time; recording stops at 20 seconds.
@@ -82,7 +84,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Tightened the model integration tutorial and added a minimal Compose screen showing how record, transcript editing and playback connect to the shared controller. The README now previews the actual recording → transcription → playback GIF.
+Moved first-party Kotlin code and iOS interop to `com.debanshu777.speech`, with matching source paths, test commands and tutorial links. The README includes the actual app GIF and the guide includes minimal Compose controller wiring.
 
 ## License
 

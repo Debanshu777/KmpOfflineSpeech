@@ -2,6 +2,14 @@
 
 The shared Compose screen delegates to `SpeechController`, which owns a `SpeechPlatform` and serializes its use. The platform factory is injected by each host; `expect`/`actual`, a DI framework and a service locator are unnecessary here.
 
+## Packages and installation identities
+
+First-party Kotlin sources use `com.debanshu777.speech`, with matching `kotlin/com/debanshu777/speech` directories in each source set. Android host and test classes use `com.debanshu777.speech.android`. The shared Android library namespace and Kotlin framework bundle identifier use `.shared`, and iOS C bindings use `.native` in both `speech.def` and Kotlin imports. Upstream sherpa wrapper packages and C function names retain their upstream names.
+
+The installed Android application ID is `dev.debanshu.speech.sample`; the iOS host bundle ID is `dev.debanshu.offlinespeech`. These installation identities are stable across the Kotlin package rename. Historical verification JSON preserves the exact test identifiers from the original runs.
+
+## Audio flow
+
 ```text
 Record -> platform microphone -> mono FloatArray + actual sample rate
        -> sherpa Whisper -> recognized text -> shared editable text

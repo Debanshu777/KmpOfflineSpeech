@@ -1,4 +1,4 @@
-package dev.debanshu.speech.android
+package com.debanshu777.speech.android
 
 import android.Manifest
 import android.app.KeyguardManager
@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import dev.debanshu.speech.PcmAudio
-import dev.debanshu.speech.SpeechPlatform
+import com.debanshu777.speech.PcmAudio
+import com.debanshu777.speech.SpeechPlatform
 import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

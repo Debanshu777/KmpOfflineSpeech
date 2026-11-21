@@ -16,6 +16,8 @@ The JVM target exercises the common controller; it is not a desktop speech imple
 
 ## Device tests
 
+First-party packages now start with `com.debanshu777.speech`. For class-filtered instrumentation runs, use `com.debanshu777.speech.android.SpeechUiDemoTest` as shown in the [capture notes](demo.md). Historical verification JSON keeps its original `dev.debanshu` test identifiers; it is a record of those runs rather than a current invocation template. The app IDs remain stable; see [architecture](architecture.md#packages-and-installation-identities).
+
 The default connected suite performs a model-only roundtrip. The acoustic test is explicitly enabled because it emits sound and opens the microphone:
 
 ```bash
@@ -51,6 +53,8 @@ Verified on 2026-11-21:
 - A development-signed physical iPhone build succeeded, but installation was rejected because the device's free-development app slots were full. No existing apps were removed. Physical iPhone microphone/playback remains unverified; simulator verification is the selected scope for now.
 
 Device microphone/playback observations are recorded separately in the Android host notes, including the exact recognized text and the acoustic test's acceptance criterion. Do not replace a measured transcription with the expected phrase.
+
+After the package rename on the same date, the Gradle checks passed: 10 preparation regressions, 3 shared controller tests, Android app and instrumentation APK builds, and the full iOS simulator host build. The class-filtered native test also passed on Pixel 9 under `com.debanshu777.speech.android.NativeSpeechSmokeTest`; see its [new result](../androidApp/verification/package-rename-native-smoke-2026-11-21.json). Microphone/playback was not repeated for this namespace refactor; the earlier acoustic and UI evidence above remains the record of those checks.
 
 ## Updating dependencies
 

@@ -1,6 +1,6 @@
 @file:OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
 
-package dev.debanshu.speech
+package com.debanshu777.speech
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background

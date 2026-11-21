@@ -1,4 +1,4 @@
-package dev.debanshu.speech
+package com.debanshu777.speech
 
 /** Mono float PCM in [-1, 1], with its actual sample rate (never just relabel it). */
 data class PcmAudio(val samples: FloatArray, val sampleRate: Int) {
