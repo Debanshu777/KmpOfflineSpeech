@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-21",
+  "device": "Pixel 9",
+  "android_version": "17",
+  "sherpa_onnx_version": "2.0.1",
+  "command": "ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.acoustic=true --console=plain",
+  "test": "dev.debanshu.speech.android.AcousticSpeechRoundTripTest.productionCaptureAndPlaybackCanRoundTripSpeech",
+  "input_text": "The quick brown fox jumps over the lazy dog.",
+  "path": "Actual application SpeechPlatform: Kitten synthesis -> AudioTrack -> physical speaker/air/microphone -> AudioRecord -> Whisper",
+  "final_assertion": "Capture at least one second, RMS > 0.0005, peak > 0.005, and at least four of six content words: quick, brown, fox, jumps, lazy, dog.",
+  "observed_runs": [
+    {
+      "result": "Failed initial strict assertion requiring quick, brown, and fox; physical capture and recognition completed.",
+      "generated_sample_rate_hz": 24000,
+      "generated_sample_count": 60056,
+      "capture_sample_rate_hz": 16000,
+      "capture_sample_count": 58238,
+      "capture_duration_seconds": 3.639875,
+      "capture_rms": 0.00860328260124553,
+      "capture_peak": 0.06478882,
+      "recognized_text": "The quick-ground fox jumps over the lazy dog.",
+      "failure": "Expected brown in the acoustic transcript."
+    },
+    {
+      "result": "Passed documented physical-path smoke assertion.",
+      "suite_tests": 2,
+      "suite_failures": 0,
+      "suite_errors": 0,
+      "suite_skipped": 0,
+      "generated_sample_rate_hz": 24000,
+      "generated_sample_count": 60010,
+      "capture_sample_rate_hz": 16000,
+      "capture_sample_count": 58878,
+      "capture_duration_seconds": 3.679875,
+      "capture_rms": 0.008671447210473268,
+      "capture_peak": 0.06817627,
+      "matched_content_words": 5,
+      "total_content_words": 6,
+      "recognized_text": "The quick round fox jumps over the lazy dog.",
+      "available_output_device_types": [1, 2, 18, 24],
+      "temporary_media_volume_index": 12,
+      "media_volume_restored_in_finally": true
+    }
+  ],
+  "limitations": "One fixed synthesized English sentence on one device. This is a hardware-path smoke test, not a word-perfect result or human speech recognition accuracy benchmark. The recognition error brown -> round is retained in the evidence."
+}

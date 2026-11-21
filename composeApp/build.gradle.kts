@@ -7,6 +7,13 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val prepareAndroidSpeech = rootProject.tasks.named<PrepareAndroidSpeech>("prepareAndroidSpeech")
+extensions.configure<com.android.build.api.variant.KotlinMultiplatformAndroidComponentsExtension> {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(prepareAndroidSpeech, PrepareAndroidSpeech::assetsDirectory)
+    }
+}
+
 kotlin {
     android {
         namespace = "dev.debanshu.speech.shared"
@@ -21,10 +28,12 @@ kotlin {
         val sherpa = rootProject.file("libs/ios/SherpaOnnxC.xcframework/$slice")
         val ort = rootProject.file("libs/ios/onnxruntime.xcframework/$slice")
         val audio = rootProject.file("libs/ios/audio/${target.name}")
-        target.compilations.getByName("main").cinterops.create("speechNative") {
+        val prepareAudio = rootProject.tasks.named("prepareIosAudio${target.name.replaceFirstChar(Char::uppercaseChar)}")
+        val interop = target.compilations.getByName("main").cinterops.create("speechNative") {
             defFile("src/iosMain/cinterop/speech.def")
             compilerOpts("-I${file("src/iosMain/cinterop")}", "-I${sherpa}/SherpaOnnxC.framework/Headers")
         }
+        tasks.named(interop.interopProcessingTaskName) { dependsOn(prepareAudio) }
         target.binaries.framework {
             baseName = "SpeechApp"
             isStatic = true
@@ -33,6 +42,7 @@ kotlin {
                 "-L$audio", "-lspeech_audio", "-lc++", "-framework", "AVFoundation",
                 "-framework", "AudioToolbox", "-framework", "Foundation", "-framework", "CoreML",
                 "-framework", "CoreFoundation")
+            linkTaskProvider.configure { dependsOn(prepareAudio) }
         }
     }
     sourceSets {
@@ -45,7 +55,7 @@ kotlin {
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
         }
         androidMain.dependencies {
-            implementation(files("libs/sherpa-onnx-2.0.1.aar"))
+            implementation(files(prepareAndroidSpeech.flatMap { it.runtimeAar }).builtBy(prepareAndroidSpeech))
             implementation("androidx.activity:activity-compose:1.13.0")
         }
         commonTest.dependencies {

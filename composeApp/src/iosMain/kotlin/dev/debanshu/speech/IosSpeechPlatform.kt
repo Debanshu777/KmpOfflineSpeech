@@ -75,7 +75,7 @@ class IosSpeechPlatform : SpeechPlatform {
                 config.model_config.provider = "cpu".cstr.ptr
                 config.decoding_method = "greedy_search".cstr.ptr
                 val recognizer = SherpaOnnxCreateOfflineRecognizer(config.ptr)
-                    ?: error("Could not load Whisper; run scripts/setup.py and rebuild")
+                    ?: error("Could not load Whisper; run ./gradlew prepareIosSpeech and rebuild")
                 try {
                     val stream = SherpaOnnxCreateOfflineStream(recognizer) ?: error("Could not create an audio stream")
                     try {
@@ -182,7 +182,7 @@ class IosSpeechPlatform : SpeechPlatform {
 
     private fun model(relative: String): String {
         val path = "${NSBundle.mainBundle.resourcePath}/models/$relative"
-        check(NSFileManager.defaultManager.fileExistsAtPath(path)) { "Missing $relative; run scripts/setup.py and rebuild" }
+        check(NSFileManager.defaultManager.fileExistsAtPath(path)) { "Missing $relative; run ./gradlew prepareIosSpeech and rebuild" }
         return path
     }
 }

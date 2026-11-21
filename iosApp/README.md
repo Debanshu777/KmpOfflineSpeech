@@ -1,6 +1,6 @@
 # iOS host
 
-Run `python3 scripts/setup.py --platform ios` and `python3 scripts/prepare_ios.py` from the root, then open `iosApp.xcodeproj`. Select the OfflineSpeech scheme and an iOS 18.5+ simulator. Physical devices require your own signing team.
+Open `iosApp.xcodeproj`, select the OfflineSpeech scheme and an iOS 18.5+ arm64 simulator on an Apple Silicon Mac. Gradle automatically prepares pinned models, frameworks and the target audio bridge. Optional explicit setup from the root is `./gradlew prepareIosSpeech prepareIosAudioIosSimulatorArm64`. Physical devices require your own signing team.
 
 The SwiftUI host links the shared SpeechApp framework and bundles the generated root `models` directory. The build phase invokes Gradle to produce the framework. See [iOS notes](../docs/ios-notes.md) and [verification](../docs/development.md).
 
@@ -11,4 +11,4 @@ remain manual checks; see [the actual UI capture](../docs/demo.md).
 
 ## Recent Changes
 
-Added the SwiftUI launcher, model resources, required Compose plist settings and shared framework build phase, with simulator launch and native model evidence.
+Added automatic Gradle native preparation to the SwiftUI host, retaining model resources, required Compose plist settings, simulator launch and native model evidence.

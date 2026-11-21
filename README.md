@@ -2,6 +2,8 @@
 
 A small Android + iOS example of **speech-to-text with Whisper** and **text-to-speech with Kitten**, using Kotlin Multiplatform, Compose Multiplatform, and [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
 
+Start with the [step-by-step guide](docs/medium-draft.md) to build the integration from an empty project. This repository provides the completed reference implementation.
+
 Record a short English phrase, transcribe it, edit the text, and hear a generated voice. Models run locally on CPU. This project has no CaraML dependency, cloud inference service, database, dependency injection framework, or model catalog.
 
 - [End-to-end tutorial / Medium source](docs/medium-draft.md)
@@ -16,7 +18,6 @@ Record a short English phrase, transcribe it, edit the text, and hear a generate
 Install JDK 21+, Android SDK platform 37.0 and build tools 37.0.0 through Android Studio. Set `ANDROID_HOME` or create an ignored `local.properties` with `sdk.dir=/your/Android/sdk`.
 
 ```bash
-python3 scripts/setup.py --platform android
 ./gradlew :androidApp:assembleDebug
 ```
 
@@ -27,19 +28,18 @@ android run --apks=androidApp/build/outputs/apk/debug/androidApp-debug.apk \
   --activity=dev.debanshu.speech.android.MainActivity
 ```
 
-Grant microphone permission when tapping **Record**. Tap **Stop & transcribe**, then **Speak**. For an initial TTS check, simply speak the prefilled text. The app has no Internet permission: network access is used only by the development setup script.
+Gradle prepares the pinned runtime and model assets before compilation. Grant microphone permission when tapping **Record**. Tap **Stop & transcribe**, then **Speak**. For an initial TTS check, simply speak the prefilled text. The app has no Internet permission: downloads happen only in the development build.
 
 ## Run iOS
 
 On an Apple Silicon Mac with full Xcode selected (`xcode-select -p`):
 
 ```bash
-python3 scripts/setup.py --platform ios
-python3 scripts/prepare_ios.py
+./gradlew prepareIosSpeech
 open iosApp/iosApp.xcodeproj
 ```
 
-Select the **OfflineSpeech** scheme and an iOS 18.5+ simulator, then Run. The checked-in host builds and links the shared Kotlin framework through its Gradle build phase. For a physical iPhone, choose your signing team in Xcode. Intel simulator builds are outside this sample's targets.
+Select the **OfflineSpeech** scheme and an iOS 18.5+ simulator, then Run. The host's Gradle build phase prepares the selected audio bridge, builds the shared Kotlin framework and links it into the app. For a physical iPhone, choose your signing team in Xcode. Intel simulator builds are outside this sample's targets.
 
 The iOS runtime ZIPs are pinned to the exact artifacts in sherpa's tagged Swift package manifest; the ONNX Runtime package tag and binary filename differ. See [the dependency lock](scripts/dependencies.json) for the URLs, hashes and provenance.
 
@@ -51,10 +51,11 @@ composeApp/src/androidMain/  Kotlin sherpa API, AudioRecord, AudioTrack
 composeApp/src/iosMain/      direct C API interop + a small AVFoundation bridge
 androidApp/                 Android launcher
 iosApp/                     SwiftUI host and Xcode project
-scripts/                    verified runtime/model setup + iOS audio build
+buildSrc/                   typed Gradle preparation tasks and regression tests
+scripts/                    pinned artifact manifest + optional native smoke source
 ```
 
-The generated `models/`, runtime binaries and model assets are ignored by Git. `setup.py` needs Python 3.10+ and only the standard library. Initial downloads require Internet and several hundred MB of disk space. Re-running verifies cached archives and model files. Model files are bundled for this teaching sample, so the app package is intentionally large.
+The generated `models/`, runtime binaries and model assets are ignored by Git. Typed Gradle tasks handle downloads, checksum verification, extraction and native audio compilation. Initial downloads require Internet and several hundred MB of disk space. Gradle declares the inputs and outputs; cached downloads are verified before reuse. Model files are bundled for this teaching sample, so the app package is intentionally large.
 
 ## Deliberate limits
 
@@ -69,7 +70,7 @@ The generated `models/`, runtime binaries and model assets are ignored by Git. `
 ## Development
 
 ```bash
-python3 -m unittest discover -s scripts -p 'test_*.py' -v
+./gradlew checkSpeechSetup
 ./gradlew :composeApp:jvmTest
 ```
 
@@ -77,7 +78,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Added the standalone Android/iOS speech example, pinned runtime/model setup, shared ownership tests, Android/iOS native roundtrip checks, an actual iOS capture, and the end-to-end tutorial.
+Moved runtime/model setup and native audio compilation into Gradle, expanded device audio verification, and rewrote the tutorial around building the integration from an empty project.
 
 ## License
 

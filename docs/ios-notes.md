@@ -4,10 +4,12 @@ The shared Kotlin UI calls `IosSpeechPlatform`. Recognition and synthesis call t
 pinned sherpa-onnx C API through Kotlin/Native cinterop. The small Objective-C++
 file only captures and plays audio using AVFoundation; it contains no model logic.
 
-`scripts/prepare_ios.py` compiles that audio file for device arm64 and simulator
-arm64. It requires full Xcode. Download the iOS dependencies with `scripts/setup.py`
-before running the bridge preparation or Gradle. Gradle compiles the Kotlin
-framework against the selected headers. The Xcode host links the static sherpa,
+The Gradle tasks `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64`
+compile that audio file using full Xcode. They depend on `prepareIosSpeech`, which
+prepares the pinned frameworks and models. Native cinterop and linking invoke the
+matching task automatically, so opening and building the Xcode host prepares its
+own inputs. For explicit setup, run `./gradlew prepareIosSpeech`. Gradle compiles
+the Kotlin framework against the selected headers. The Xcode host links the static sherpa,
 ONNX Runtime and audio bridge libraries into the final application.
 
 Open `iosApp/iosApp.xcodeproj`, select the OfflineSpeech scheme and an iOS 18.5+
@@ -66,5 +68,5 @@ without it the executable uses `models` relative to its working directory.
 ## Recent Changes
 
 - Added a direct C API iOS adapter, bounded AVFoundation capture and playback, and
-  a runnable SwiftUI host independent of CaraML, plus a reproducible native
-  simulator TTS-to-STT smoke test.
+  a runnable SwiftUI host independent of CaraML, with Gradle preparing native
+  inputs automatically and a reproducible simulator TTS-to-STT smoke test.

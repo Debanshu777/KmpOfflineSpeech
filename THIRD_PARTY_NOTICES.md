@@ -1,6 +1,6 @@
 # Third-party components
 
-This repository contains sample source under MIT. Runtime binaries and model weights are downloaded separately by `scripts/setup.py` and are not covered by the sample's MIT license.
+This repository contains sample source under MIT. Runtime binaries and model weights are downloaded by Gradle preparation tasks and are not covered by the sample's MIT license.
 
 | Component | Upstream license/source |
 | --- | --- |

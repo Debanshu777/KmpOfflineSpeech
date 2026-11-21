@@ -1,8 +1,16 @@
-# Setup tools
+# Artifact manifest and native verification
 
-`setup.py` (Python 3.10+, standard library) downloads exactly the runtimes and model files pinned in `dependencies.json`, verifies SHA-256 hashes and extracts archives safely. Use `--platform android`, `--platform ios`, or `--platform all`. `--models-only` and `--runtimes-only` support focused setup. Generated files and the `.cache` directory are ignored by Git.
+`dependencies.json` pins runtime/model URLs, sizes and SHA-256 hashes. The typed
+[Gradle build tools](../buildSrc/README.md) read this manifest during task execution.
+Use `./gradlew prepareAndroidSpeech` or `./gradlew prepareIosSpeech` for explicit
+preparation; normal platform builds prepare their own inputs automatically.
+Use `./gradlew prepareSpeechModels` to prepare only the model files and notices.
+Generated files and `.cache/downloads/` are ignored by Git.
 
-`prepare_ios.py` compiles the small audio bridge for arm64 device and Apple Silicon simulator. Run it after iOS runtime setup, and re-run it whenever `speech_audio.mm` or its header changes. Full Xcode is required.
+The Gradle tasks `prepareIosAudioIosArm64` and
+`prepareIosAudioIosSimulatorArm64` compile the small audio bridge with full Xcode.
+Gradle tracks source/header and native toolchain inputs and invokes the matching
+task before cinterop and framework linking. There are no Python setup steps.
 
 `ios_native_smoke.cpp` optionally checks the native C API model pair on an already
 booted arm64 iOS simulator: Kitten generates a phrase and Whisper transcribes its
@@ -10,8 +18,11 @@ PCM. See [iOS notes](../docs/ios-notes.md#native-runtime-smoke-test) for the exa
 compile/run commands and [the recorded result](../docs/ios-native-smoke.json).
 It does not test the Kotlin UI adapter or microphone/speaker hardware.
 
-Run `python3 -m unittest discover -s scripts -p 'test_*.py' -v` from the root. See [development](../docs/development.md) for the full verification recipe.
+Run `./gradlew checkSpeechSetup` from the root for checksum, cache and safe archive
+extraction regressions. See [development](../docs/development.md) for the full
+verification recipe.
 
 ## Recent Changes
 
-Added verified artifact setup, extraction regression tests, the iOS audio bridge build and optional native simulator model verification.
+Moved runtime/model preparation and native audio compilation into Gradle, retained
+the pin manifest and optional native simulator verification, and removed Python.

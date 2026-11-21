@@ -11,6 +11,8 @@ Record -> platform microphone -> mono FloatArray + actual sample rate
 
 Android uses the official sherpa Kotlin wrappers from its prebuilt AAR. The AAR already contains native inference libraries; adding a separate ONNX Runtime AAR could introduce duplicate native libraries.
 
+Typed Gradle tasks in `buildSrc` prepare the pinned artifacts before platform compilation. The JSON manifest records download identities, while task inputs/outputs express build dependencies. Android receives generated assets, and iOS builds the selected AVFoundation bridge after its XCFramework headers are installed. There is no separate setup interpreter.
+
 iOS uses Kotlin/Native cinterop with sherpa's C API from `SherpaOnnxC.xcframework`, plus its matching ONNX Runtime binary. A small Objective-C++ bridge handles AVFoundation capture and playback only. C structs are zero-initialized before required fields are set. Every recognizer, stream, result, TTS session, generated buffer and audio handle has explicit cleanup.
 
 Microphone capture preserves the actual hardware sample rate. Android converts signed PCM16 to float by dividing by 32768. iOS mixes hardware float channels to mono. Both feed that rate to sherpa's `acceptWaveform` API, which performs the model-rate conversion. Changing just the sample-rate integer would change the meaning of the audio. Synthesis is played at its returned rate.
