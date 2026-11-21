@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-21",
+  "device": "Pixel 9",
+  "android_version": "17",
+  "test": "dev.debanshu.speech.android.SpeechUiDemoTest.recordTranscribeAndSpeakThroughTheRealScreen",
+  "command": "ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.demo=true -Pandroid.testInstrumentationRunnerArguments.class=dev.debanshu.speech.android.SpeechUiDemoTest",
+  "tests": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "input_text": "The quick brown fox jumps over the lazy dog.",
+  "recognized_text": "The quick brown fox jumps over the lazy dog.",
+  "matched_content_words": 6,
+  "total_content_words": 6,
+  "observed_states": [
+    "Ready",
+    "Listening",
+    "Transcribing",
+    "Generating speech",
+    "Speaking"
+  ],
+  "completed_ready": true,
+  "scope": "Real screen/controller recording and transcription, then real screen/controller synthesis and playback. The initial repeatable acoustic stimulus is synthesized before recording, played through the phone speaker and captured by the microphone. No transcript or phase is injected.",
+  "media_volume_restored": true,
+  "gif": {
+    "path": "docs/images/speech-demo.gif",
+    "width": 480,
+    "height": 960,
+    "fps": 8,
+    "loop": true,
+    "crop": "Actual app content; system chrome only is excluded."
+  },
+  "limitations": "One fixed synthesized sentence on one device. This is a UI and audio-path integration check, not a human speech recognition accuracy or latency benchmark."
+}

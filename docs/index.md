@@ -1,6 +1,6 @@
 # Offline speech example guides
 
-Start with the [end-to-end tutorial](medium-draft.md) or [quick setup](../README.md).
+Start with the [model integration tutorial](medium-draft.md), which assumes an existing KMP project, or run the completed sample using the [quick setup](../README.md). The [demo](demo.md) shows the focused recorder design and a real Android recording → transcript → playback GIF.
 
 - [Architecture and deliberate limits](architecture.md)
 - [Development and verification](development.md)

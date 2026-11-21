@@ -2,7 +2,7 @@
 
 A small Android + iOS example of **speech-to-text with Whisper** and **text-to-speech with Kitten**, using Kotlin Multiplatform, Compose Multiplatform, and [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
 
-Start with the [step-by-step guide](docs/medium-draft.md) to build the integration from an empty project. This repository provides the completed reference implementation.
+Start with the [step-by-step guide](docs/medium-draft.md) to add speech models to an existing KMP project. This repository provides the completed reference implementation.
 
 Record a short English phrase, transcribe it, edit the text, and hear a generated voice. Models run locally on CPU. This project has no CaraML dependency, cloud inference service, database, dependency injection framework, or model catalog.
 
@@ -78,7 +78,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Moved runtime/model setup and native audio compilation into Gradle, expanded device audio verification, and rewrote the tutorial around building the integration from an empty project.
+Added the focused recorder UI and an actual app GIF. The tutorial assumes an existing KMP project and focuses on obtaining, loading and running speech models on Android and iOS; Gradle manages preparation.
 
 ## License
 

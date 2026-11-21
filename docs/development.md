@@ -30,7 +30,7 @@ See [Android host notes](../androidApp/README.md) for the exact acoustic opt-in 
 2. Record a clear English phrase for 2–5 seconds, then stop. Confirm editable recognized text.
 3. Tap Speak. Confirm the edited text is played and the screen returns to Ready.
 4. Start playback and cancel. Repeat recording, transcription and synthesis after cancellation.
-5. Record without tapping Stop; confirm the 20-second automatic stop and recording ruler.
+5. Record without tapping Stop; confirm the elapsed-time ring and 20-second automatic stop.
 6. Background the app during recording/playback. Return and confirm it is ready. Cleanup during inference may wait for native work.
 7. Repeat without network connectivity. Android's merged manifest has no Internet permission; iOS reads models from its bundle.
 
@@ -45,7 +45,9 @@ Verified on 2026-11-21:
 - Gradle prepared the Android model assets/AAR from verified cache and compiled the device/simulator iOS audio bridges.
 - Pixel 9 / Android 17 model-only and acoustic roundtrip tests: 2 passed. The acoustic transcript was “The quick round fox jumps over the lazy dog.” The 16 kHz microphone captured 3.680 seconds of non-silent audio played through the 24 kHz output path. See the [Android host notes](../androidApp/README.md) for exact diagnostics and acceptance criteria.
 - iOS native C API roundtrip passed; [recorded result](ios-native-smoke.json) and [reproduction](ios-notes.md#native-runtime-smoke-test). This test does not call the Kotlin UI adapter or microphone/speaker.
-- The iOS simulator host built and launched through the Gradle-managed native preparation flow. Visual redesign approval is separate from these integration checks.
+- The opt-in [real UI journey](../androidApp/verification/ui-journey-2026-11-21.json) passed one test with zero failures. The screen/controller recorded the physical speaker stimulus, transcribed “The quick brown fox jumps over the lazy dog.”, generated speech, played it and returned to Ready. The [GIF](demo.md) captures this run; no transcript or phase was injected.
+- The refined iOS simulator host built and launched through the Gradle-managed native preparation flow; its actual screen is captured in the demo notes.
+- A development-signed physical iPhone build succeeded, but installation was rejected because the device's free-development app slots were full. No existing apps were removed. Physical iPhone microphone/playback remains unverified; simulator verification is the selected scope for now.
 
 Device microphone/playback observations are recorded separately in the Android host notes, including the exact recognized text and the acoustic test's acceptance criterion. Do not replace a measured transcription with the expected phrase.
 

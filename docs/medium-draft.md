@@ -1,134 +1,59 @@
-# Offline Speech Recognition and Text-to-Speech in Kotlin Multiplatform, From Scratch
+# Run Speech-to-Text and Text-to-Speech Models in Kotlin Multiplatform
 
-A microphone, a text field, and two local models are enough to build a useful speech demo. In this tutorial we will create an Android and iOS app that records a sentence, transcribes it, lets us edit the text, and reads it aloud.
+Integrate Whisper and KittenTTS into an existing Android and iOS app, with local inference and a shared Kotlin interface.
 
-We will start with an empty project. Kotlin Multiplatform will share the screen and operation controller. Android and iOS will supply audio capture, playback, and their native model bindings. The [finished project](https://github.com/Debanshu777/KmpOfflineSpeech) is available for comparing files as you go.
+A speech feature has a straightforward shape: record audio, turn it into text, let someone edit it, then turn that text back into audio. The interesting work is obtaining the right model files, loading them through native runtimes, and moving samples across the platform boundary correctly.
 
-The demo uses **Whisper tiny INT8 ONNX** for speech recognition and **KittenTTS Nano v0.8 INT8** for English synthesis, through **sherpa-onnx**. It has no CaraML dependency, database, dependency injection framework, model hub, or server. We choose and package the weights ourselves instead of using system speech recognition or system TTS.
+This tutorial starts with an existing Kotlin Multiplatform project targeting Android and iOS. We will build the speech integration from scratch. The examples use `composeApp` for shared code and `androidApp` for the Android host; adjust module names to your project. The [finished example](https://github.com/Debanshu777/KmpOfflineSpeech) supplies complete files alongside the excerpts below.
 
-## 1. Create the project and its two modules
+![Record, transcribe and play in the actual Android app](images/speech-demo.gif)
 
-Install JDK 21 or newer, an Android SDK with platform 37, and Gradle for generating the wrapper once. For iOS, use an Apple Silicon Mac with full Xcode and an iOS 18.5 or newer simulator or device. Physical iOS deployment also needs signing configured.
+*Actual Android app demonstration. The verification stimulus is synthesized speech played through the speaker and physically recorded through the microphone; this is not a human speech-accuracy benchmark.*
 
-Create an empty directory, then generate its wrapper:
+## 1. Obtain the models and their supporting files
 
-```bash
-mkdir KmpOfflineSpeech
-cd KmpOfflineSpeech
-gradle wrapper --gradle-version 9.9.1
-```
+We will use **Whisper tiny multilingual INT8 ONNX** for recognition, configured for English in this demo, and **KittenTTS Nano v0.8 INT8** for English synthesis. **sherpa-onnx** provides the speech APIs and runs the models using ONNX Runtime. These are packaged models, rather than calls to system speech services or a server.
 
-Use `./gradlew` afterward so everyone builds with the same Gradle release. Create `settings.gradle.kts`:
-
-```kotlin
-pluginManagement {
-    repositories { google(); mavenCentral(); gradlePluginPortal() }
-}
-dependencyResolutionManagement {
-    repositories { google(); mavenCentral() }
-}
-rootProject.name = "KmpOfflineSpeech"
-include(":composeApp", ":androidApp")
-```
-
-In the root `build.gradle.kts`, declare the plugins:
-
-```kotlin
-plugins {
-    kotlin("multiplatform") version "2.4.21" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21" apply false
-    id("org.jetbrains.compose") version "1.12.2" apply false
-    id("com.android.kotlin.multiplatform.library") version "9.5.1" apply false
-    id("com.android.application") version "9.5.1" apply false
-}
-```
-
-Add `android.useAndroidX=true` and `kotlin.mpp.enableCInteropCommonization=true` to `gradle.properties`. Point Gradle at your Android SDK through `ANDROID_HOME` or `local.properties`.
-
-Create these source directories:
+Weights and runtimes are different dependencies. An ONNX model contains learned data; the runtime contains executable inference code. Supporting files describe tokens, voices, and text pronunciation. Keep each bundle together:
 
 ```text
-androidApp/src/main/                 Android Activity and manifest
-composeApp/src/commonMain/kotlin/    Contract, controller, Compose screen
-composeApp/src/androidMain/kotlin/   Android adapter
-composeApp/src/iosMain/kotlin/       iOS adapter and UIViewController
-composeApp/src/iosMain/cinterop/     Native header and audio bridge
-buildSrc/src/main/kotlin/            Typed dependency-preparation tasks
-iosApp/                             SwiftUI host
+models/
+  whisper/
+    tiny-encoder.int8.onnx
+    tiny-decoder.int8.onnx
+    tiny-tokens.txt
+  kitten/
+    model.int8.onnx
+    voices.bin
+    tokens.txt
+    lexicon-en-us.txt
 ```
 
-Use `dev.debanshu.speech` for the shared example package, with matching directories under each Kotlin source set. `composeApp` is the reusable shared library; `androidApp` is its Android launcher.
+Download the three Whisper files from the [pinned export revision](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/tree/65176e2deb88badc814a94058666cadccc29b61c). For Kitten, extract the model, voices and tokens from the [Nano v0.8 INT8 archive](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2), then add the separate [English lexicon](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/lexicon-en-us.txt). A Kitten ONNX file without its voice data and lexicon is incomplete.
 
-## 2. Configure the shared library and Android host
+Record download URLs, expected sizes and SHA-256 checksums in a dependency manifest. For example, the encoder entry in this project's `scripts/dependencies.json` is:
 
-Apply the multiplatform, Compose, Compose compiler, and Android multiplatform library plugins in `composeApp/build.gradle.kts`. Configure Android and the two Apple Silicon targets:
-
-```kotlin
-kotlin {
-    android {
-        namespace = "dev.debanshu.speech.shared"
-        compileSdk = 37
-        minSdk = 26
-        compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
-        androidResources { enable = true }
-    }
-    iosArm64()
-    iosSimulatorArm64()
-    jvm() // Shared controller tests; no desktop speech implementation.
+```json
+{
+  "name": "tiny-encoder.int8.onnx",
+  "url": "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/resolve/65176e2deb88badc814a94058666cadccc29b61c/tiny-encoder.int8.onnx?download=true",
+  "sha256": "d24fb083ae3b1041fc24e97971d60e280c9342201fbb67b0ab428a8b4a51a434",
+  "bytes": 12937772,
+  "destination": "models/whisper/tiny-encoder.int8.onnx"
 }
 ```
 
-Add Compose runtime, foundation, UI and Material 3 to `commonMain`, along with coroutines and lifecycle's Compose integration. The sample pins Compose `1.12.2`, Material 3 `1.10.0-alpha05`, coroutines `1.11.0`, and lifecycle `2.11.0`. Add Activity Compose `1.13.0` to `androidMain`. Keep these versions together while constructing the example.
+The [complete manifest](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/scripts/dependencies.json) includes both model bundles and the native binaries. Pin files rather than following a mutable branch or silently accepting a changed release asset.
 
-In `androidApp/build.gradle.kts`, apply `com.android.application` and the Compose compiler plugin. Set the namespace to `dev.debanshu.speech.android`, application ID to `dev.debanshu.speech.sample`, compile SDK to 37, minimum SDK to 26, and target SDK to 36. Enable Compose, select Java 17 bytecode, and depend on `project(":composeApp")` plus Activity Compose. Include `arm64-v8a` and `x86_64` for a phone and emulator.
+## 2. Prepare native runtimes through Gradle
 
-Keep the host small. Its Activity will construct the platform adapter before the Activity reaches STARTED, because Android's permission launcher must be registered early:
+For Android, use the official [sherpa-onnx 2.0.1 AAR](https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-2.0.1.aar). It contains Kotlin-facing APIs and native libraries. For iOS, use the static sherpa C XCFramework and the matching ONNX Runtime framework from upstream's [tagged package manifest](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/Package.swift).
 
-```kotlin
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val speech = createAndroidSpeechPlatform(this)
-        setContent { SpeechApp(speech) }
-    }
-}
-```
+There is a small naming trap: the referenced ONNX Runtime package is `1.28.2`, but its [manifest points to 1.28.1 binary archives](https://github.com/csukuangfj/onnxruntime-libs/blob/v1.28.2/Package.swift). Follow the actual URLs and checksums.
 
-We will implement those two functions shortly.
+Make preparation a Gradle responsibility. A typed task should declare its manifest input, download cache, and generated outputs. Download to a temporary file, verify its size and streaming SHA-256, then publish it. Validate cached downloads too. For archives, reject traversal, links, duplicate paths and excessive expansion.
 
-## 3. Make model installation part of Gradle
-
-A runtime is executable inference code. Weights are the learned data it loads. We need both, plus each model's supporting files.
-
-Whisper needs `tiny-encoder.int8.onnx`, `tiny-decoder.int8.onnx`, and `tiny-tokens.txt`. Kitten needs `model.int8.onnx`, `voices.bin`, `tokens.txt`, and `lexicon-en-us.txt`. The lexicon is a separate download; copying only the ONNX file will not create a working voice.
-
-Store the URLs, exact revisions, sizes and SHA-256 checksums in `scripts/dependencies.json`. Pin sherpa-onnx `2.0.1` and the exact model exports. Hashes are what let a repeated build reject changed or incomplete content.
-
-Create `buildSrc/build.gradle.kts` with the `kotlin-dsl` plugin, `mavenCentral()`, Commons Compress `1.28.0` for archives, and Gson `2.13.2` for the manifest. Name this build `speech-build-tools` in `buildSrc/settings.gradle.kts`.
-
-Put download and extraction helpers in `SpeechArtifacts.kt`. Stream bytes into a temporary file, compute SHA-256, check the expected size and hash, and only then publish the file. The core of the helper is:
-
-```kotlin
-val temporary = Files.createTempFile(cache.toPath(), ".speech-", ".part").toFile()
-try {
-    open(artifact.json["url"].asString).use { input ->
-        temporary.outputStream().use { input.copyTo(it) }
-    }
-    verify(temporary, artifact) // Expected byte count and streaming SHA-256.
-    move(temporary.toPath(), output.toPath())
-    return output
-} finally {
-    temporary.delete()
-}
-```
-
-Verify cached files too. During extraction, reject paths escaping the destination, links, duplicate entries, and archives exceeding a chosen expansion limit. The [complete helper](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/buildSrc/src/main/kotlin/SpeechArtifacts.kt) contains those checks.
-
-The [build tools notes](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/buildSrc/README.md) explain the task inputs, verified cache and extraction limits alongside the implementation.
-
-Create typed `PrepareSpeechModels`, `PrepareAndroidSpeech`, `PrepareIosSpeech`, and `PrepareIosAudio` tasks. Declare the manifest as `@InputFile`, the cache as `@LocalState`, and generated files/directories as outputs. Model preparation downloads Whisper and the Kitten archive, verifies the extracted Kitten files, and publishes `models/whisper` and `models/kitten`.
-
-Register the model task in the root build:
+The example's `buildSrc` tasks are `PrepareSpeechModels`, `PrepareAndroidSpeech`, `PrepareIosSpeech`, and `PrepareIosAudio`. Its [build tools guide](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/buildSrc/README.md) explains the implementation. Model preparation is registered like this:
 
 ```kotlin
 val prepareSpeechModels = tasks.register<PrepareSpeechModels>("prepareSpeechModels") {
@@ -139,56 +64,47 @@ val prepareSpeechModels = tasks.register<PrepareSpeechModels>("prepareSpeechMode
 }
 ```
 
-Register `prepareAndroidSpeech` with `modelDirectory` supplied by `prepareSpeechModels.flatMap { it.modelDirectory }`. This provider carries the task dependency. Register `prepareIosSpeech` with a dependency on model preparation. Keep network access inside task actions, so opening the project or running controller tests does not download models.
-
-Downloads, model extraction, and native audio compilation all belong to Gradle's task graph. One build command can prepare its prerequisites without a separate scripting environment or manual setup command.
-
-Android's preparation copies the AAR to `composeApp/libs/sherpa-onnx-2.0.1.aar` and models to `composeApp/build/generated/speechAssets/models`. Register that generated asset directory and add the AAR to `androidMain`:
+Android preparation takes this output, copies the AAR into `composeApp/libs`, and creates `composeApp/build/generated/speechAssets/models`. In the shared module, connect the generated AAR to `androidMain`:
 
 ```kotlin
 val prepareAndroidSpeech = rootProject.tasks
     .named<PrepareAndroidSpeech>("prepareAndroidSpeech")
-// In androidMain.dependencies:
+
+// Inside androidMain.dependencies:
 implementation(files(prepareAndroidSpeech.flatMap { it.runtimeAar })
     .builtBy(prepareAndroidSpeech))
 ```
 
-Use Android Components' `onVariants` callback to register the generated assets with `variant.sources.assets?.addGeneratedSourceDirectory(prepareAndroidSpeech, PrepareAndroidSpeech::assetsDirectory)`. Both the AAR and assets now tell Gradle which task produces them.
-
-iOS preparation installs static sherpa and ONNX Runtime XCFrameworks under `libs/ios` and keeps a `models` folder for the application bundle. Ignore downloaded runtimes, models, and caches in Git.
-
-The iOS binary lock follows upstream's [sherpa package manifest](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/Package.swift). Its ONNX Runtime package version is `1.28.2`, while that [package's manifest](https://github.com/csukuangfj/onnxruntime-libs/blob/v1.28.2/Package.swift) references `1.28.1` binary archives. Keep the actual URLs and hashes instead of guessing filenames from version labels.
-
-## 4. Define shared audio and operations
-
-Create `SpeechPlatform.kt` in `commonMain`:
+Register its asset directory through Android Components:
 
 ```kotlin
-data class PcmAudio(val samples: FloatArray, val sampleRate: Int)
-
-interface SpeechPlatform {
-    suspend fun requestMicrophonePermission(): Boolean
-    suspend fun startRecording()
-    suspend fun stopRecording(): PcmAudio
-    suspend fun transcribe(audio: PcmAudio): String
-    suspend fun synthesize(text: String): PcmAudio
-    suspend fun play(audio: PcmAudio)
-    suspend fun stop()
-    suspend fun close()
+extensions.configure<KotlinMultiplatformAndroidComponentsExtension> {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(
+            prepareAndroidSpeech, PrepareAndroidSpeech::assetsDirectory)
+    }
 }
 ```
 
-Use mono float PCM in the range `-1f` to `1f`, and validate that the samples are nonempty and the rate is positive. A sample rate describes how many values represent one second. Relabelling 48 kHz input as 16 kHz changes its meaning; it does not resample the audio.
+The task provider carries the dependency, so assembly prepares its inputs. iOS preparation extracts frameworks into `libs/ios` and leaves the models ready for bundling as a folder resource. Ignore weights, runtimes and download caches in Git. Keep downloads inside task actions, rather than project configuration.
 
-One platform instance belongs to one controller. Model operations and teardown must never overlap. That ownership rule is more important than whether we use an interface or `expect`/`actual`.
+## 3. Pass audio through a small shared contract
 
-## 5. Implement Android recognition and synthesis
+Create a shared audio value in `commonMain`:
 
-Create `AndroidSpeechPlatform.kt` in `androidMain`. Keep the application context for assets/files, and register `ActivityResultContracts.RequestPermission()` with the Activity for microphone permission.
+```kotlin
+data class PcmAudio(val samples: FloatArray, val sampleRate: Int)
+```
 
-Copy model assets to `context.filesDir/models` before opening sessions, because the configurations below use filesystem paths. Copy through a temporary file and close both streams. Do that work on `Dispatchers.IO`.
+Use mono float PCM, normally between `-1f` and `1f`. Validate a positive rate and nonempty samples. The core platform operations are `suspend fun transcribe(audio: PcmAudio): String` and `suspend fun synthesize(text: String): PcmAudio`. Capture and playback can sit behind the same platform interface.
 
-Whisper configuration connects the encoder, decoder and tokens:
+Keep the real sample rate with every recording. Relabelling 48 kHz input as 16 kHz changes its timing; it does not resample it. The recognizer API accepts the original rate and sherpa performs conversion internally, as shown in its [offline stream implementation](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/sherpa-onnx/csrc/offline-stream.cc).
+
+## 4. Load Whisper and Kitten on Android
+
+In `androidMain`, import `com.k2fsa.sherpa.onnx` classes from the AAR. Before initialization, copy packaged model assets to `context.filesDir/models` on `Dispatchers.IO`, because this configuration uses filesystem paths. Copy through a temporary file, close streams, and publish only after the copy completes.
+
+Create the recognizer on `Dispatchers.Default`, away from the UI thread:
 
 ```kotlin
 val recognizer = OfflineRecognizer(
@@ -208,7 +124,7 @@ val recognizer = OfflineRecognizer(
 )
 ```
 
-Use the upstream `com.k2fsa.sherpa.onnx` classes from the AAR; no custom JNI code is needed. Run creation and decoding on `Dispatchers.Default`:
+A recognizer owns the model session; a stream holds one recording's input and result:
 
 ```kotlin
 try {
@@ -222,87 +138,84 @@ try {
 } finally { recognizer.release() }
 ```
 
-For synthesis, construct `OfflineTtsConfig` containing an `OfflineTtsModelConfig` with its `kitten` field:
+For TTS, configure all four Kitten files:
 
 ```kotlin
-OfflineTtsKittenModelConfig(
-    model = modelPath,
-    voices = voicesPath,
-    tokens = tokensPath,
-    lexicon = lexiconPath,
+val tts = OfflineTts(
+    config = OfflineTtsConfig(
+        model = OfflineTtsModelConfig(
+            kitten = OfflineTtsKittenModelConfig(
+                model = modelPath,
+                voices = voicesPath,
+                tokens = tokensPath,
+                lexicon = lexiconPath,
+            ),
+            numThreads = 2,
+            provider = "cpu",
+        ),
+        maxNumSentences = 1,
+    ),
 )
+try {
+    val generated = tts.generate(text, sid = 0, speed = 1.0f)
+    currentCoroutineContext().ensureActive()
+    PcmAudio(generated.samples, generated.sampleRate)
+} finally { tts.release() }
 ```
 
-Set two CPU threads and `maxNumSentences = 1`, then create `OfflineTts`. Generate with `tts.generate(text, sid = 0, speed = 1.0f)`. Return `PcmAudio(generated.samples, generated.sampleRate)` and release the TTS session in `finally`.
+Speaker zero is selected on both platforms. Use the returned output rate for playback. The sample creates a session per operation to keep ownership visible; caching sessions would reduce repeated loading work but requires the same serialization and cleanup rules. The [Android adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/androidMain/kotlin/dev/debanshu/speech/AndroidSpeechPlatform.kt) includes the complete error paths.
 
-Creating a session per operation keeps this example's ownership simple. It adds model-loading work each time. Session caching can come later, with the same serialization and cleanup rules.
+## 5. Bind and link the iOS C API
 
-## 6. Add Android microphone capture and playback
-
-Create an `AudioRecord` for mono PCM16. Try 16 kHz, then 48 kHz and 44.1 kHz when necessary. Check `getMinBufferSize`, `STATE_INITIALIZED`, and negative read results; [Android does not guarantee every requested rate on every route](https://developer.android.com/reference/android/media/AudioRecord).
-
-Read on an IO coroutine into a bounded buffer. Convert each short using:
-
-```kotlin
-samples[index] = pcm16[index] / 32768f
-```
-
-Allocate at most `actualSampleRate * 20` samples. On stop, stop the recorder, join its reader, release it, and return the captured portion with the actual sample rate.
-
-Feed that pair to sherpa. Its [offline stream implementation](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/sherpa-onnx/csrc/offline-stream.cc) resamples incoming audio for Whisper, so we do not need our own resampler.
-
-For playback, build an `AudioTrack` with mono `ENCODING_PCM_FLOAT` at the **synthesis output rate**. Write until all samples are queued, handle partial/zero writes, and wait until `playbackHeadPosition` reaches the queued frame count. A successful write means queued audio, not completed playback. Stop and release the track in `finally`.
-
-In the Android host manifest, declare microphone access and export the launcher Activity:
-
-```xml
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-feature android:name="android.hardware.microphone"
-    android:required="true" />
-```
-
-Request permission before opening the recorder. Denial should produce a readable error while leaving text-to-speech available.
-
-## 7. Generate iOS C bindings and link the native libraries
-
-Create `speech_audio.h` in `iosMain/cinterop`. Include sherpa's header and declare C functions for your audio bridge:
-
-```c
-#include "sherpa-onnx/c-api/c-api.h"
-void *speech_capture_create(void);
-float *speech_capture_stop(void *capture, int32_t *count, int32_t *rate);
-void speech_free_samples(float *samples);
-```
-
-Also declare start/destroy functions, playback functions and a microphone permission callback. Wrap declarations in `extern "C"` when compiling as C++.
-
-Create `speech.def`:
+On iOS, call sherpa's C API directly from Kotlin/Native. In `iosMain/cinterop`, create a header including `sherpa-onnx/c-api/c-api.h` and a definition file:
 
 ```properties
 headers = speech_audio.h
 package = dev.debanshu.speech.native
 ```
 
-For each iOS target in the shared Gradle build, select `ios-arm64` or `ios-arm64_x86_64-simulator`. Register cinterop with include paths for our header and the selected sherpa framework's Headers directory. Export a static Kotlin framework named `SpeechApp`.
-
-Its linker options must include sherpa, ONNX Runtime, our audio archive and Apple dependencies:
+Our header also declares audio-bridge functions; model inference itself needs no custom C++ wrapper. In the shared Gradle build, select the correct XCFramework slice for each target:
 
 ```kotlin
-linkerOpts(
-    "-F$sherpa", "-framework", "SherpaOnnxC",
-    "-F$ort", "-framework", "onnxruntime",
-    "-L$audio", "-lspeech_audio", "-lc++",
-    "-framework", "AVFoundation", "-framework", "AudioToolbox",
-    "-framework", "Foundation", "-framework", "CoreML",
-    "-framework", "CoreFoundation",
-)
+val slice = if (target.name == "iosArm64")
+    "ios-arm64" else "ios-arm64_x86_64-simulator"
+val sherpa = rootProject.file("libs/ios/SherpaOnnxC.xcframework/$slice")
+val ort = rootProject.file("libs/ios/onnxruntime.xcframework/$slice")
+val interop = target.compilations.getByName("main")
+    .cinterops.create("speechNative") {
+        defFile("src/iosMain/cinterop/speech.def")
+        compilerOpts("-I${file("src/iosMain/cinterop")}",
+            "-I$sherpa/SherpaOnnxC.framework/Headers")
+    }
 ```
 
-Bindings and linking are separate steps: cinterop makes Kotlin declarations; the linker supplies their implementations.
+Add framework search paths and link `SherpaOnnxC`, `onnxruntime`, C++, the audio bridge, AVFoundation, AudioToolbox, Foundation, CoreML and CoreFoundation. Generating bindings and linking are separate: cinterop creates Kotlin declarations; the linker supplies their implementations.
 
-In `IosSpeechPlatform.kt`, opt into `ExperimentalForeignApi`. Allocate and zero the C recognizer config in `memScoped`, set Whisper's file paths, English language, transcription task and CPU options, then call `SherpaOnnxCreateOfflineRecognizer`.
+Make cinterop and framework linking depend on the appropriate preparation task. The example uses `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64`, which prepare the runtimes and compile its audio bridge before the Kotlin framework needs them.
 
-After creating a stream, pass Kotlin samples safely:
+## 6. Initialize and run the models on iOS
+
+Opt into `ExperimentalForeignApi`. Allocate the C config in `memScoped`, zero it, then fill the model paths and execution options:
+
+```kotlin
+val config = alloc<SherpaOnnxOfflineRecognizerConfig>()
+memset(config.ptr, 0,
+    sizeOf<SherpaOnnxOfflineRecognizerConfig>().convert())
+config.feat_config.sample_rate = 16000
+config.feat_config.feature_dim = 80
+config.model_config.whisper.encoder = encoderPath.cstr.ptr
+config.model_config.whisper.decoder = decoderPath.cstr.ptr
+config.model_config.whisper.language = "en".cstr.ptr
+config.model_config.whisper.task = "transcribe".cstr.ptr
+config.model_config.tokens = tokensPath.cstr.ptr
+config.model_config.num_threads = 2
+config.model_config.provider = "cpu".cstr.ptr
+config.decoding_method = "greedy_search".cstr.ptr
+val recognizer = SherpaOnnxCreateOfflineRecognizer(config.ptr)
+    ?: error("Could not load Whisper")
+```
+
+Create a stream, pass the recording, decode, and copy the result:
 
 ```kotlin
 audio.samples.usePinned { pinned ->
@@ -312,146 +225,86 @@ audio.samples.usePinned { pinned ->
     )
 }
 SherpaOnnxDecodeOfflineStream(recognizer, stream)
+currentCoroutineContext().ensureActive()
+val result = SherpaOnnxGetOfflineStreamResult(stream)
+    ?: error("No recognition result")
+try {
+    result.pointed.text?.toKString()?.trim().orEmpty()
+} finally {
+    SherpaOnnxDestroyOfflineRecognizerResult(result)
+}
 ```
 
-Copy the result's text to a Kotlin string, then destroy the native result, stream and recognizer in `finally`. For Kitten, fill `config.model.kitten`, generate with speaker zero, copy returned samples and sample rate into `PcmAudio`, then destroy generated audio and the TTS handle.
+The surrounding `finally` blocks destroy the stream and recognizer. `usePinned` stabilizes the Kotlin array's address for the call; do not retain its pointer afterward. Temporary C strings stay inside the `memScoped` lifetime.
 
-Never retain a pinned pointer beyond its block or read native output after freeing it. [Kotlin's C interop guide](https://kotlinlang.org/docs/native-c-interop.html) explains these lifetimes and callback `StableRef` disposal.
+Kitten uses a separate zero-initialized config:
 
-## 8. Supply iOS audio and the SwiftUI host
-
-Implement `speech_audio.mm` using AVFoundation. An `AVAudioEngine` input tap captures float PCM at the hardware rate. Average input channels to mono and cap native storage at 20 seconds, independently of the UI timer. On stop, remove the tap and return a copied buffer plus its actual rate. Kotlin copies that buffer and calls `speech_free_samples`.
-
-For playback, the small bridge converts generated floats to a PCM WAV buffer and uses `AVAudioPlayer`. Configure the audio session for recording or spoken playback as appropriate and deactivate it after stopping. Keep audio handle calls on Main; blocking model work runs on Default.
-
-Use a typed Gradle task to invoke Xcode's `clang++` and `libtool` for device and simulator, producing `libspeech_audio.a` for each. Register it as `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64`, depending on `prepareIosSpeech`. Make cinterop processing and framework linking depend on the corresponding audio task. The bridge contains audio code only; inference calls the upstream C API directly from Kotlin.
-
-Create an iOS SwiftUI application target. Add `models` as a **folder resource**, preserving paths such as `models/whisper/tiny-tokens.txt`. Add a build phase before Swift compilation:
-
-```bash
-cd "$SRCROOT/.."
-./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+```kotlin
+config.model.kitten.model = modelPath.cstr.ptr
+config.model.kitten.voices = voicesPath.cstr.ptr
+config.model.kitten.tokens = tokensPath.cstr.ptr
+config.model.kitten.lexicon = lexiconPath.cstr.ptr
+config.model.kitten.length_scale = 1f
+config.model.num_threads = 2
+config.model.provider = "cpu".cstr.ptr
+config.max_num_sentences = 1
+config.silence_scale = 0.2f
 ```
 
-Link the resulting `SpeechApp.framework` and add its build directory to Framework Search Paths. Disable User Script Sandboxing for this Gradle phase. Set the host and audio bridge deployment target to 18.5; this pinned Compose toolchain includes an ICU dependency requiring that minimum.
+Here `config` is a `SherpaOnnxOfflineTtsConfig`. Create it with `SherpaOnnxCreateOfflineTts`, then zero a `SherpaOnnxGenerationConfig`, set `sid = 0` and `speed = 1f`, and call `SherpaOnnxOfflineTtsGenerateWithConfig`.
 
-Add these `Info.plist` entries:
+Copy `output.pointed.samples` into a Kotlin `FloatArray` and preserve `output.pointed.sample_rate`. Destroy the generated audio only after copying it, then destroy the TTS handle. A native pointer is not an independently owned Kotlin buffer. The [iOS adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/dev/debanshu/speech/IosSpeechPlatform.kt) shows the nested cleanup; [Kotlin's C interop guide](https://kotlinlang.org/docs/native-c-interop.html) explains pointer scopes and callback ownership.
+
+Resolve iOS model paths from `NSBundle.mainBundle.resourcePath`, for example `models/kitten/model.int8.onnx`, and check that each file exists before creating a session. An asset copied into the wrong bundle location can look like a model-loading failure. Use the exact exported bundles here: an arbitrary ONNX speech model will not necessarily match Whisper's encoder/decoder contract or Kitten's input configuration. Start by loading and running each model independently, then connect them through the shared audio value. This makes missing files, incompatible exports and audio-format problems easier to distinguish.
+
+## 7. Connect microphone input, playback and permissions
+
+Android uses mono PCM16 `AudioRecord`, trying 16 kHz with 48 kHz and 44.1 kHz fallbacks. Check initialization and read errors. Convert shorts with `sample / 32768f`. Stop capture, join the reader and release the recorder before transcribing. Android's [AudioRecord reference](https://developer.android.com/reference/android/media/AudioRecord) documents supported-format constraints.
+
+For output, stream float PCM to `AudioTrack` at the TTS result's rate. Handle partial writes and wait for the playback head to consume queued frames before releasing the track.
+
+On iOS, an AVAudioEngine input tap captures the hardware format, averages channels to mono and preserves the actual rate. The small Objective-C++ bridge returns an owned buffer that Kotlin copies and frees. Its player packages generated samples for AVAudioPlayer. Audio sessions and handles stay on Main; model work runs on Default.
+
+Both capture implementations bound storage to 20 seconds. Add Android's `RECORD_AUDIO` permission to the manifest and request it at runtime. On iOS, request recording permission and include:
 
 ```xml
 <key>NSMicrophoneUsageDescription</key>
 <string>Record a short clip for speech recognition on this device.</string>
-<key>CADisableMinimumFrameDurationOnPhone</key>
-<true/>
 ```
 
-The microphone purpose string is [required by Apple](https://developer.apple.com/documentation/bundleresources/information-property-list/nsmicrophoneusagedescription). The frame-duration entry is part of this Compose iOS host's rendering configuration.
+Apple [requires the purpose string](https://developer.apple.com/documentation/bundleresources/information-property-list/nsmicrophoneusagedescription). For this Compose host, also retain `CADisableMinimumFrameDurationOnPhone = true`. Add `models` to the iOS app as a folder resource so paths such as `models/whisper/tiny-tokens.txt` survive bundling.
 
-Expose `MainViewController()` using `ComposeUIViewController { SpeechApp(remember { IosSpeechPlatform() }) }`. In Swift, import `SpeechApp` and return `MainViewControllerKt.MainViewController()` from a `UIViewControllerRepresentable` embedded in your app's `WindowGroup`.
+## 8. Own operations, then verify the whole path
 
-## 9. Connect the shared controller and screen
+Expose recording, transcription, synthesis and playback states to your shared UI. Keep one operation owner, serialize model calls and teardown with a mutex, and show errors without disabling unrelated capabilities. The sample limits synthesis to 500 characters and rejects recordings shorter than 0.2 seconds.
 
-Create phases for Idle, Starting, Recording, Transcribing, Synthesizing, Playing and Stopping. Expose a `StateFlow<SpeechUiState>` containing phase, editable text and error. The controller holds a `Job?` for the active operation and a `Mutex` for ownership.
+Cancellation cannot instantly interrupt a synchronous native decode. Check coroutine cancellation after decoding, discard obsolete results, and wait for model ownership before destroying handles. Stop capture/playback when the app leaves the foreground, and close the adapter when its screen is disposed. Background recording, streaming transcripts and automatic route recovery are outside this small example.
 
-Run actions through the same guarded function. Its cleanup must still run when a coroutine has been cancelled:
-
-```kotlin
-private fun runOperation(block: suspend () -> Unit) {
-    operation = scope.launch {
-        ownership.withLock {
-            try {
-                block()
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (error: Exception) {
-                mutableState.value = state.value.copy(
-                    phase = Phase.Idle, error = error.message ?: "Speech failed")
-            } finally {
-                if (!isActive || state.value.error != null) {
-                    withContext(NonCancellable) { platform.stop() }
-                }
-            }
-        }
-    }
-}
-```
-
-The transcription action stops capture, checks for at least 0.2 seconds of audio, calls the adapter, and updates the text. Start a separate timer when recording begins: `delay(20_000); transcribe()`.
-
-The speaking action shows the same ownership pattern:
-
-```kotlin
-val text = state.value.text.take(500)
-mutableState.value = state.value.copy(phase = Phase.Synthesizing)
-runOperation {
-    val audio = platform.synthesize(text)
-    try {
-        mutableState.value = state.value.copy(phase = Phase.Playing)
-        platform.play(audio)
-        mutableState.value = state.value.copy(phase = Phase.Idle)
-    } finally { audio.samples.fill(0f) }
-}
-```
-
-In Compose, remember a controller with its own Main scope, collect its state, and connect the controls:
-
-```kotlin
-val controller = remember(platform) {
-    SpeechController(platform,
-        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-}
-val state by controller.state.collectAsState()
-Button(onClick = controller::speak,
-    enabled = state.phase == Phase.Idle && state.text.isNotBlank()) {
-    Text("Speak")
-}
-BasicTextField(
-    value = state.text, onValueChange = controller::edit,
-    enabled = state.phase == Phase.Idle, minLines = 3,
-    textStyle = TextStyle(fontSize = 18.sp, lineHeight = 28.sp),
-)
-LifecycleEventEffect(Lifecycle.Event.ON_STOP) { controller.stop() }
-DisposableEffect(controller) { onDispose { controller.close() } }
-```
-
-Add Record/Stop-and-transcribe and Cancel buttons, and disable editing during operations. Surface permission and model errors in the screen. The controller's scope stays alive long enough to perform ordered cleanup after the composition is removed, then cancels itself.
-
-Keep the recording control, editable transcript and playback control visually distinct. Display actual recording time against the 20-second limit instead of inventing microphone levels. Keep the text editor and playback control together, with scrolling and keyboard insets for smaller screens. The [shared Compose screen](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/commonMain/kotlin/dev/debanshu/speech/SpeechApp.kt) provides the complete presentation layer; it can be styled without changing the native integration.
-
-Cancellation does not instantly interrupt synchronous native inference. Cancel the coroutine, discard results after native work returns, and wait for ownership before destroying handles. The Stopping state communicates that wait. This sample supports short foreground clips; route recovery, background recording and streaming transcripts require more platform work.
-
-## 10. Build, run and check offline behavior
-
-Build Android from the root. Assembly brings in its preparation tasks automatically:
+In the companion project, Android assembly prepares its generated assets and runtime automatically:
 
 ```bash
 ./gradlew :androidApp:assembleDebug
-adb install -r androidApp/build/outputs/apk/debug/androidApp-debug.apk
-adb shell am start -n dev.debanshu.speech.sample/dev.debanshu.speech.android.MainActivity
 ```
 
-For iOS, prepare its files and simulator audio bridge, then open the host:
+For its iOS host:
 
 ```bash
 ./gradlew prepareIosSpeech prepareIosAudioIosSimulatorArm64
 open iosApp/iosApp.xcodeproj
 ```
 
-Select the OfflineSpeech scheme and an iOS 18.5+ simulator. The Xcode Gradle phase builds the Kotlin framework. Device builds select the device audio preparation task automatically.
+The pinned host uses iOS 18.5+ because its Compose toolchain includes an ICU dependency requiring that minimum; this is not a general minimum for speech inference. Android's sample minimum is API 26. Build and test your own project's selected targets and toolchain.
 
-Add `kotlin("test")` and coroutines-test to `commonTest`. Useful controller tests cover denied permission, the recording timeout, and cancellation waiting for native ownership before teardown. Add checksum/cache/archive tests in `buildSrc`, and expose them through `checkSpeechSetup`:
+Run shared ownership/cancellation tests and preparation regressions:
 
 ```bash
 ./gradlew :composeApp:jvmTest checkSpeechSetup
 ```
 
-Run shared controller tests on the JVM without native libraries, then build/install Android or open the iOS host. On each actual target, record a short English sentence, transcribe it, edit it, and speak the edited version. Try cancellation, permission denial, automatic timeout and leaving the screen.
+Then test the complete interaction on each target: record a short sentence, transcribe, edit, and speak. Try permission denial, cancellation, the timeout, and leaving the screen. Disable Wi-Fi and cellular connectivity, relaunch the installed app, and repeat. Downloads happen during preparation; inference uses packaged assets.
 
-Finally disable Wi-Fi and cellular connectivity, relaunch the installed app, and repeat both model operations. Dependencies are downloaded during preparation, while the application performs local inference using packaged assets.
+The preparation regressions, Android build and iOS simulator host build passed. On a Pixel 9 running Android 17, Kitten generated speech, AudioTrack played it, AudioRecord captured the speaker through the microphone, and Whisper returned “The quick round fox jumps over the lazy dog.” The stimulus used “brown,” so recognition was not word-perfect. The [acoustic evidence](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/verification/acoustic-roundtrip-2026-11-21.json) preserves both runs and their acceptance criteria. A separate [iOS native roundtrip](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/docs/ios-native-smoke.json) checks the simulator's model pair, rather than an iPhone microphone or speaker. These are integration checks, not accuracy or latency benchmarks.
 
-The Gradle preparation regressions passed, along with Android compilation and the iOS simulator host build. On a Pixel 9 running Android 17, the acoustic test exercised the actual app adapter: Kitten generated speech, AudioTrack played it, AudioRecord captured the speaker through the microphone, and Whisper transcribed that capture. It returned “The quick round fox jumps over the lazy dog.” The original sentence used “brown,” so the result was not word-perfect. The [recorded evidence](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/verification/acoustic-roundtrip-2026-11-21.json) preserves both observed runs, the non-silence checks and the test's acceptance criterion. A separate [iOS C API roundtrip](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/docs/ios-native-smoke.json) verifies the native model pair on the simulator; it does not test an iPhone microphone or speaker. These are integration checks, not speech-accuracy or latency benchmarks.
+Keep licenses with the integration. sherpa-onnx uses [Apache-2.0](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/LICENSE), Whisper uses [MIT](https://github.com/openai/whisper/blob/main/LICENSE), and the selected [Kitten Nano INT8 model](https://huggingface.co/KittenML/kitten-tts-nano-0.8-int8) identifies Apache-2.0. Preserve notices attached to runtime binaries and supporting assets as well.
 
-Successful compilation does not prove audible output or microphone recognition on hardware. Keep any measured device results separate from assumptions about accuracy or speed.
-
-Preserve licenses when distributing the app: sherpa-onnx uses [Apache-2.0](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/LICENSE), Whisper uses [MIT](https://github.com/openai/whisper/blob/main/LICENSE), and the selected [Kitten Nano INT8 model](https://huggingface.co/KittenML/kitten-tts-nano-0.8-int8) identifies Apache-2.0. Native binaries and supporting model assets can carry additional notices.
-
-You now have the full path: microphone PCM, local recognition, shared editable state, local synthesis, and platform playback. The shared boundary stays small enough to move into another KMP app. The [complete project](https://github.com/Debanshu777/KmpOfflineSpeech) supplies the surrounding error paths and build wiring when you want to compare your implementation.
+The resulting boundary is small: shared Kotlin owns the interaction and audio values; each platform loads the models and supplies audio hardware access. That is enough to add local speech to an existing KMP application without adopting a larger application's infrastructure.

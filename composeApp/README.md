@@ -6,4 +6,4 @@ Android compilation depends on `prepareAndroidSpeech`, which supplies the local 
 
 ## Recent Changes
 
-Connected platform builds to typed Gradle runtime/model/audio preparation tasks; shared ownership and UI behavior remain covered by controller tests.
+Added a compact focused recorder screen with a circular record/stop control, actual elapsed time, a prominent transcript and contextual playback Stop. Platform preparation remains managed by Gradle.

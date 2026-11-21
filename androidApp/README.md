@@ -12,8 +12,12 @@ Verified on Pixel 9 / Android 17 on 2026-11-21: one test passed with no failures
 
 The separate [physical acoustic run](verification/acoustic-roundtrip-2026-11-21.json) also passed on that device: both tests completed with zero failures. The real microphone captured 58,878 samples at 16 kHz, and Whisper returned “The quick round fox jumps over the lazy dog.” Five of six content words matched. The evidence retains the earlier strict keyword failure and both exact transcripts; recognition was not word-perfect.
 
+For the recorded UI journey, run `ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.demo=true -Pandroid.testInstrumentationRunnerArguments.class=dev.debanshu.speech.android.SpeechUiDemoTest`. It drives the actual controller through Record, transcription and Speak, using a physical speaker stimulus for repeatability. No transcript or phase is injected. This flag emits sound and records the microphone; media volume is restored afterward. See [capture notes](../docs/demo.md).
+
 The host requests dark system-bar icons to preserve contrast with the shared light screen.
+
+The [recorded UI run](verification/ui-journey-2026-11-21.json) passed one test with zero failures on the same Pixel 9. It recognized “The quick brown fox jumps over the lazy dog.” and observed Listening, Transcribing, Generating speech and Speaking before returning to Ready. This is a separate run from the earlier acoustic result above. See the [actual GIF](../docs/demo.md).
 
 ## Recent Changes
 
-Added device verification for native model compatibility and the real microphone/speaker path, including recorded recognition errors and a readable light system-bar style.
+Added an opt-in real UI journey for the tutorial GIF, alongside native/acoustic verification and readable system bars.
