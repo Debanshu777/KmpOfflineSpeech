@@ -78,7 +78,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Added the focused recorder UI and an actual app GIF. The tutorial assumes an existing KMP project and focuses on obtaining, loading and running speech models on Android and iOS; Gradle manages preparation.
+Tightened the model integration tutorial and added a minimal Compose screen showing how record, transcript editing and playback connect to the shared controller. The focused recorder UI and actual app GIF remain available as the completed example.
 
 ## License
 

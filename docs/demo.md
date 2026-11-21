@@ -2,6 +2,8 @@
 
 Record up to 20 seconds, stop and transcribe, edit the transcript, then Speak. The playback button becomes Stop while generating or playing speech. Cancel discards recording or transcription; synchronous native work may finish before cleanup.
 
+For the code behind these interactions, see [the tutorial's minimal Compose screen](medium-draft.md#7-add-a-small-compose-screen). It connects the same controller actions without the finished app's visual styling.
+
 ![Record, transcribe and play in the actual Android app](images/speech-demo.gif)
 
 This GIF records the real Android UI. For a repeatable capture, a test fixture synthesizes a fixed sentence and plays it through the phone's speaker while the normal controller records the microphone. It then presses the real Stop & transcribe and Speak controls. The fixture never inserts a transcript or changes the UI phase directly. GIFs are silent; the physical audio-path evidence is recorded separately.

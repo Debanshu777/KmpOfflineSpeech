@@ -42,6 +42,7 @@ Verified on 2026-11-21:
 
 - Gradle build-tool regression suite: 10 tests passed.
 - Shared JVM controller suite: 3 tests passed with the Gradle-only build.
+- The tutorial's minimal Compose screen compiled against the real controller for JVM and iOS simulator using Gradle. The excerpt is documentation; the app continues to use the focused recorder screen.
 - Gradle prepared the Android model assets/AAR from verified cache and compiled the device/simulator iOS audio bridges.
 - Pixel 9 / Android 17 model-only and acoustic roundtrip tests: 2 passed. The acoustic transcript was “The quick round fox jumps over the lazy dog.” The 16 kHz microphone captured 3.680 seconds of non-silent audio played through the 24 kHz output path. See the [Android host notes](../androidApp/README.md) for exact diagnostics and acceptance criteria.
 - iOS native C API roundtrip passed; [recorded result](ios-native-smoke.json) and [reproduction](ios-notes.md#native-runtime-smoke-test). This test does not call the Kotlin UI adapter or microphone/speaker.
