@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-21",
+  "device": "Pixel 9",
+  "android_version": "17",
+  "sherpa_onnx_version": "2.0.1",
+  "command": "ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest --console=plain",
+  "test": "dev.debanshu.speech.android.NativeSpeechSmokeTest.kittenAudioCanBeTranscribedByWhisper",
+  "tests": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "generated_sample_rate_hz": 24000,
+  "generated_sample_count": 60010,
+  "input_text": "The quick brown fox jumps over the lazy dog.",
+  "recognized_text": "The quick brown fox jumps over the lazy dog.",
+  "scope": "Packaged JNI and Kitten-to-Whisper model compatibility. No microphone capture or speaker playback was exercised."
+}

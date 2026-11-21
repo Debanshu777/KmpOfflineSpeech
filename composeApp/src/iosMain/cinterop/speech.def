@@ -1,0 +1,2 @@
+headers = speech_audio.h
+package = dev.debanshu.speech.native

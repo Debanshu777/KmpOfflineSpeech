@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "provenance": {
+    "sherpa": "https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/Package.swift",
+    "onnxruntime": "https://github.com/csukuangfj/onnxruntime-libs/blob/v1.28.2/Package.swift",
+    "onnxruntime_note": "The upstream 1.28.2 Swift package deliberately references 1.28.1 binary URLs. This lock follows those exact URLs and checksums.",
+    "whisper": "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/tree/65176e2deb88badc814a94058666cadccc29b61c",
+    "kitten": "https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models"
+  },
+  "runtimes": {
+    "android": {
+      "name": "sherpa-onnx-2.0.1.aar",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-2.0.1.aar",
+      "sha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
+      "destination": "composeApp/libs/sherpa-onnx-2.0.1.aar"
+    },
+    "ios": [
+      {
+        "name": "sherpa-onnx-v2.0.1-ios-static.xcframework.zip",
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/xcframework/sherpa-onnx-v2.0.1-ios-static.xcframework.zip",
+        "sha256": "88aa569f71b7903e0bbdfbe6e2e114b3b95862b1ef0759eea3024f82926d7374",
+        "destination": "libs/ios/SherpaOnnxC.xcframework"
+      },
+      {
+        "name": "onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
+        "url": "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.1/onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
+        "sha256": "992d8a0cc6014cccc3a7815c36bbff5e5a06833ea2c4d47dd43ef071f639cf9d",
+        "destination": "libs/ios/onnxruntime.xcframework"
+      }
+    ]
+  },
+  "models": {
+    "files": [
+      {
+        "name": "tiny-encoder.int8.onnx",
+        "url": "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/resolve/65176e2deb88badc814a94058666cadccc29b61c/tiny-encoder.int8.onnx?download=true",
+        "sha256": "d24fb083ae3b1041fc24e97971d60e280c9342201fbb67b0ab428a8b4a51a434",
+        "bytes": 12937772,
+        "destination": "models/whisper/tiny-encoder.int8.onnx"
+      },
+      {
+        "name": "tiny-decoder.int8.onnx",
+        "url": "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/resolve/65176e2deb88badc814a94058666cadccc29b61c/tiny-decoder.int8.onnx?download=true",
+        "sha256": "d2fece8dd42771f1df975c6c0445770d0c292bf7547c2cae04a6c0cc57540925",
+        "bytes": 89855401,
+        "destination": "models/whisper/tiny-decoder.int8.onnx"
+      },
+      {
+        "name": "tiny-tokens.txt",
+        "url": "https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/resolve/65176e2deb88badc814a94058666cadccc29b61c/tiny-tokens.txt?download=true",
+        "sha256": "b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+        "bytes": 816730,
+        "destination": "models/whisper/tiny-tokens.txt"
+      },
+      {
+        "name": "lexicon-en-us.txt",
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/lexicon-en-us.txt",
+        "sha256": "8b67ae549a465eee78f92ecb74644ad90c3c58ce65f19c68baf85878a10ef73a",
+        "bytes": 6305773,
+        "destination": "models/kitten/lexicon-en-us.txt"
+      }
+    ],
+    "kitten_archive": {
+      "name": "kitten-nano-en-v0_8-int8.tar.bz2",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2",
+      "sha256": "6fa5be852612ce761094ba74ee6123b4fc4acfefa79bf64dc63acae4a83af2fd",
+      "bytes": 31220690,
+      "files": [
+        {
+          "name": "model.int8.onnx",
+          "bytes": 24370878,
+          "sha256": "0ba1e21eda9c8bcc4a70ada7e0d27fefc9ba775aaa037547248ec71f9a3d9b7d"
+        },
+        {
+          "name": "voices.bin",
+          "bytes": 3276800,
+          "sha256": "d520519c4a3519d44fcfcd943ed0b1e3c5da5cee0eea501d922fac1a93cd24dc"
+        },
+        {
+          "name": "tokens.txt",
+          "bytes": 1064,
+          "sha256": "934a4188addc7665dd3410256bb622169242357fbb99d840d9351209b486dabb"
+        }
+      ]
+    }
+  }
+}
