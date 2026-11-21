@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "input": "The quick brown fox jumps over the lazy dog.",
+  "transcript": "The quick brown fox jumps over the lazy dog.",
+  "sample_rate": 24000,
+  "samples": 59932,
+  "scope": "iOS simulator C API TTS-to-STT; no microphone or speaker",
+  "date": "2026-11-21",
+  "device": "iPhone 17 arm64 simulator",
+  "runtime": "iOS 27.0",
+  "deployment_target": "18.5",
+  "sherpa_onnx": "2.0.1",
+  "onnxruntime_binary": "1.28.1",
+  "source": "scripts/ios_native_smoke.cpp",
+  "source_sha256": "1ccf0a68b0d8236ad15aeaa257f0a17f491df3956c562ee39d3a9eeb861af42c",
+  "compile_command": "xcrun --sdk iphonesimulator clang++ -std=c++17 -O2 -target arm64-apple-ios18.5-simulator -isysroot \"$(xcrun --sdk iphonesimulator --show-sdk-path)\" -I libs/ios/SherpaOnnxC.xcframework/ios-arm64_x86_64-simulator/SherpaOnnxC.framework/Headers -F libs/ios/SherpaOnnxC.xcframework/ios-arm64_x86_64-simulator -F libs/ios/onnxruntime.xcframework/ios-arm64_x86_64-simulator -framework SherpaOnnxC -framework onnxruntime -framework Foundation -framework CoreML -framework CoreFoundation -framework Accelerate scripts/ios_native_smoke.cpp -o build/ios-native-smoke",
+  "run_command": "xcrun simctl spawn booted \"$(pwd)/build/ios-native-smoke\" \"$(pwd)/models\"",
+  "assertion": "Lowercase transcript contains quick, brown and fox",
+  "not_tested": [
+    "Kotlin adapter inference",
+    "microphone capture",
+    "speaker output"
+  ]
+}

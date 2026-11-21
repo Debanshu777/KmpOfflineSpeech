@@ -34,7 +34,37 @@ discarded. `close()` waits for native work before releasing audio handles. This
 sample is intended for short foreground clips; it has no background recording or
 route/interruption recovery. Stop and retry after an interruption.
 
+## Native runtime smoke test
+
+The recorded [iOS native result](ios-native-smoke.json) generated a short KittenTTS
+phrase at 24 kHz and passed the returned PCM and rate to Whisper, which recognized
+the phrase. This verifies the pinned C API runtime and model pair on an iOS
+simulator. It does not exercise the Kotlin adapter, microphone capture or speaker
+output. The [UI capture](demo.md) separately verifies the Compose app launches.
+
+To reproduce from the repository root after setup, with an arm64 simulator already
+booted (and only one simulator booted when using `booted`):
+
+```sh
+mkdir -p build
+xcrun --sdk iphonesimulator clang++ -std=c++17 -O2 \
+  -target arm64-apple-ios18.5-simulator \
+  -isysroot "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+  -I libs/ios/SherpaOnnxC.xcframework/ios-arm64_x86_64-simulator/SherpaOnnxC.framework/Headers \
+  -F libs/ios/SherpaOnnxC.xcframework/ios-arm64_x86_64-simulator \
+  -F libs/ios/onnxruntime.xcframework/ios-arm64_x86_64-simulator \
+  -framework SherpaOnnxC -framework onnxruntime -framework Foundation \
+  -framework CoreML -framework CoreFoundation -framework Accelerate \
+  scripts/ios_native_smoke.cpp -o build/ios-native-smoke
+xcrun simctl spawn booted "$(pwd)/build/ios-native-smoke" "$(pwd)/models"
+```
+
+The executable prints JSON and returns a nonzero exit status unless the transcript
+contains `quick`, `brown` and `fox`. Its optional argument is the model directory;
+without it the executable uses `models` relative to its working directory.
+
 ## Recent Changes
 
 - Added a direct C API iOS adapter, bounded AVFoundation capture and playback, and
-  a runnable SwiftUI host independent of CaraML.
+  a runnable SwiftUI host independent of CaraML, plus a reproducible native
+  simulator TTS-to-STT smoke test.

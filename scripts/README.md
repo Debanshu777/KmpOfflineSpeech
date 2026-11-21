@@ -4,8 +4,14 @@
 
 `prepare_ios.py` compiles the small audio bridge for arm64 device and Apple Silicon simulator. Run it after iOS runtime setup, and re-run it whenever `speech_audio.mm` or its header changes. Full Xcode is required.
 
+`ios_native_smoke.cpp` optionally checks the native C API model pair on an already
+booted arm64 iOS simulator: Kitten generates a phrase and Whisper transcribes its
+PCM. See [iOS notes](../docs/ios-notes.md#native-runtime-smoke-test) for the exact
+compile/run commands and [the recorded result](../docs/ios-native-smoke.json).
+It does not test the Kotlin UI adapter or microphone/speaker hardware.
+
 Run `python3 -m unittest discover -s scripts -p 'test_*.py' -v` from the root. See [development](../docs/development.md) for the full verification recipe.
 
 ## Recent Changes
 
-Added verified artifact setup, extraction regression tests and the iOS audio bridge build.
+Added verified artifact setup, extraction regression tests, the iOS audio bridge build and optional native simulator model verification.

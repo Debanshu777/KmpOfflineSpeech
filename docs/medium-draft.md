@@ -68,6 +68,24 @@ libs/ios/                           Generated native frameworks
 
 The JVM target runs shared controller tests; it is not a desktop speech app.
 
+## Wire the platform dependencies
+
+From an empty Compose Multiplatform Android/iOS project, keep the shared code in `composeApp` and the Android launcher in `androidApp`. The shared module applies Kotlin Multiplatform, the Compose compiler/plugin, and `com.android.kotlin.multiplatform.library`. Use the pinned [root build file](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/build.gradle.kts) for compatible plugin versions.
+
+The Android-specific runtime dependency is simply:
+
+```kotlin
+kotlin {
+    sourceSets {
+        androidMain.dependencies {
+            implementation(files("libs/sherpa-onnx-2.0.1.aar"))
+        }
+    }
+}
+```
+
+The AAR already carries its native runtime. This example does not need another ONNX Runtime Maven dependency or a custom Android CMake build. The [shared module build file](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/build.gradle.kts) includes the Compose, coroutine and lifecycle dependencies used by the screen.
+
 ## Prepare the weights and runtimes
 
 [`scripts/dependencies.json`](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/scripts/dependencies.json) records download URLs, SHA-256 checksums and model sizes. The setup script verifies cached downloads and new responses before installing them. Model archives are extracted with path and file-type checks.
@@ -172,6 +190,27 @@ The demo selects speaker zero on both platforms. Release the TTS session in `fin
 
 On iOS, Kotlin/Native generates bindings from a small header that includes sherpa-onnx's C API and declares our audio functions. Its `.def` file sets the generated Kotlin package. Gradle adds the appropriate framework header directory for device or simulator and links sherpa, ONNX Runtime, the audio bridge and Apple frameworks.
 
+The definition file is only two lines:
+
+```text
+headers = speech_audio.h
+package = dev.debanshu.speech.native
+```
+
+For each iOS target, the cinterop task receives the bridge and selected XCFramework header directories:
+
+```kotlin
+target.compilations.getByName("main").cinterops.create("speechNative") {
+    defFile("src/iosMain/cinterop/speech.def")
+    compilerOpts(
+        "-I${file("src/iosMain/cinterop")}",
+        "-I$sherpa/SherpaOnnxC.framework/Headers",
+    )
+}
+```
+
+Here `sherpa` is the selected `ios-arm64` or `ios-arm64_x86_64-simulator` slice directory. The full build and Xcode host also link `SherpaOnnxC`, `onnxruntime`, the compiled audio archive and Apple frameworks; a static Kotlin framework does not remove the host's final link requirements.
+
 This distinction matters: **cinterop generates bindings; linking supplies implementations**. Having generated Kotlin functions does not mean the native libraries have been linked.
 
 The [iOS adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/dev/debanshu/speech/IosSpeechPlatform.kt) allocates and zeroes the C configuration before filling fields:
@@ -242,6 +281,8 @@ python3 -m unittest discover -s scripts -p 'test_*.py' -v
 ```
 
 The Android native roundtrip test was run on a Pixel 9 with Android 17: Kitten generated 60,010 samples at 24 kHz, and Whisper returned “The quick brown fox jumps over the lazy dog.” This checks the packaged models and JNI, independently of the microphone or speaker. See the [recorded evidence](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/verification/native-smoke-2026-11-21.json).
+
+An equivalent native C API roundtrip also passed on the iPhone 17 / iOS 27 simulator, with the same sentence and a 24 kHz output rate. The shared iOS app was built and visually launched. The [iOS notes](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/docs/ios-notes.md) include a reproducible smoke command; neither roundtrip tests the physical microphone or speaker.
 
 Then verify each target you intend to support:
 

@@ -77,7 +77,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Added the standalone Android/iOS speech example, pinned runtime/model setup, shared ownership tests, a Pixel 9 native roundtrip check, an actual iOS capture, and the end-to-end tutorial.
+Added the standalone Android/iOS speech example, pinned runtime/model setup, shared ownership tests, Android/iOS native roundtrip checks, an actual iOS capture, and the end-to-end tutorial.
 
 ## License
 

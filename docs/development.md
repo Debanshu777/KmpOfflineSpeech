@@ -12,7 +12,7 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme OfflineSpeech \
 git diff --check
 ```
 
-The JVM target exercises the common controller only; it is not a desktop speech implementation. The tests verify permission denial, the recording duration limit, and cancellation waiting for native ownership before teardown. Python tests cover hash/size verification, safe archive extraction and verified download caching. CI builds Android and runs the shared/Python tests; local iOS linkage must be checked with Xcode.
+The JVM target exercises the common controller only; it is not a desktop speech implementation. The tests verify permission denial, the recording duration limit, and cancellation waiting for native ownership before teardown. Python tests cover hash/size verification, safe archive extraction and verified download caching. CI uses the Ubuntu runner's installed Android command-line tools, installs the pinned SDK packages, builds Android and runs the shared/Python tests; local iOS linkage must be checked with Xcode.
 
 ## Manual recipe
 
@@ -36,7 +36,7 @@ Verified on 2026-11-21:
 - Pixel 9 / Android 17 native Kitten-to-Whisper test: 1 passed; exact phrase recognized. See [recorded evidence](../androidApp/verification/native-smoke-2026-11-21.json).
 - iOS arm64 device and simulator framework/host builds: passed (device build unsigned); launched and visually verified on iPhone 17 / iOS 27 simulator. See [capture notes](demo.md).
 
-The device test does not exercise microphone capture or audible speaker output. These manual checks remain unverified. The simulator screen confirms launch; model inference and audio routing are separate checks.
+The device test does not exercise microphone capture or audible speaker output. These manual checks remain unverified. The simulator screen confirms launch. A separate native C API Kitten-to-Whisper roundtrip also passed on the iPhone 17 / iOS 27 simulator; see [recorded result](ios-native-smoke.json) and the reproducible command in [iOS notes](ios-notes.md). That smoke test does not call through the Kotlin UI or exercise microphone/speaker routing.
 
 ## Updating dependencies
 
