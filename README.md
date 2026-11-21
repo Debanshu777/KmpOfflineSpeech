@@ -6,6 +6,10 @@ Start with the [step-by-step guide](docs/medium-draft.md) to add speech models t
 
 Record a short English phrase, transcribe it, edit the text, and hear a generated voice. Models run locally on CPU. This project has no CaraML dependency, cloud inference service, database, dependency injection framework, or model catalog.
 
+<img src="docs/images/speech-demo.gif" width="320" alt="Actual Android app recording speech, transcribing it and playing it back">
+
+*Actual Android recording → transcription → playback. See [capture and verification notes](docs/demo.md) for details.*
+
 - [End-to-end tutorial / Medium source](docs/medium-draft.md)
 - [Architecture and limits](docs/architecture.md)
 - [Actual app capture](docs/demo.md)
@@ -78,7 +82,7 @@ See [development notes](docs/development.md) for native checks, the manual verif
 
 ## Recent Changes
 
-Tightened the model integration tutorial and added a minimal Compose screen showing how record, transcript editing and playback connect to the shared controller. The focused recorder UI and actual app GIF remain available as the completed example.
+Tightened the model integration tutorial and added a minimal Compose screen showing how record, transcript editing and playback connect to the shared controller. The README now previews the actual recording → transcription → playback GIF.
 
 ## License
 
