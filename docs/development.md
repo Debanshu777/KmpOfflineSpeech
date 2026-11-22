@@ -61,9 +61,9 @@ It uses actual callbacks/inference/audio, without injecting text/phases, accessi
 
 ## Optional model-packaging add-on
 
-The standalone [Gradle plugin](../siren-models-gradle-plugin/README.md) is a local, unpublished add-on. Run `./gradlew -p siren-models-gradle-plugin check` for integrity/extraction and functional build regressions. The [independent consumer](../validation/models-consumer/README.md) tests actual generated resources against the published SDK. Its `verifyModelPackaging` task hashes the selected files inside the Android APK, JVM JAR and iOS resource output. The [model workflow](../.github/workflows/models-check.yml) consumes a staged plugin marker outside the checkout; it contains no publication step. Existing core release artifacts and their evidence remain unchanged.
+The standalone [Gradle plugin](../siren-models-gradle-plugin/README.md) is published independently as version 0.1.0. Run `./gradlew -p siren-models-gradle-plugin check` for integrity/extraction and functional build regressions. The [independent consumer](../validation/models-consumer/README.md) tests actual generated resources against the published SDK. Its `verifyModelPackaging` task hashes the selected files inside the Android APK, JVM JAR and iOS resource output. The [model workflow](../.github/workflows/models-check.yml) consumes a staged plugin marker outside the checkout; it contains no publication step. Existing core release artifacts and their evidence remain unchanged.
 
-The current default-ready setup passed 19 plugin regressions and a relocated consumer with no explicit SDK dependency. Native synthesis/transcription, Android packaging, both iOS links and all seven packaged model hashes passed. The actual Xcode embed task copied both defaults into app resources. Whole-bundle opt-out built offline with a fresh empty model cache and zero generated model files; functional tests preserved app-owned resources and reused configuration cache. This was a packaging fixture, not an installed-app or physical-audio check. The new remote workflow has not run. See [current results](../validation/default-models-verification.json) and [earlier selection/compression evidence](../validation/optional-models-verification.json).
+The current default-ready setup passed 19 plugin regressions and a relocated consumer with no explicit SDK dependency. Native synthesis/transcription, Android packaging, both iOS links and all seven packaged model hashes passed. The actual Xcode embed task copied both defaults into app resources. Whole-bundle opt-out built offline with a fresh empty model cache and zero generated model files; functional tests preserved app-owned resources and reused configuration cache. This was a packaging fixture, not an installed-app or physical-audio check. The later [release workflow](https://github.com/Debanshu777/Siren/actions/runs/45073444409) passed these gates and a fresh Central-only consumer; see [publication evidence](../validation/models-publication-0.1.0.json). See [current results](../validation/default-models-verification.json) and [earlier selection/compression evidence](../validation/optional-models-verification.json).
 
 ## Artifact and release validation
 
@@ -145,15 +145,7 @@ Update artifact URL, hash, size and provenance together in `scripts/dependencies
 
 ## Recent Changes
 
-Model add-on release tooling now tests three independent version/tag/notes guards and verifies staged sources, Dokka API docs, marker metadata and a weight-free implementation. Run `./gradlew -p siren-models-gradle-plugin/buildSrc test` and `./gradlew -p siren-models-gradle-plugin check verifyModelAddonArtifacts`. Its manual release workflow is separate from the core SDK release and defaults to verification-only.
-
-Completed native compiler notice/evidence coverage, added vendored-input integrity regressions and a default nonpublishing preflight. Central authentication/namespace access passed in the [read-only CI check](https://github.com/Debanshu777/Siren/actions/runs/45056250019); [nonsecret result](../validation/central-credential-verification.json).
-
-
-Verified the shorter factories, standard model-layout helpers, raw PCM call and cancellation-safe scoped cleanup through source tests and relocated artifacts. Updated the API baselines intentionally; no remote publication ran.
-
-Added a manually dispatched signing-secret verification path with explicit key
-protection modes, a public-key fingerprint check and no SDK publication.
+Verified the [model add-on release](https://github.com/Debanshu777/Siren/actions/runs/45073444409) with 19 plugin tests, three release-guard tests, staged and Central-only native consumers, model hashes, both iOS links, Xcode resource integration and an offline empty-cache opt-out. No new physical audio check was performed. [Evidence](../validation/models-publication-0.1.0.json).
 
 ## Simpler integration verification — 2026-11-22
 

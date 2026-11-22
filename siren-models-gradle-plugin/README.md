@@ -2,11 +2,34 @@
 
 This quick-start Gradle plugin supplies the Siren SDK dependency and packages Whisper tiny INT8 and Kitten nano INT8 by default. It packages selected files into Android assets and JVM resources, and copies them into iOS app resources through Kotlin's standard Xcode direct integration.
 
-The plugin is a **local, unpublished add-on**. Siren SDK 0.1.0 is already on Maven Central; this plugin is not part of that release. Its JAR contains build logic, a pinned catalog and a license text, not model weights. The core SDK remains unchanged.
+The [add-on 0.1.0](https://central.sonatype.com/artifact/io.github.debanshu777/siren-models-gradle-plugin/0.1.0) and Siren SDK 0.1.0 are published on Maven Central as separate artifacts. Its 51,480-byte JAR contains build logic, a pinned catalog and a license text, not model weights. The core SDK remains unchanged.
+
+Run Gradle on JDK 21 or later. The verified KMP stack uses Kotlin 2.4.21, Gradle 9.9.1 and AGP 9.5.1; compatibility with older build-tool combinations is not established by these checks.
+
+## Use the published plugin
+
+In your application’s `settings.gradle.kts`, configure plugin and dependency repositories:
+
+```kotlin
+pluginManagement {
+    repositories { google(); mavenCentral(); gradlePluginPortal() }
+}
+dependencyResolutionManagement {
+    repositories { google(); mavenCentral() }
+}
+```
+
+Apply it to your existing shared-module `plugins` block:
+
+```kotlin
+id("io.github.debanshu777.siren.models") version "0.1.0"
+```
+
+No Siren checkout is required. The plugin is published to Maven Central, not the Gradle Plugin Portal.
 
 ## Use from source
 
-In your application's `settings.gradle.kts`, include this plugin build:
+For plugin development, include this build in your application’s `settings.gradle.kts`:
 
 ```kotlin
 pluginManagement {
@@ -77,10 +100,8 @@ From the Siren root:
 
 This tests the build plugin and stages its implementation and plugin-marker artifacts locally. It does not publish to Central or the Gradle Plugin Portal. The [independent consumer](../validation/models-consumer/README.md) verifies real models, Android/JVM packaging and iOS resource output. The [check workflow](../.github/workflows/models-check.yml) repeats artifact-based validation outside the checkout.
 
-[Current local verification](../validation/default-models-verification.json) passed 19 plugin tests, automatic SDK/model setup in a relocated Central SDK consumer, native synthesis/transcription, both iOS links and the actual Xcode resource hook. The whole-bundle opt-out built offline with a fresh empty model cache and no generated model files. App-owned resources and configuration-cache reuse are covered by functional tests. The plugin JAR is 51,480 bytes and contains no weights. The workflow is prepared but has not executed remotely. [Earlier selection/compression evidence](../validation/optional-models-verification.json) remains historical.
+[Current local verification](../validation/default-models-verification.json) passed 19 plugin tests, automatic SDK/model setup in a relocated Central SDK consumer, native synthesis/transcription, both iOS links and the actual Xcode resource hook. The whole-bundle opt-out built offline with a fresh empty model cache and no generated model files. App-owned resources and configuration-cache reuse are covered by functional tests. The plugin JAR is 51,480 bytes and contains no weights. The later [release workflow](https://github.com/Debanshu777/Siren/actions/runs/45073444409) also passed clean-runner checks and public Central-only plugin resolution; [publication evidence](../validation/models-publication-0.1.0.json) records the result. [Earlier selection/compression evidence](../validation/optional-models-verification.json) remains historical.
 
 ## Recent Changes
 
-Added independent Central publication with sources/Dokka docs, three release-guard regressions, artifact-size/no-weights checks and a guarded manual release workflow. The core SDK is not republished.
-
-Made the quick-start supply the SDK and both models by default. Added a whole-bundle opt-out that preserves app-owned resources and a single SDK version setting. The add-on is unpublished.
+Published [0.1.0](https://github.com/Debanshu777/Siren/releases/tag/models-v0.1.0) with signed implementation/marker artifacts, sources and Dokka docs. Applying the versioned plugin adds SDK/default models; `bundleModels.set(false)` keeps SDK setup and leaves model ownership to the app.

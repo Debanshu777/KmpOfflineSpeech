@@ -314,17 +314,28 @@ Record a sentence, transcribe it, change a few words, then tap Speak. Repeat wit
 
 ## Use Siren to skip the repeated wiring
 
-The code above became **Siren**, a UI-free Kotlin Multiplatform SDK. It handles file resolution, model configuration, native inference and cleanup. Your app supplies the model files and owns the screen, microphone and speaker.
+The code above became **Siren**, a UI-free Kotlin Multiplatform SDK. It handles model configuration, native inference and cleanup. Its quick-start Gradle plugin also packages the default models, so your app only needs to handle the screen, microphone and speaker.
 
-[Siren 0.1.0 is on Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). With `mavenCentral()` in your dependency repositories, add it to `commonMain`:
+Both [Siren SDK 0.1.0](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0) and the [model add-on 0.1.0](https://central.sonatype.com/artifact/io.github.debanshu777/siren-models-gradle-plugin/0.1.0) are on Maven Central. Run Gradle on JDK 21 or later. In `settings.gradle.kts`, keep `mavenCentral()` in both plugin and dependency repositories:
 
 ```kotlin
-commonMain.dependencies {
-    implementation("io.github.debanshu777:siren:0.1.0")
+pluginManagement {
+    repositories { google(); mavenCentral(); gradlePluginPortal() }
+}
+dependencyResolutionManagement {
+    repositories { google(); mavenCentral() }
 }
 ```
 
-Package the `models/whisper` and `models/kitten` files from the first section in your app: Android assets, iOS bundle resources or JVM classpath resources. Siren knows this layout; you do not need to map each filename or configure native libraries yourself. Android requires API 27 or later.
+Add this to your shared KMP module’s existing `plugins` block:
+
+```kotlin
+id("io.github.debanshu777.siren.models") version "0.1.0"
+```
+
+That adds the SDK dependency and both models. The first app build downloads the pinned Whisper tiny INT8 and Kitten nano INT8 files, verifies them and packages them as Android assets, JVM resources or iOS app resources through standard Xcode direct integration. No separate SDK dependency, manual file placement or model-loading call is needed. Android requires API 27 or later; this plugin’s Android integration uses the KMP Android library plugin.
+
+The models add about 138 MB before app compression. They’re part of the installed app, so speech works offline from its first launch. The SDK itself still carries no model weights or runtime downloader. Custom iOS integration needs the resource-copy step described in the [quickstart](https://github.com/Debanshu777/Siren/blob/main/siren-models-gradle-plugin/README.md).
 
 In an Android coroutine, use the recording captured earlier:
 
@@ -339,12 +350,16 @@ val replyAudio = createSpeechEngine(context).use { engine ->
 }
 ```
 
-On iOS or desktop, use `createSpeechEngine()` instead; the block stays the same. For text-to-speech alone, call `engine.synthesize("Hello from Siren.")` inside the scope.
+On iOS or desktop, use `createSpeechEngine()` instead. `use` closes the engine after the operation, including failure or cancellation. Play `replyAudio.samples` at `replyAudio.sampleRate` through your app’s audio adapter. A screen that keeps an engine between actions should close it on disposal.
 
-`use` closes the engine after the operation, including after failure or cancellation. Play `replyAudio.samples` through your own audio adapter at `replyAudio.sampleRate`; the samples remain valid after the scope closes. Siren includes the inference runtime, but no model weights, downloader or UI components.
+To supply your own models, turn off the default bundle:
 
-If you only need one capability, use `SherpaModels.bundled(recognition = false)` or `SherpaModels.bundled(synthesis = false)`. For an installed model tree, use `SherpaModels.local(directory)`. Pass that configuration to the factory. The [quickstart](https://github.com/Debanshu777/Siren/blob/main/docs/getting-started.md) covers resource placement; the [configuration guide](https://github.com/Debanshu777/Siren/blob/main/docs/model-configuration.md) covers custom files and providers. A long-lived screen can keep one engine across actions and close it on disposal.
+```kotlin
+sirenModels { bundleModels.set(false) }
+```
 
-The sample’s recording → transcription → playback flow was checked on a Pixel 9. iOS was checked in the simulator; native inference also ran on macOS arm64 and Linux x64. Physical iPhone and desktop audio haven’t been checked. The [verification notes](https://github.com/Debanshu777/Siren/blob/main/docs/development.md) record what was tested.
+The plugin still supplies the SDK, but downloads and packages no default models and skips the iOS copy. Provide your own bundled files or pass `SherpaModels.local(directory)` to the engine. Clean previous app build products once when switching. To manage the dependency yourself too, omit the plugin and add `implementation("io.github.debanshu777:siren:0.1.0")` to `commonMain.dependencies`.
 
-This is a short, foreground-only demo; streaming and audio-route recovery can come later. The [README](https://github.com/Debanshu777/Siren#readme) has build requirements and run commands, and [third-party notices](https://github.com/Debanshu777/Siren/blob/main/THIRD_PARTY_NOTICES.md) cover the bundled runtimes and models.
+The [configuration guide](https://github.com/Debanshu777/Siren/blob/main/docs/model-configuration.md) covers other compatible files and providers. The [sample](https://github.com/Debanshu777/Siren/tree/main/sample) shows the UI and audio adapters; they stay outside the SDK.
+
+The recording → transcription → playback flow was checked on a Pixel 9. iOS was checked in the simulator; native inference also ran on macOS arm64 and Linux x64. Physical iPhone and desktop audio haven’t been checked. The [verification notes](https://github.com/Debanshu777/Siren/blob/main/docs/development.md) record those limits, and [third-party notices](https://github.com/Debanshu777/Siren/blob/main/THIRD_PARTY_NOTICES.md) cover the runtimes and models.

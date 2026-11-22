@@ -16,19 +16,30 @@ The core SDK has **no UI, Compose dependency or runtime downloads**. The quick-s
 
 ## Get started
 
-Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). The default-ready Gradle add-on below is **local and unpublished**, with [source setup](siren-models-gradle-plugin/README.md#use-from-source). The public SDK dependency alone retains its original model-file requirements.
+Siren SDK **0.1.0** and the [quick-start model add-on **0.1.0**](https://central.sonatype.com/artifact/io.github.debanshu777/siren-models-gradle-plugin/0.1.0) are available on Maven Central. The plugin adds the SDK dependency and packages both models by default; you can opt out below.
 
 ### 1. Use the quick-start build setup
 
-After including the source plugin build in your settings, add it to the shared module's existing plugins:
+In `settings.gradle.kts`, configure plugin and dependency repositories:
 
 ```kotlin
-plugins {
-    id("io.github.debanshu777.siren.models")
+pluginManagement {
+    repositories { google(); mavenCentral(); gradlePluginPortal() }
+}
+dependencyResolutionManagement {
+    repositories { google(); mavenCentral() }
 }
 ```
 
-This supplies the SDK dependency and both default model bundles. Ensure `mavenCentral()` is in your dependency repositories. Normal app builds fetch, verify and package Whisper tiny INT8 and Kitten nano INT8 automatically. No file placement, model-loading calls or extra initialization are needed. The installed app can use the models offline from first launch.
+Add this to the shared module's existing plugins:
+
+```kotlin
+plugins {
+    id("io.github.debanshu777.siren.models") version "0.1.0"
+}
+```
+
+This supplies the SDK dependency and both default model bundles. Ensure `mavenCentral()` is in your dependency repositories. Normal app builds fetch, verify and package Whisper tiny INT8 and Kitten nano INT8 automatically. No file placement, model-loading calls or extra initialization are needed. The installed app can use the models offline from first launch. Both bundles add about **138 MB before app compression**. Android uses the KMP Android library plugin; standard iOS Xcode direct integration copies app resources automatically. See the [integration details](siren-models-gradle-plugin/README.md#how-packaging-works) for custom iOS builds.
 
 ### 2. Call the engine
 
@@ -67,7 +78,7 @@ Supply your own bundle or local model configuration. You can also omit the plugi
 | JVM Linux x64 | Native resources in JVM JAR | Native model roundtrip passed in CI |
 | JVM macOS x64, Linux arm64, Windows arm64/x64 | Native resources in JVM JAR | Packaged/hash-verified; execution untested |
 
-The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributors use JDK 21. The pinned Compose sample uses iOS 18.5+. Wasm is unsupported. [Evidence and limits](docs/development.md).
+The reference build uses Kotlin 2.4.21. The SDK targets Java 17 bytecode; the Gradle model plugin requires running Gradle on JDK 21 or later. Contributors use JDK 21. The pinned Compose sample uses iOS 18.5+. Wasm is unsupported. [Evidence and limits](docs/development.md).
 
 ## Sample apps
 
@@ -95,11 +106,7 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
-Prepared an independent model add-on release pipeline with signed Central implementation/marker publications and public plugin-ID consumer validation. Source setup below remains valid while publication is being verified.
-
-Made the prepared quick-start add-on supply the SDK and both models by default, with `bundleModels.set(false)` for custom model ownership. The add-on remains unpublished; the public core runtime is unchanged.
-
-Published [Siren 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) to Maven Central with signed Android, iOS and JVM artifacts. The [release pipeline](https://github.com/Debanshu777/Siren/actions/runs/45062849601) verified public delivery and a separate Central-only consumer. The quickstart uses one scoped engine for transcription and synthesis.
+Published the [model add-on 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/models-v0.1.0) with SDK/default-model setup and a whole-bundle opt-out. The [release checks](https://github.com/Debanshu777/Siren/actions/runs/45073444409) verified signed Central delivery, public plugin-ID resolution, native inference, Android/JVM packaging, both iOS links and Xcode resource copying. Core SDK 0.1.0 remains unchanged.
 
 ## License
 

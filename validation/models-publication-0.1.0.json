@@ -1,0 +1,242 @@
+{
+  "date": "2026-11-23",
+  "timestampUtc": "2026-11-22T22:03:24.623Z",
+  "status": "Published to Maven Central; public plugin-ID consumer and signatures verified",
+  "sourceCommit": "7d27aa9018109371e32bbd6df893efadfb2d655f",
+  "tag": "models-v0.1.0",
+  "githubRelease": "https://github.com/Debanshu777/Siren/releases/tag/models-v0.1.0",
+  "pluginId": "io.github.debanshu777.siren.models",
+  "pluginVersion": "0.1.0",
+  "implementation": "io.github.debanshu777:siren-models-gradle-plugin:0.1.0",
+  "marker": "io.github.debanshu777.siren.models:io.github.debanshu777.siren.models.gradle.plugin:0.1.0",
+  "sdk": "io.github.debanshu777:siren:0.1.0",
+  "coreSdkRepublished": false,
+  "ci": {
+    "release": "https://github.com/Debanshu777/Siren/actions/runs/45073444409",
+    "releaseConclusion": "success",
+    "modelChecks": "https://github.com/Debanshu777/Siren/actions/runs/45073426921",
+    "modelChecksConclusion": "success",
+    "sourceRegressionChecks": "https://github.com/Debanshu777/Siren/actions/runs/45073426957",
+    "sourceRegressionConclusion": "success"
+  },
+  "pluginTests": [
+    {
+      "name": "io.github.debanshu.siren.gradle.ModelArtifactsTest",
+      "tests": 11,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "io.github.debanshu.siren.gradle.SirenModelsPluginTest",
+      "tests": 8,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "releaseGuardTests": [
+    {
+      "name": "ModelAddonReleaseTest",
+      "tests": 3,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "stagedJvmConsumer": [
+    {
+      "name": "PublishedApiTest[jvm]",
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "PublishedJvmNativeTest[jvm]",
+      "tests": 1,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "nativeOutput": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59932 matched=6/6 transcript=The quick brown fox jumps over the lazy dog."
+    }
+  ],
+  "publicJvmConsumer": [
+    {
+      "name": "PublishedApiTest[jvm]",
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "PublishedJvmNativeTest[jvm]",
+      "tests": 1,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "nativeOutput": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59936 matched=6/6 transcript=The quick brown fox jumps over the lazy dog."
+    }
+  ],
+  "defaultModels": {
+    "bundleModels": true,
+    "passed": true,
+    "modelFiles": 7,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 137564418,
+    "androidApkCompressedModelBytes": 90608967,
+    "jvmJarCompressedModelBytes": 85709167,
+    "androidApkBytes": 160193972,
+    "jvmJarBytes": 85720286,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "synthesisOnly": {
+    "bundleModels": true,
+    "passed": true,
+    "modelFiles": 4,
+    "recognition": false,
+    "synthesis": true,
+    "rawModelBytes": 33954515,
+    "androidApkCompressedModelBytes": 25509533,
+    "jvmJarCompressedModelBytes": 24964290,
+    "androidApkBytes": 95093294,
+    "jvmJarBytes": 24974123,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "xcodeDirectIntegration": {
+    "bundleModels": true,
+    "passed": true,
+    "modelFiles": 7,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 137564418,
+    "androidApkCompressedModelBytes": 90608967,
+    "jvmJarCompressedModelBytes": 85709167,
+    "androidApkBytes": 160193972,
+    "jvmJarBytes": 85720286,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "optOut": {
+    "bundleModels": false,
+    "passed": true,
+    "modelFiles": 0,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 0,
+    "androidApkCompressedModelBytes": 0,
+    "jvmJarCompressedModelBytes": 0,
+    "androidApkBytes": 69578041,
+    "jvmJarBytes": 4483,
+    "iosResourcesVerified": false,
+    "sdkVersion": "0.1.0",
+    "offline": true,
+    "emptyCacheNotCreated": true,
+    "appOwnedResourcesPreservedByFunctionalTests": true
+  },
+  "publicCentralConsumer": {
+    "outsideCheckout": true,
+    "noIncludedPluginBuild": true,
+    "noStagedPluginRepository": true,
+    "pluginMarkerAndImplementationExclusiveToCentral": true,
+    "sdkFromCentral": true,
+    "noExplicitSdkDependency": true,
+    "iosDeviceAndSimulatorDynamicLinksPassed": true,
+    "packaging": {
+      "bundleModels": true,
+      "passed": true,
+      "modelFiles": 7,
+      "recognition": true,
+      "synthesis": true,
+      "rawModelBytes": 137564418,
+      "androidApkCompressedModelBytes": 90608967,
+      "jvmJarCompressedModelBytes": 85709167,
+      "androidApkBytes": 160193972,
+      "jvmJarBytes": 85720286,
+      "iosResourcesVerified": true,
+      "sdkVersion": "0.1.0"
+    }
+  },
+  "publicDelivery": {
+    "verified": true,
+    "files": {
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.pom": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.module": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.jar": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.jar.asc": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren/models/io.github.debanshu777.siren.models.gradle.plugin/0.1.0/io.github.debanshu777.siren.models.gradle.plugin-0.1.0.pom": 200,
+      "io/github/debanshu777/siren/models/io.github.debanshu777.siren.models.gradle.plugin/0.1.0/io.github.debanshu777.siren.models.gradle.plugin-0.1.0.pom.asc": 200
+    },
+    "attempt": 30,
+    "candidateJarSha256": "07bbb6e616d93033fb7157312ff3b17e9b25555c32d5edbc7487d59d98a2e1b4"
+  },
+  "independentPublicSignatures": {
+    "verified": true,
+    "timestampUtc": "2026-11-22T22:00:12.084Z",
+    "source": "https://repo.maven.apache.org/maven2/",
+    "fingerprint": "B0A877633B48643CD48BF7CEE5F9B7F951C22F86",
+    "files": [
+      {
+        "path": "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.pom",
+        "bytes": 2156,
+        "sha256": "5a20658c79143702c892ec1dfaaea090e928bb57ec9ab5292fa777887b2fc001",
+        "validSignature": true
+      },
+      {
+        "path": "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.module",
+        "bytes": 3741,
+        "sha256": "2832837a9e69e5c91e6895f0077fcb367d77b2848a89c414a61c3f7236918a08",
+        "validSignature": true
+      },
+      {
+        "path": "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0.jar",
+        "bytes": 51480,
+        "sha256": "07bbb6e616d93033fb7157312ff3b17e9b25555c32d5edbc7487d59d98a2e1b4",
+        "validSignature": true
+      },
+      {
+        "path": "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-sources.jar",
+        "bytes": 9329,
+        "sha256": "9e1417aa8dc893e19948f34e75a51b025759cce7af742ab3e56f188e27e521c2",
+        "validSignature": true
+      },
+      {
+        "path": "io/github/debanshu777/siren-models-gradle-plugin/0.1.0/siren-models-gradle-plugin-0.1.0-javadoc.jar",
+        "bytes": 601422,
+        "sha256": "67b9bf7748005f5d32272a62f2b88eb06b79420dd07138469e06e90b5970f66f",
+        "validSignature": true
+      },
+      {
+        "path": "io/github/debanshu777/siren/models/io.github.debanshu777.siren.models.gradle.plugin/0.1.0/io.github.debanshu777.siren.models.gradle.plugin-0.1.0.pom",
+        "bytes": 1481,
+        "sha256": "f5212c602c4ce386d1bdb48f473d12b19d32badfb299c62f803ee2904187c971",
+        "validSignature": true
+      }
+    ]
+  },
+  "allUnsignedArtifactsMatchStagedHashes": true,
+  "pluginContainsWeights": false,
+  "documentation": {
+    "readmeDefaultAndOptOut": true,
+    "mediumDraftSaved": true,
+    "mediumTutorialPrefixPreserved": true,
+    "mediumGifPreserved": true,
+    "mediumArticlePublished": false
+  },
+  "limits": [
+    "Native consumer inference ran on macOS arm64; Linux x64 core native regression CI also passed.",
+    "Android APK packaging and iOS dynamic links/resource-copy checks are not new physical microphone/speaker tests.",
+    "The actual Xcode Gradle hook was exercised in an app build-directory fixture.",
+    "Other desktop classifiers remain packaging-verified, execution-untested.",
+    "Reported model compression sizes are fixture archive entries, excluding native/runtime/app overhead; they are not installed size or RAM."
+  ]
+}

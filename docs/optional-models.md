@@ -2,12 +2,12 @@
 
 The default-ready [Siren Gradle plugin](../siren-models-gradle-plugin/README.md) supplies the SDK dependency and removes manual model-file placement. Apply it to the app's KMP module, and its normal build obtains and packages the selected Whisper/Kitten files. The app can use them offline from its first launch.
 
-**Status:** this add-on is prepared locally from source and is not published. It works with the already-published `io.github.debanshu777:siren:0.1.0` engine. Do not add a versioned plugin declaration expecting it to resolve from a public repository yet.
+**Available:** [model add-on 0.1.0](https://central.sonatype.com/artifact/io.github.debanshu777/siren-models-gradle-plugin/0.1.0), using the published `io.github.debanshu777:siren:0.1.0` engine. No source checkout is needed.
 
-Include the plugin source build in `pluginManagement` as shown in its [quickstart](../siren-models-gradle-plugin/README.md#use-from-source), then add this to the shared module's existing `plugins` block:
+Configure `mavenCentral()` in both plugin and dependency repositories as shown in the [quickstart](../siren-models-gradle-plugin/README.md#use-the-published-plugin), then add this to the shared module's existing `plugins` block:
 
 ```kotlin
-id("io.github.debanshu777.siren.models")
+id("io.github.debanshu777.siren.models") version "0.1.0"
 ```
 
 The plugin supplies the Siren dependency and both default bundles automatically, using the known `models/whisper` and `models/kitten` paths. Keep the existing engine calls; no separate dependency or model configuration block is needed.
@@ -36,4 +36,4 @@ See the [independent consumer](../validation/models-consumer/README.md) and [dev
 
 ## Recent Changes
 
-Made the source quick-start include the SDK and default models, with a whole-bundle opt-out for custom model ownership.
+Documented the published plugin’s default setup and opt-out. [Release evidence](../validation/models-publication-0.1.0.json) includes public resolution and packaged models.

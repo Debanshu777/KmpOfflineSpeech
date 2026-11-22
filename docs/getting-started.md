@@ -6,7 +6,24 @@ Siren **0.1.0** is available from [Maven Central](https://central.sonatype.com/a
 
 ## Default-ready quick-start
 
-The [quick-start plugin](../siren-models-gradle-plugin/README.md#use-from-source) is local and unpublished. Include its source build in your settings, then add `id("io.github.debanshu777.siren.models")` to the existing shared-module plugins. It supplies the published SDK dependency and packages both default model bundles. No extra model configuration block or manual files are needed. Continue at [Create and use the engine](#create-and-use-the-engine).
+The [quick-start plugin 0.1.0](../siren-models-gradle-plugin/README.md#use-the-published-plugin) is on Maven Central. In `settings.gradle.kts`:
+
+```kotlin
+pluginManagement {
+    repositories { google(); mavenCentral(); gradlePluginPortal() }
+}
+dependencyResolutionManagement {
+    repositories { google(); mavenCentral() }
+}
+```
+
+In the shared module’s existing `plugins` block:
+
+```kotlin
+id("io.github.debanshu777.siren.models") version "0.1.0"
+```
+
+Run Gradle on JDK 21 or later. This supplies the SDK dependency and packages Whisper tiny INT8 and Kitten nano INT8 by default, adding about 138 MB before app compression. The first build needs network access or a verified cache; the installed app works offline. Android integration uses `com.android.kotlin.multiplatform.library`. Standard Xcode direct integration copies iOS resources; custom integration needs the documented copy phase. No extra model configuration block or manual files are needed. Continue at [Create and use the engine](#create-and-use-the-engine).
 
 To manage your own models while retaining SDK setup:
 
@@ -136,8 +153,4 @@ Android's floor is API 27. The reference build uses Kotlin 2.4.21 and Java 17 by
 
 ## Recent Changes
 
-Published the 0.1.0 dependency on Maven Central; the README and tutorial show a short recording-to-speech integration.
-
-Reduced the basic path to a model bundle, one-line engine creation and scoped calls. Bundled/local helpers, PCM transcription and automatic cleanup preserve custom APIs for advanced cases.
-
-Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
+Replaced source-only setup with the published model plugin 0.1.0, including plugin/dependency repositories, default models and the whole-bundle opt-out.

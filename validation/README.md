@@ -20,17 +20,8 @@ checkout framework paths; the Android APK included its JNI payload and no models
 
 The earlier unpublished `0.1.0` candidate has separate [local release-preparation evidence](release-preparation-0.1.0.json), including API baselines, 20 build-tool tests, notice/source-availability packaging, four consumer JVM tests and both iOS links. Earlier snapshot evidence remains unchanged.
 
-The [quick-start model consumer](models-consumer/README.md) validates automatic SDK dependency setup and default/opt-out model packaging with the public SDK. Its plugin can be resolved from staged implementation/marker artifacts outside this checkout. The add-on is unpublished. [Default/opt-out verification](default-models-verification.json) records the latest automatic SDK setup and packaging checks.
+The [quick-start model consumer](models-consumer/README.md) validates automatic SDK dependency setup and default/opt-out model packaging with the public SDK. Its plugin can be resolved from staged implementation/marker artifacts outside this checkout. The add-on 0.1.0 is independently published; [release evidence](models-publication-0.1.0.json) includes public plugin-ID resolution. [Default/opt-out verification](default-models-verification.json) records the latest automatic SDK setup and packaging checks.
 
 ## Recent Changes
 
-Added release delivery and Central-only plugin-ID consumer validation for the independent model add-on. Default/native test evidence is retained outside consumer build products before opt-out clean builds.
-
-Added independent Android/JVM/iOS model-resource packaging checks and a real native roundtrip using automatically generated classpath resources.
-
-Siren 0.1.0 is published. [Publication evidence](central-publication-0.1.0.json) records public artifact delivery and the independent Central-only consumer; earlier local and preflight records remain historical.
-
-Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
-
-
-Added independent signing and read-only Central credential checks alongside relocated artifact consumers. Explicit unprotected-key mode uses no passphrase; Central authentication creates no deployment.
+Recorded model add-on 0.1.0 public Central delivery, candidate JAR identity and staged/public consumer verification. Historical local evidence remains unchanged.

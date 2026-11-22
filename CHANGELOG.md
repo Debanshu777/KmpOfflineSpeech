@@ -1,6 +1,6 @@
 # Changelog
 
-Release status: [0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) is published to Maven Central.
+Release status: [SDK 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) and [model add-on 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/models-v0.1.0) are published to Maven Central.
 
 ## [Unreleased]
 

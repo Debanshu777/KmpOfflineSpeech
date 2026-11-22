@@ -2,7 +2,7 @@
 
 The quick path uses Siren's standard Whisper tiny INT8 + Kitten nano INT8 folder layout. Put the application-owned files under `models/`, then call `createSpeechEngine(context)` on Android or `createSpeechEngine()` on iOS/JVM. No individual path mapping is needed.
 
-The SDK includes the layout helper and native inference runtime, **not model weights or a downloader**. A separate source-only [optional Gradle helper](optional-models.md) can prepare selected model files during the app build; it does not change engine configuration or introduce runtime downloads. Files are resolved when their model is used. See [getting started](getting-started.md) for the bundle tree and platform resource locations.
+The SDK includes the layout helper and native inference runtime, **not model weights or a downloader**. The published [optional Gradle plugin 0.1.0](optional-models.md) can prepare selected model files during the app build; it does not change engine configuration or introduce runtime downloads. Files are resolved when their model is used. See [getting started](getting-started.md) for the bundle tree and platform resource locations.
 
 ## Change the directory or capability
 
@@ -96,5 +96,7 @@ The sample audio hosts accept any `SpeechEngine`; they own microphone permission
 `io.github.debanshu777:siren:0.1.0` is available from Maven Central. Convenience defaults add no weights, hidden downloads or UI. See [release verification](releasing.md) for public delivery, consumer checks and native audit status.
 
 ## Recent Changes
+
+Updated the published build-time model plugin status; runtime model selection and provider APIs remain unchanged.
 
 Added bundled/local layout helpers and default factory configuration, with scoped automatic cleanup and custom descriptors/SPI retained for advanced integrations.

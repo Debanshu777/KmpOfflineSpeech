@@ -47,7 +47,7 @@ State paths include `Idle -> Starting -> Recording -> Transcribing -> Idle` and 
 
 ## Distribution and scope
 
-The standalone [optional Gradle model helper](optional-models.md) supplies the SDK dependency and handles app-build acquisition and resource packaging by default. `bundleModels=false` keeps dependency setup and leaves model ownership to the app. Its plugin JAR contains a pinned catalog/build logic, while weights become app-owned assets/resources. The core SDK gains no weights, UI or runtime downloader. iOS direct integration must copy resources into the app; KLIB distribution alone does not supply them. This add-on is unpublished.
+The standalone [optional Gradle model helper](optional-models.md) supplies the SDK dependency and handles app-build acquisition and resource packaging by default. `bundleModels=false` keeps dependency setup and leaves model ownership to the app. Its plugin JAR contains a pinned catalog/build logic, while weights become app-owned assets/resources. The core SDK gains no weights, UI or runtime downloader. iOS direct integration must copy resources into the app; KLIB distribution alone does not supply them. The add-on 0.1.0 has independent signed Central implementation/marker publications and a `models-v0.1.0` tag.
 
 `:siren` uses explicit API mode, API baselines, Vanniktech publication/signing and Dokka artifacts. `io.github.debanshu777:siren:0.1.0` is published to Maven Central; the [release record](releasing.md) links public delivery and Central-only consumer checks. Local staging remains under `build/staging-repository`. The [recorded relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, plain Android packaging and both iOS dynamic links using copied artifacts and separate models outside the checkout. Candidates must validate their own version; historical snapshots do not establish public Central delivery. See [distribution status](library-design.md).
 
@@ -55,6 +55,4 @@ Android's floor is API 27; the pinned sample uses iOS 18.5 on arm64 devices/simu
 
 ## Recent Changes
 
-Added default platform factory aliases, known bundled/local layout helpers, scoped automatic cleanup and direct PCM transcription without adding weights, network access or UI.
-
-Native notice preparation also declares checksum-pinned vendored compiler texts under `scripts/notices/` as Gradle inputs. The release gate checks complete payload/component/compiler coverage and the separate compiler-evidence checksum. This does not add runtime SDK dependencies or model downloads.
+Documented independent publication of the build-time model add-on; runtime contracts and application-owned UI/audio are unchanged.

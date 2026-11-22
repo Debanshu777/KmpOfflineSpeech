@@ -79,7 +79,7 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
-Added a separate guarded release procedure for the model add-on. Its version and tag cannot collide with the core SDK release.
+Published model add-on 0.1.0 through its independent guarded workflow, including public delivery and Central-only plugin-ID consumer validation.
 
 Published 0.1.0 through the guarded manual workflow, then verified public artifact delivery and independent Central-only consumers. The default remains nonpublishing preflight.
 
@@ -88,6 +88,8 @@ Android minimum SDK is 27 throughout the library, samples and isolated consumer.
 Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.
 
 ## Model add-on release
+
+[Model add-on 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/models-v0.1.0) is published on Maven Central from `7d27aa9` through the [release workflow](https://github.com/Debanshu777/Siren/actions/runs/45073444409). Public files, candidate JAR identity and an independent Central-only consumer passed. [Publication evidence](../validation/models-publication-0.1.0.json). This version is immutable; do not rerun its upload.
 
 The standalone plugin version is `sirenModelsVersion` in `siren-models-gradle-plugin/gradle.properties`. It publishes `io.github.debanshu777:siren-models-gradle-plugin` plus the `io.github.debanshu777.siren.models` Gradle marker to Maven Central; it does not use the Gradle Plugin Portal. Consumers need `mavenCentral()` in `pluginManagement.repositories`.
 
