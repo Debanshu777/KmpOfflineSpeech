@@ -9,10 +9,16 @@ val expectedFingerprint = requiredEnvironment("EXPECTED_SIGNING_FINGERPRINT").up
 require(expectedFingerprint.matches(Regex("[0-9A-F]{40}"))) { "Expected a full 40-character fingerprint" }
 val keyId = requiredEnvironment("SIGNING_KEY_ID").trim().uppercase()
 require(keyId == expectedFingerprint.takeLast(8)) { "SIGNING_KEY_ID must match the expected fingerprint's last eight characters" }
+val keyProtection = providers.environmentVariable("SIGNING_KEY_PROTECTION").getOrElse("passphrase")
+val keyPassword = when (keyProtection) {
+    "passphrase" -> requiredEnvironment("SIGNING_PASSWORD")
+    "unprotected" -> ""
+    else -> throw GradleException("SIGNING_KEY_PROTECTION must be passphrase or unprotected")
+}
 
 signing {
     isRequired = true
-    useInMemoryPgpKeys(keyId, requiredEnvironment("GPG_KEY_CONTENTS"), requiredEnvironment("SIGNING_PASSWORD"))
+    useInMemoryPgpKeys(keyId, requiredEnvironment("GPG_KEY_CONTENTS"), keyPassword)
 }
 
 val probe = layout.buildDirectory.file("verification/probe.txt")

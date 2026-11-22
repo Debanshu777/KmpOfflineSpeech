@@ -79,7 +79,9 @@ runs from `main` with your full public signing fingerprint as input. Its isolate
 [Gradle fixture](../validation/signing-check/README.md) signs a harmless text probe
 using the saved key ID, ASCII-armored private key and passphrase. GnuPG independently
 verifies it against the key downloaded from Ubuntu's keyserver and checks the exact
-fingerprint. All five required secret names must be nonempty. The Central token's
+fingerprint. Select `passphrase` (default) or explicitly `unprotected` when
+dispatching. The latter uses an empty key password and ignores `SIGNING_PASSWORD`;
+protected keys require it. The other four secret names must be nonempty. The Central token's
 authentication is not tested.
 
 This check has read-only repository permissions, disables Gradle build/configuration
@@ -90,8 +92,8 @@ pipeline remains separately prepared locally until publication work resumes.
 
 ## Recent Changes
 
-Added a manually dispatched signing-secret verification path with a public-key
-fingerprint check and no SDK publication.
+Added a manually dispatched signing-secret verification path with explicit key
+protection modes, a public-key fingerprint check and no SDK publication.
 
 ## Updating dependencies
 
