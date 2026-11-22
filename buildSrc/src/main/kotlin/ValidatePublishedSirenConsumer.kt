@@ -16,13 +16,19 @@ abstract class ValidatePublishedSirenConsumer : DefaultTask() {
     @get:Input abstract val releaseVersion: Property<String>
     @get:Input abstract val appleTargets: Property<Boolean>
     @get:Input abstract val useStagingRepository: Property<Boolean>
+    @get:Input abstract val dependencyOffline: Property<Boolean>
     @get:LocalState abstract val workspaceDirectory: DirectoryProperty
     @get:OutputFile abstract val reportFile: RegularFileProperty
-    init { useStagingRepository.convention(true); outputs.upToDateWhen { false } }
+    init {
+        useStagingRepository.convention(true)
+        dependencyOffline.convention(project.gradle.startParameter.isOffline)
+        outputs.upToDateWhen { false }
+    }
 
     @TaskAction fun verify() {
         val staged = useStagingRepository.get()
-        require(staged || !project.gradle.startParameter.isOffline) { "Central consumer verification requires online dependency resolution" }
+        val offline = dependencyOffline.get()
+        require(staged || !offline) { "Central consumer verification requires online dependency resolution" }
         val workspace = workspaceDirectory.get().asFile.canonicalFile
         val checkout = project.rootDir.canonicalFile
         require(!workspace.toPath().startsWith(checkout.toPath())) { "Consumer validation workspace must be outside the SDK checkout" }
@@ -49,13 +55,14 @@ abstract class ValidatePublishedSirenConsumer : DefaultTask() {
             addAll(listOf("jvmTest", "compileAndroidMain", ":androidApp:assembleDebug"))
             if (appleTargets.get()) addAll(listOf("linkDebugFrameworkIosSimulatorArm64", "linkDebugFrameworkIosArm64"))
         }
-        val command = SirenConsumerInvocation.arguments(wrapper, repository, releaseVersion.get(), models) + tasks
+        val command = SirenConsumerInvocation.arguments(wrapper, repository, releaseVersion.get(), models, offline) + tasks
         val process = ProcessBuilder(command).directory(consumer).redirectErrorStream(true).start()
         process.inputStream.bufferedReader().useLines { lines -> lines.forEach { logger.lifecycle(it) } }
         val exit = process.waitFor()
         val report = mapOf("version" to releaseVersion.get(), "passed" to (exit == 0), "exitCode" to exit,
             "outsideCheckout" to true, "consumerDirectory" to consumer.absolutePath,
             "repository" to (repository?.absolutePath ?: "Maven Central"), "useStagingRepository" to staged,
+            "dependencyResolutionOffline" to offline,
             "tasks" to tasks, "nativeJvmModelCheck" to true, "appleTargets" to appleTargets.get())
         reportFile.get().asFile.apply { parentFile.mkdirs() }.writeText(GsonBuilder().setPrettyPrinting().create().toJson(report) + "\n")
         check(exit == 0) { "Relocated published-artifact consumer failed; see ${reportFile.get().asFile}" }
@@ -64,10 +71,11 @@ abstract class ValidatePublishedSirenConsumer : DefaultTask() {
 
 /** Central mode deliberately has no local repository argument or offline dependency resolution. */
 object SirenConsumerInvocation {
-    fun arguments(wrapper: File, stagingRepository: File?, version: String, models: File): List<String> = buildList {
+    fun arguments(wrapper: File, stagingRepository: File?, version: String, models: File, offline: Boolean = false): List<String> = buildList {
+        require(stagingRepository != null || !offline) { "Central consumer verification requires online dependency resolution" }
         add(wrapper.absolutePath)
         if (stagingRepository != null) {
-            add("--offline")
+            if (offline) add("--offline")
             add("-PsirenRepository=${stagingRepository.absolutePath}")
         } else {
             // Revalidate repository metadata rather than accepting a prior staged-version cache.

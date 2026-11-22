@@ -70,9 +70,15 @@ class SirenReleaseChecksTest {
         assertFalse("--offline" in central)
         assertFalse(central.any { it.startsWith("-PsirenRepository=") })
         val staged = SirenConsumerInvocation.arguments(wrapper, File("/tmp/repository"), "0.1.0", models)
-        assertTrue("--offline" in staged)
+        assertFalse("--offline" in staged)
         assertFalse("--refresh-dependencies" in staged)
         assertTrue("-PsirenRepository=/tmp/repository" in staged)
         assertTrue("-Pnative=true" in central)
+        val offlineStaged = SirenConsumerInvocation.arguments(wrapper, File("/tmp/repository"), "0.1.0", models, offline = true)
+        assertTrue("--offline" in offlineStaged)
+        assertTrue("-PsirenRepository=/tmp/repository" in offlineStaged)
+        assertFailsWith<IllegalArgumentException> {
+            SirenConsumerInvocation.arguments(wrapper, null, "0.1.0", models, offline = true)
+        }
     }
 }

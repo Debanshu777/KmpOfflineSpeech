@@ -121,4 +121,9 @@ consumer; the fixture and SDK do not introduce Compose or UIKit-facing APIs.
 
 ## Recent Changes
 
+Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
+
+
 Added default-factory, layout, scoped-close and direct-PCM probes while retaining legacy factory coverage. Android minimum 27 matches the pinned runtime; JVM native inference and both iOS links remain independent checks.
+
+Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.

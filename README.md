@@ -108,6 +108,9 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
+Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
+
+
 Simplified model setup and scoped engine cleanup; completed the 33-text native/compiler inventory and aligned Android to API 27. Read-only credential checks and default nonpublishing preflight verify preparation while `0.1.0` remains unpublished.
 
 ## License

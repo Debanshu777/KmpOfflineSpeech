@@ -78,3 +78,5 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 Added read-only Central authentication, completed compiler notice/evidence coverage and default nonpublishing preflight with local candidate signing. Publication remains deferred.
 
 Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
+
+Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.

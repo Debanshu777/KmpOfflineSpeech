@@ -110,7 +110,9 @@
     "androidApk": true,
     "iosDeviceAndSimulatorDynamicLinks": true,
     "nativeJvmInference": true,
-    "nativeResult": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59566 matched=6/6 transcript=The quick brown fox jumps over the lazy dog."
+    "nativeResult": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59566 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+    "dependencyResolutionOffline": false,
+    "freshRunnerDependencyResolution": "Online by default; explicit outer offline flag preserved; SDK group exclusively uses copied staging artifacts"
   },
   "artifacts": [
     {

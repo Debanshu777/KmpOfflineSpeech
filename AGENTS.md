@@ -89,3 +89,5 @@ Preserve the canonical formatting of Kotlin-generated ABI references. `.gitattri
 Preserve checksum-pinned upstream compiler notice bytes, including original CRLF, trailing whitespace and space-before-tab formatting. `.gitattributes` scopes the corresponding exceptions to those vendored notice directories; do not reformat them to satisfy general whitespace checks.
 
 Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
+
+Do not force relocated staging consumers offline on fresh CI runners. `dependencyOffline` propagates the outer Gradle flag; the fixture settings exclusively route the SDK group to its copied repository while resolving plugins and other dependencies normally. Central-only consumers require online refresh.

@@ -39,6 +39,9 @@ The desktop sample's `:sample:desktopApp:stageDesktopModels` task uses `prepareS
 
 ## Recent Changes
 
+Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
+
+
 Added declared, checksum-verified vendored notices and compiler provenance checks. Release tooling defaults to nonpublishing validation; the 33-text technical inventory passes its mandatory native gate.
 
 ## Release tooling
@@ -46,3 +49,5 @@ Added declared, checksum-verified vendored notices and compiler provenance check
 Typed Gradle tasks also manage stable release guards, Central delivery checks and relocated published-artifact consumers; see [releasing](../docs/releasing.md). API baselines are checked by `:siren:checkKotlinAbi`. Local staging requires no publishing credentials. Central upload tasks require `verifyNativeRedistribution`, whose pinned component/payload audit and report remain separate from normal build preparation.
 
 Native preparation retains exact-commit notices for Android assets, JVM resources and the SDK's native cinterop KLIBs. Notice embedding preserves native archive bytes and is covered by build-tool regression tests. The current technical inventory is complete for the exact pins, including compiler-runtime evidence; the gate still rejects missing reviews or changed text/evidence hashes. Vendored notices live under `scripts/notices/`, retain source provenance and are declared Gradle inputs.
+
+Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.

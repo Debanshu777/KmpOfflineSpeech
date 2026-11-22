@@ -22,4 +22,7 @@ The unpublished `0.1.0` candidate has separate [local release-preparation eviden
 
 ## Recent Changes
 
+Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
+
+
 Added independent signing and read-only Central credential checks alongside relocated artifact consumers. Explicit unprotected-key mode uses no passphrase; Central authentication creates no deployment.
