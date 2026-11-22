@@ -114,7 +114,13 @@ Update artifact URL, hash, size and provenance together in `scripts/dependencies
 
 ## Recent Changes
 
-Added first-release version/API-baseline and artifact validation guidance, Central publication-state distinctions, explicit platform support evidence and reproducible native/UI checks.
+Verified the shorter factories, standard model-layout helpers, raw PCM call and cancellation-safe scoped cleanup through source tests and relocated artifacts. Updated the API baselines intentionally; no remote publication ran.
+
+## Simpler integration verification — 2026-11-22
+
+The revised API passed 16 SDK common tests and five sample controller tests. The opt-in SDK native test was skipped in the ordinary unit run; native inference ran separately in the relocated Maven consumer. That consumer passed four API tests and one actual macOS arm64 model roundtrip using `createSpeechEngine().use { ... }` and `transcribe(samples, sampleRate)`. It synthesized 59,930 samples at 24 kHz and recognized all six checked words. This verifies model execution, not microphone/playback hardware or general recognition accuracy.
+
+Android/JVM/native API baselines passed. The independent consumer built a plain Android APK and linked dynamic frameworks for both iOS arm64 targets. Android sample app/test APKs and the desktop sample JAR also built successfully. See [the local verification record](../validation/simple-integration-0.1.0.json). Existing device captures describe earlier runs; this API change did not repeat physical audio testing. Candidate `0.1.0` remains unpublished, with the native redistribution gate unchanged.
 
 ## Local release preparation — 2026-11-22
 

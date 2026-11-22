@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
  * Local files must be absolute. The engine owns only its materialized resource copies.
  */
 public fun createJvmSpeechEngine(
-    models: SherpaModels,
+    models: SherpaModels = SherpaModels.bundled(),
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader ?: ClassLoader.getSystemClassLoader(),
 ): SpeechEngine {
     val files = JvmModelFiles(classLoader)
@@ -214,3 +214,9 @@ private class JvmModelFiles(private val classLoader: ClassLoader) {
         installed.clear()
     }
 }
+
+/** Create an engine for the standard app-owned model bundle, or supply a custom configuration. */
+public fun createSpeechEngine(
+    models: SherpaModels = SherpaModels.bundled(),
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader ?: ClassLoader.getSystemClassLoader(),
+): SpeechEngine = createJvmSpeechEngine(models, classLoader)

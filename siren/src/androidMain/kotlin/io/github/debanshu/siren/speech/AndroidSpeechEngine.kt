@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 /** Build only the configured capabilities; model files are resolved lazily on first use. */
 public fun createAndroidSpeechEngine(
     context: Context,
-    models: SherpaModels,
+    models: SherpaModels = SherpaModels.bundled(),
 ): SpeechEngine {
     val files = AndroidModelFiles(context.applicationContext)
     return ModelSpeechEngine(
@@ -193,3 +193,9 @@ private class AndroidModelFiles(private val context: Context) {
         require(file.isFile && file.canRead() && file.length() > 0) { "Missing, empty, or unreadable model file: ${file.name}" }
     }
 }
+
+/** Create an engine for the standard app-owned model bundle, or supply a custom configuration. */
+public fun createSpeechEngine(
+    context: Context,
+    models: SherpaModels = SherpaModels.bundled(),
+): SpeechEngine = createAndroidSpeechEngine(context, models)

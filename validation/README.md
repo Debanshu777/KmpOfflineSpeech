@@ -22,5 +22,6 @@ The unpublished `0.1.0` candidate has separate [local release-preparation eviden
 
 ## Recent Changes
 
-Added separate Gradle gates for local staged artifacts and publicly delivered
-Central coordinates, retaining relocated JVM native, Android and iOS checks.
+Added published-consumer probes for default factories, standard model layouts,
+automatic scoped close and the raw PCM transcription overload, retaining legacy
+factory coverage and separate local-staging/Central gates.

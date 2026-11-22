@@ -1,35 +1,65 @@
-# Configuring Siren's speech models
+# Configuring Siren's models
 
-The [`:siren` SDK](../siren/README.md) separates inference from the sample's microphone, playback and Compose UI. Built-in providers support compatible sherpa Whisper and Kitten exports. Other model families need concrete adapters; an arbitrary ONNX filename does not establish compatible inputs and outputs.
+The quick path uses Siren's standard Whisper tiny INT8 + Kitten nano INT8 folder layout. Put the application-owned files under `models/`, then call `createSpeechEngine(context)` on Android or `createSpeechEngine()` on iOS/JVM. No individual path mapping is needed.
 
-## Select either capability
+The SDK includes the layout helper and native inference runtime, **not model weights or a downloader**. Files are resolved when their model is used. See [getting started](getting-started.md) for the bundle tree and platform resource locations.
 
-Native factories require an explicit `SherpaModels`. The demonstration preset lives only in `:sample:composeApp`:
+## Change the directory or capability
+
+`SherpaModels.bundled()` is the default configuration. It selects both models under resource directory `models`, with two threads, English Whisper configuration and Kitten speaker zero. Override only what you need:
 
 ```kotlin
-import io.github.debanshu.siren.sample.SampleModels
 import io.github.debanshu.siren.speech.SherpaModels
 
-val preset = SampleModels.bundledDemo()
-val recognitionOnly = preset.copy(synthesis = null)
-val synthesisOnly = preset.copy(recognition = null)
-val noModels = SherpaModels()
+val anotherResourceFolder = SherpaModels.bundled(directory = "speech-models")
+val recognitionOnly = SherpaModels.bundled(synthesis = false)
+val synthesisOnly = SherpaModels.bundled(recognition = false)
+val localFiles = SherpaModels.local("/absolute/path/to/models")
 ```
 
-SDK consumers configure files themselves; they do not need the sample module or preset. Only configured providers are constructed. Files and native sessions open lazily when an operation runs. Absent capabilities are reflected in `SpeechEngine.capabilities`; the sample disables their controls and avoids microphone access when recognition is absent.
+Both helpers expect `whisper/` and `kitten/` subfolders with the known seven filenames. They return descriptors without downloading or opening files. A local directory must resolve to absolute readable files on the target platform. Bundled paths are portable relative resource paths; an empty directory selects the resource root. Traversal and absolute bundled paths are rejected.
 
-Runtime choices do not change packaged contents. Default sample Gradle preparation still obtains both demonstration bundles. Setting a model to null does not slim its APK. SDK artifacts contain runtime libraries and notices, but no model weights; applications own weight acquisition and packaging.
+Pass an override to the same factory. In Android code:
 
-## Supply compatible files
+```kotlin
+import io.github.debanshu.siren.speech.createSpeechEngine
 
-Use `ModelFile.Local` for absolute filesystem paths, or `ModelFile.Bundled` for paths relative to Android assets, iOS application resources or JVM classpath resources. Native adapters check files before model creation. Bundled paths reject traversal and are not download URLs.
+val engine = createSpeechEngine(context, models = synthesisOnly)
+```
+
+In iOS/JVM code:
+
+```kotlin
+import io.github.debanshu.siren.speech.createSpeechEngine
+
+val engine = createSpeechEngine(models = synthesisOnly)
+```
+
+Only configured providers are constructed. `SpeechEngine.capabilities` reports that configuration and its labels, not a file-readiness check; the sample disables absent controls. `SherpaModels()` itself configures neither capability, whereas the factory's default is `SherpaModels.bundled()`.
+
+These are runtime choices. They do not trim native binaries or model assets already packaged by a build. Default sample preparation still obtains both demonstration bundles. The SDK artifact contains no weights.
+
+## Resource and file ownership
+
+| Descriptor | Android | iOS | JVM |
+| --- | --- | --- | --- |
+| `ModelFile.Bundled` | Relative Android asset path; materialized into app-private files | Relative application resource path | Relative classpath resource path; materialized into engine-owned temporary files |
+| `ModelFile.Local` | Absolute readable filesystem path | Absolute readable app-accessible path | Absolute readable filesystem path |
+
+JVM `createSpeechEngine` accepts an optional `ClassLoader`; by default it uses the thread context loader, falling back to the system loader. Engine close removes its temporary resource copies, not caller-supplied Local files. Applications own verified acquisition, updates, storage and applicable model licenses.
+
+Use the suspending `engine.use { ... }` helper for an operation scope that should close automatically. For a long-lived host/controller, keep one engine owner and close it when that owner is disposed. Do not put an engine in `use` and then reuse it after the block.
+
+## Advanced: custom compatible exports
+
+Use typed descriptors when filenames or model settings differ from the standard bundle:
 
 ```kotlin
 import io.github.debanshu.siren.speech.ModelFile
 import io.github.debanshu.siren.speech.SherpaModels
 import io.github.debanshu.siren.speech.WhisperModel
 
-val models = SherpaModels(
+val custom = SherpaModels(
     recognition = WhisperModel(
         encoder = ModelFile.Local("$modelDirectory/encoder.int8.onnx"),
         decoder = ModelFile.Local("$modelDirectory/decoder.int8.onnx"),
@@ -42,69 +72,29 @@ val models = SherpaModels(
 )
 ```
 
-`modelDirectory` is an absolute directory supplied by the application. Encoder, decoder and tokens must belong to one compatible Whisper export. `KittenModel` names its model, voices, tokens and lexicon and configures `speakerId`, `speed` and `displayName`.
+`modelDirectory` is an absolute directory supplied by the application. Encoder, decoder and tokens must belong to one compatible sherpa Whisper export. `KittenModel` similarly configures its model, voices, tokens, lexicon, speaker ID, speed and display label. An arbitrary ONNX graph does not become compatible by changing a filename.
 
-Android SDK usage:
+The original named factories `createAndroidSpeechEngine`, `createIosSpeechEngine` and `createJvmSpeechEngine` remain available and also default to `SherpaModels.bundled()`. They provide the same inference capabilities; basic integrations can use the shorter platform `createSpeechEngine` name.
 
-```kotlin
-import io.github.debanshu.siren.speech.createAndroidSpeechEngine
-val engine = createAndroidSpeechEngine(applicationContext, models)
-```
+## Advanced: another model family
 
-iOS SDK usage:
-
-```kotlin
-import io.github.debanshu.siren.speech.createIosSpeechEngine
-val engine = createIosSpeechEngine(models)
-```
-
-JVM/Desktop SDK usage:
-
-```kotlin
-import io.github.debanshu.siren.speech.createJvmSpeechEngine
-val engine = createJvmSpeechEngine(models)
-```
-
-The JVM factory optionally accepts a `ClassLoader`, defaulting to the current thread's context loader or the system loader. Bundled weights are classpath resources materialized into engine-owned temporary files; close removes those copies. Local paths remain caller-owned.
-
-Factories have no implicit demonstration configuration and do not download weights. Android copies bundled assets to app-private files for native filesystem access. iOS resolves bundled paths from application resources. Local files must be absolute, readable and nonempty. Applications remain responsible for verified acquisition, updates, storage and licenses.
-
-## Connect the sample audio host
-
-The sample, rather than the SDK, adds permissions and hardware audio:
-
-```kotlin
-// Android, in Activity.onCreate before STARTED:
-val platform = createAndroidSpeechPlatform(this, engine)
-
-// iOS:
-val platform = IosSpeechPlatform(engine)
-
-// JVM/Desktop:
-val platform = JvmSpeechPlatform(engine)
-```
-
-Audio hosts are in `io.github.debanshu.siren.sample.platform`. Android registers its permission callback before STARTED. JVM uses JavaSound with OS-level microphone access checked when the input opens; it has no portable permission preflight. The sample controller owns and closes its platform/engine on disposal; do not share that engine between independently owned hosts. A headless SDK consumer needs neither audio host nor Compose.
-
-## Add another model family
-
-Implement `SpeechRecognizer`, `SpeechSynthesizer`, or both with `audio.PcmAudio` as the boundary:
+Implement `SpeechRecognizer`, `SpeechSynthesizer`, or both, and compose them:
 
 ```kotlin
 fun recognitionOnly(provider: SpeechRecognizer): SpeechEngine =
     ModelSpeechEngine(recognizer = provider)
 ```
 
-Providers expose display labels, move blocking inference off Main, preserve real audio sample rates, return independently owned buffers and pair native allocations with cleanup. Model-specific parameters belong to their adapters. No camera/vision APIs or generic model registry are included.
+Providers expose labels, move blocking inference off Main, return independent mono PCM at its real sample rate, and own native cleanup. Keep configuration specific to the model family. No UI, hardware audio or generic camera/vision framework is part of the SDK.
 
-`ModelSpeechEngine` serializes operations and close, preserves cancellation, and discards obsolete synthesized audio. Synchronous native decoding may finish before cancellation cleanup can complete. Close an engine before replacing its immutable provider configuration.
+`ModelSpeechEngine` serializes calls and teardown. Cancellation can discard obsolete results but cannot interrupt synchronous native decoding instantly. Built-in Whisper adapters accept 0.2–20-second clips. The sample adds its own 20-second recording and 500-character TTS limits.
 
-The built-in Whisper adapters accept 0.2–20-second clips. The sample additionally caps recording at 20 seconds and TTS input at 500 characters. New adapters should document their own input and duration requirements.
+The sample audio hosts accept any `SpeechEngine`; they own microphone permission, capture/playback and engine disposal. `SampleModels.bundledDemo()` remains a sample wrapper around the SDK's resource-layout helper, not a required SDK dependency.
 
-## Distribution status
+## Release status
 
-Public contracts and native providers live in `:siren`, with explicit API mode and no UI dependency. Candidate `io.github.debanshu777:siren:0.1.0` is prepared locally and not published; publication is deferred. Local staging writes `build/staging-repository`. See [getting started](getting-started.md) for intended installation and [release status](library-design.md) for readiness gates.
+Candidate `io.github.debanshu777:siren:0.1.0` remains local and unpublished. Convenience defaults add no weights, hidden downloads or UI. See [release preparation](releasing.md) for the deferred public release and native audit status.
 
 ## Recent Changes
 
-Documented explicit Android/iOS/JVM factories and independent capabilities for local candidate `0.1.0`, retaining sample-only presets and unpublished status.
+Added bundled/local layout helpers and default factory configuration, with scoped automatic cleanup and custom descriptors/SPI retained for advanced integrations.

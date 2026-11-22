@@ -2,7 +2,7 @@
 
 `:sample:androidApp` launches the shared sample and contains instrumentation tests. It depends on `:sample:composeApp`, which consumes the UI-free `:siren` SDK. Runtime JNI/wrapper code comes from the SDK; demonstration weights come from the sample's generated assets. The manifest requests microphone access and no Internet permission.
 
-The launcher/tests use `io.github.debanshu.siren.sample.android`. The installed application ID remains `dev.debanshu.speech.sample`. It registers the audio permission launcher before STARTED and constructs an explicit engine with `createAndroidSpeechEngine(applicationContext, SampleModels.bundledDemo())`, then passes it to `createAndroidSpeechPlatform(activity, engine)`. No model preset or UI lives in the SDK.
+The launcher/tests use `io.github.debanshu.siren.sample.android`. The installed application ID remains `dev.debanshu.speech.sample`. It registers the audio permission launcher before STARTED and constructs an explicit engine with `createAndroidSpeechEngine(applicationContext, SampleModels.bundledDemo())`, then passes it to `createAndroidSpeechPlatform(activity, engine)`. The sample descriptor delegates to `SherpaModels.bundled()`. Apps packaging that layout can call `createSpeechEngine(context)` directly; weights, microphone access and UI remain application responsibilities.
 
 Choose other bundled/local files through `SherpaModels`, omit a capability, or inject `ModelSpeechEngine` with custom providers. See [configuration](../../docs/model-configuration.md). Audio and UI use capabilities and labels rather than assuming a model family.
 
@@ -55,4 +55,4 @@ These records preserve original test identities. Current extraction/build eviden
 
 ## Recent Changes
 
-Consumed the extracted SDK runtime and verified native/configuration cases; the actual UI journey now uses pre-granted microphone access and direct instrumentation without automatic volume changes or accessibility automation.
+Reused the SDK bundled model layout without duplicating file mappings; documented the default Android engine factory while retaining explicit sample injection and existing hardware verification scope.

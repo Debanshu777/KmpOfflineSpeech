@@ -7,7 +7,7 @@ Siren is the UI-free SDK module `:siren`, using Kotlin package `io.github.debans
 | Area | Implemented design | Verification/release responsibility |
 | --- | --- | --- |
 | Contracts | Explicit public PCM, recognition, synthesis and engine APIs | Versioned API baselines and consumer tests |
-| Providers | Android, iOS and JVM inference with explicit `SherpaModels` | Compatible model exports, native lifetime and target checks |
+| Providers | Android, iOS and JVM inference with bundled defaults or explicit `SherpaModels` | Compatible model exports, native lifetime and target checks |
 | Android runtime | Embedded wrapper/JNI, two ABIs, consumer rules and notices | Final AAR/APK inspection and native ownership |
 | JVM runtime | Java wrapper plus six native resource sets in JVM JAR | macOS arm64/Linux x64 executed; four targets untested |
 | iOS runtime | Static sherpa/ONNX archives inside cinterop KLIBs | Both arm64 dynamic links and complete native dependency closure |
@@ -33,7 +33,7 @@ fun synthesisOnly(provider: SpeechSynthesizer): SpeechEngine =
     ModelSpeechEngine(synthesizer = provider)
 ```
 
-Built-in factories require `SherpaModels`. Its Whisper/Kitten descriptors identify compatible bundled or local files; they do not download models. Other model families supply concrete adapters. The `SampleModels.bundledDemo()` preset remains sample-only.
+Built-in `createSpeechEngine` factories default to `SherpaModels.bundled()`, which describes the standard Whisper tiny/Kitten nano filenames. `SherpaModels.local(directory)` uses the same layout on disk. Both are metadata-only helpers; the app supplies compatible model files. Explicit descriptors and replaceable provider contracts remain available for custom configurations. `SampleModels.bundledDemo()` is a thin sample wrapper. Scoped operations can use `engine.use { ... }` for cancellation-safe cleanup; longer-lived engines retain a lifecycle owner.
 
 Default sample builds prepare both demonstration bundles. Setting a provider to null disables a runtime capability but does not remove already packaged assets or native binaries. Close the engine before replacing providers. JVM bundled resources are copied into engine-owned temporary storage; Local files remain caller-owned.
 
@@ -59,4 +59,4 @@ Android starts at API 26; the pinned sample uses iOS 18.5 arm64 targets. JVM inf
 
 ## Recent Changes
 
-Prepared local `0.1.0` release configuration and API baselines; publication remains deferred with explicit native-notice/provenance readiness requirements.
+Added standard model-layout defaults, short platform factories and scoped cleanup while keeping providers replaceable and model files app-owned. Publication remains deferred.

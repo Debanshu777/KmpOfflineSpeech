@@ -12,9 +12,9 @@ Installed identities remain Android `dev.debanshu.speech.sample` and iOS `dev.de
 
 ## Model and audio boundaries
 
-`ModelSpeechEngine` composes independently optional `SpeechRecognizer` and `SpeechSynthesizer` providers, exposes capabilities/labels, and serializes inference and close. Native factories require explicit `SherpaModels`. File descriptors select compatible bundled or local exports; they do not download weights. A new model family implements a concrete adapter rather than reusing incompatible graph configuration. See [model configuration](model-configuration.md).
+`ModelSpeechEngine` composes independently optional `SpeechRecognizer` and `SpeechSynthesizer` providers, exposes capabilities/labels, and serializes inference and close. The short platform factory is `createSpeechEngine(context)` on Android and `createSpeechEngine()` on iOS/JVM. It defaults to `SherpaModels.bundled()`, which describes the standard app-owned Whisper tiny/Kitten nano file layout. `SherpaModels.local(root)` describes the same layout on disk. Helpers contain no weights and perform no downloads or eager loading. Custom descriptors and the original named factories remain available. See [model configuration](model-configuration.md).
 
-`SampleModels.bundledDemo()` exists only in the sample and selects Whisper tiny/Kitten nano. The sample's `SpeechPlatform` extends `SpeechEngine` with microphone permission, capture, playback and stop. Android/iOS/JavaSound audio hosts delegate inference to an injected engine. The shared `SpeechController` manages state and interaction cancellation.
+`SampleModels.bundledDemo()` is a sample wrapper around the SDK's bundled-layout helper. It is not needed by SDK consumers. The sample's `SpeechPlatform` extends `SpeechEngine` with microphone permission, capture, playback and stop. Android/iOS/JavaSound audio hosts delegate inference to an injected engine. The shared `SpeechController` manages state and interaction cancellation.
 
 ```text
 sample capture -> PCM + actual rate -> SDK recognition -> editable sample text
@@ -39,6 +39,8 @@ Desktop JavaSound reads/writes signed mono PCM16 on workers, tries 16/48/44.1 kH
 
 Each native inference call owns its session, streams/results and returned native allocations. C configurations are zero-initialized. Kotlin copies native output before destruction; pinned arrays are used only during synchronous calls. Provider work runs off Main. Engine close waits for its ownership mutex.
 
+The common suspending `SpeechEngine.use` extension runs a block and closes in `NonCancellable` cleanup. If both the block and close fail, the original block failure is preserved with cleanup suppressed. It suits short operation scopes; lifecycle-owned engines remain open across actions and close on disposal. The `transcribe(samples, sampleRate)` extension wraps caller-owned PCM without requiring a `PcmAudio` construction at each call site. Both extensions must be imported when used outside the speech package.
+
 The sample controller separately serializes platform operations and lifecycle cleanup. A cancelled coroutine cannot destroy resources still used by native work; results are checked for cancellation after decode/generation. The UI owns an independent scope so disposal cleanup can finish before that scope closes.
 
 State paths include `Idle -> Starting -> Recording -> Transcribing -> Idle` and `Idle -> Synthesizing -> Playing -> Idle`. Errors return to idle with a message. `ON_STOP` cancels work and releases sample audio; disposal closes its platform and engine. Late permission callbacks cannot resume cancelled recording requests.
@@ -51,4 +53,4 @@ Android's floor is API 26; the pinned sample uses iOS 18.5 on arm64 devices/simu
 
 ## Recent Changes
 
-Added first-release API/publication structure while preserving UI-free inference, sample-owned audio/models and target-specific verification limits.
+Added default platform factory aliases, known bundled/local layout helpers, scoped automatic cleanup and direct PCM transcription without adding weights, network access or UI.

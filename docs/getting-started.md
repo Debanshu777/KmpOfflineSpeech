@@ -1,168 +1,125 @@
-# Add Siren to an existing KMP application
+# Add speech with Siren
 
-Siren supplies model inference on Android, iOS and JVM. It does not supply UI, Compose components, microphone permission handling, recording, playback or model weights. Begin with an existing KMP application and choose which speech capabilities it needs.
+The basic integration is: add Siren, place the known model bundle in your app, then create an engine and call it. Individual model-path mapping and manual `finally` cleanup are unnecessary for this layout.
 
-**Release status:** `io.github.debanshu777:siren:0.1.0` is the intended first-release coordinate. It is prepared locally, not published; the Central dependency shown below becomes usable only after a future release. For now, use the source module or a local staged Maven repository.
+**Release status:** `io.github.debanshu777:siren:0.1.0` remains prepared locally and unpublished. The Central dependency below is intended for a future release. Use the source/local staging meanwhile; [release preparation](releasing.md) records current status.
 
-The [release preparation guide](releasing.md) distinguishes local candidate checks from the deferred public release.
+## Add the dependency
 
-## Install the SDK
-
-Use Maven Central in your existing repository configuration:
+In your existing KMP project, use `mavenCentral()` and add Siren to `commonMain`:
 
 ```kotlin
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-    }
+commonMain.dependencies {
+    implementation("io.github.debanshu777:siren:0.1.0")
 }
 ```
 
-Add the dependency to the shared source set:
+KMP selects the platform runtime artifact. You do not copy SDK native libraries or configure checkout-local native linker paths.
 
-```kotlin
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation("io.github.debanshu777:siren:0.1.0")
-        }
-    }
-}
-```
+## Place the model bundle
 
-KMP selects the platform artifact. Android carries wrapper classes/JNI; JVM carries wrapper classes/native resources; iOS carries target-specific static archives in cinterop KLIBs. Consumers do not copy the SDK checkout's native libraries or configure its local `-F` paths.
-
-The reference build uses Kotlin 2.4.21, Java 17 bytecode and Android API 26+. The sample's pinned Compose toolchain uses iOS 18.5 on arm64 devices/simulators. JVM native inference is tested on macOS arm64 and Linux x64; four other packaged desktop classifiers remain execution-untested. See [current support/evidence](development.md).
-
-## Obtain compatible model files
-
-For the demonstration bundles, use the three files from the [pinned Whisper tiny export](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/tree/65176e2deb88badc814a94058666cadccc29b61c), the [Kitten nano INT8 archive](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2), and the separate [English lexicon](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/lexicon-en-us.txt).
+The default `createSpeechEngine` configuration knows this layout:
 
 ```text
 models/
-  whisper/tiny-encoder.int8.onnx
-  whisper/tiny-decoder.int8.onnx
-  whisper/tiny-tokens.txt
-  kitten/model.int8.onnx
-  kitten/voices.bin
-  kitten/tokens.txt
-  kitten/lexicon-en-us.txt
+  whisper/
+    tiny-encoder.int8.onnx
+    tiny-decoder.int8.onnx
+    tiny-tokens.txt
+  kitten/
+    model.int8.onnx
+    voices.bin
+    tokens.txt
+    lexicon-en-us.txt
 ```
 
-The [artifact manifest](../scripts/dependencies.json) records pinned URLs, sizes and SHA-256 checksums. Verify downloaded content before installation, and retain applicable model/support-file notices. A model filename alone does not establish compatibility with the Whisper encoder/decoder or Kitten voice/token contract.
+Use the three files from the [pinned Whisper tiny export](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/tree/65176e2deb88badc814a94058666cadccc29b61c), extract the model/voices/tokens from the [Kitten nano INT8 bundle](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2), and add the separate [English lexicon](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/lexicon-en-us.txt). The [manifest](../scripts/dependencies.json) records hashes/sizes for verified acquisition. The source sample can prepare this tree with `./gradlew prepareSpeechModels`.
 
-You can install weights in app-private storage and use `ModelFile.Local`, or package your own resources and use `ModelFile.Bundled`:
+Package the tree in your application:
 
-| Descriptor | Android | iOS | JVM |
-| --- | --- | --- | --- |
-| `Local` | Absolute readable file path | Absolute readable file path in the app-accessible filesystem | Absolute readable file path |
-| `Bundled` | Path relative to Android assets | Path relative to application resources | Classpath resource path |
+| Platform | Bundle location |
+| --- | --- |
+| Android | Android assets, for example host `src/main/assets/models/` |
+| iOS | Add `models` as a folder resource, preserving subdirectories |
+| JVM | Classpath resources, for example `src/jvmMain/resources/models/` in a KMP host |
 
-For example, Android host assets can live under `src/main/assets/models/`. Add the iOS `models` folder as a folder resource to preserve nested paths. JVM resources can live under `src/jvmMain/resources/models/` in a KMP host or `src/main/resources/models/` in a JVM host. These are application assets, not SDK files.
+Siren includes native inference code and the file-layout preset, **not these model weights**. Creation performs no network downloads. Files/native sessions open when the corresponding operation runs. Applications own verified installation and applicable model licenses.
 
-The source sample's `prepareSpeechModels` Gradle task is an optional reference for verified preparation; a Maven consumer does not need that task or the sample module.
+## Create and use the engine
 
-## Configure both capabilities explicitly
+Call the factory from the relevant platform source set, inside a coroutine.
 
-The following shared function accepts an absolute model-root directory with the tree above:
-
-```kotlin
-import io.github.debanshu.siren.speech.KittenModel
-import io.github.debanshu.siren.speech.ModelFile
-import io.github.debanshu.siren.speech.SherpaModels
-import io.github.debanshu.siren.speech.WhisperModel
-
-fun localModels(root: String): SherpaModels = SherpaModels(
-    recognition = WhisperModel(
-        encoder = ModelFile.Local("$root/whisper/tiny-encoder.int8.onnx"),
-        decoder = ModelFile.Local("$root/whisper/tiny-decoder.int8.onnx"),
-        tokens = ModelFile.Local("$root/whisper/tiny-tokens.txt"),
-        language = "en",
-    ),
-    synthesis = KittenModel(
-        model = ModelFile.Local("$root/kitten/model.int8.onnx"),
-        voices = ModelFile.Local("$root/kitten/voices.bin"),
-        tokens = ModelFile.Local("$root/kitten/tokens.txt"),
-        lexicon = ModelFile.Local("$root/kitten/lexicon-en-us.txt"),
-        speakerId = 0,
-        speed = 1f,
-    ),
-    threads = 2,
-)
-```
-
-For packaged assets replace each `Local` with its `Bundled("models/...")` path. Android materializes bundled files in app-private storage. JVM copies classpath model resources into engine-owned temporary files and removes them on close; caller-supplied Local files remain caller-owned.
-
-Use `models.copy(synthesis = null)` for recognition only or `models.copy(recognition = null)` for synthesis only. `SherpaModels()` enables neither. These runtime choices do not trim native libraries or model assets already included by a build. No model preset is built into the SDK; `SampleModels.bundledDemo()` belongs only to the separate sample.
-
-## Create the platform engine
-
-Each factory requires explicit model configuration. Call the appropriate function from that target's source set:
+Android (`androidMain`):
 
 ```kotlin
-// androidMain
-import android.content.Context
-import io.github.debanshu.siren.speech.SpeechEngine
-import io.github.debanshu.siren.speech.createAndroidSpeechEngine
+import io.github.debanshu.siren.speech.createSpeechEngine
+import io.github.debanshu.siren.speech.use
 
-fun androidEngine(context: Context, modelRoot: String): SpeechEngine =
-    createAndroidSpeechEngine(context.applicationContext, localModels(modelRoot))
-```
-
-```kotlin
-// iosMain
-import io.github.debanshu.siren.speech.SpeechEngine
-import io.github.debanshu.siren.speech.createIosSpeechEngine
-
-fun iosEngine(modelRoot: String): SpeechEngine =
-    createIosSpeechEngine(localModels(modelRoot))
-```
-
-```kotlin
-// jvmMain
-import io.github.debanshu.siren.speech.SpeechEngine
-import io.github.debanshu.siren.speech.createJvmSpeechEngine
-
-fun jvmEngine(modelRoot: String): SpeechEngine =
-    createJvmSpeechEngine(localModels(modelRoot))
-```
-
-The JVM factory optionally accepts a `ClassLoader` for bundled models; its default uses the thread context loader, falling back to the system loader. Native sessions open lazily when an inference operation runs. Factories do not download models or request microphone access.
-
-## Run recognition and synthesis
-
-The shared audio boundary is caller-owned mono float PCM plus its actual sample rate:
-
-```kotlin
-import io.github.debanshu.siren.audio.PcmAudio
-import io.github.debanshu.siren.speech.SpeechEngine
-
-suspend fun transcribeAndSynthesize(
-    engine: SpeechEngine,
-    recordedSamples: FloatArray,
-    recordedSampleRate: Int,
-): PcmAudio {
-    val input = PcmAudio(recordedSamples, recordedSampleRate)
-    val text = engine.transcribe(input)
-    return engine.synthesize(text)
+val audio = createSpeechEngine(context).use { engine ->
+    engine.synthesize("Hello from Kotlin Multiplatform.")
 }
 ```
 
-Samples normally range from `-1f` to `1f`. Do not mutate an input array while inference consumes it. Preserve the microphone's actual rate; changing the rate label is not resampling. The built-in recognizer converts supported input for Whisper internally. Use the returned PCM's rate for playback, even when it differs from the recording rate.
+`context` is supplied by your Android host; no global context or initialization singleton is needed.
 
-Capture/playback adapters belong to your application. The [sample audio hosts](../sample/composeApp/README.md) illustrate AudioRecord/AudioTrack, AVFoundation and JavaSound without adding those concerns to the SDK.
+iOS or desktop (`iosMain` / `jvmMain`):
 
-Keep one owner for each engine and call its suspending `close()` when that owner finishes. `ModelSpeechEngine` serializes inference and close. Cancellation can suppress a result but cannot forcibly interrupt a synchronous native decode; cleanup waits until native work returns. Returned PCM is independently owned, so it remains valid after engine close. Clear or release audio buffers when your application no longer needs them.
+```kotlin
+import io.github.debanshu.siren.speech.createSpeechEngine
+import io.github.debanshu.siren.speech.use
 
-Built-in Whisper adapters accept 0.2–20-second clips. The sample's 500-character TTS limit is an application policy rather than a universal SDK limit. Background capture, streaming and route recovery need application-specific work.
+val audio = createSpeechEngine().use { engine ->
+    engine.synthesize("Hello from Kotlin Multiplatform.")
+}
+```
 
-## Supply another model family
+The returned `PcmAudio` contains mono float `samples` and `sampleRate`. Send it to your application's playback adapter at that rate. The samples remain valid after the engine scope closes.
 
-Implement `SpeechRecognizer`, `SpeechSynthesizer`, or both, and compose them with `ModelSpeechEngine`. Providers have display labels, own native cleanup and must return independent PCM buffers at their real sample rate. Use concrete model-specific configuration instead of passing an arbitrary ONNX graph into the Whisper/Kitten descriptors.
+## Transcribe your recorded audio
 
-See [configuration](model-configuration.md) for SPI examples, [architecture](architecture.md) for ownership, and [development](development.md) for real verification and release status.
+The `transcribe(samples, sampleRate)` overload accepts a recorded mono `FloatArray` and its actual rate. For a recording-to-text-to-speech operation in an Android coroutine:
+
+```kotlin
+import io.github.debanshu.siren.speech.createSpeechEngine
+import io.github.debanshu.siren.speech.transcribe
+import io.github.debanshu.siren.speech.use
+
+val replyAudio = createSpeechEngine(context).use { engine ->
+    val text = engine.transcribe(recordedSamples, recordedSampleRate)
+    engine.synthesize(text)
+}
+```
+
+On iOS/JVM, use `createSpeechEngine()` instead; the block stays the same. You can also call `transcribe(PcmAudio(...))` when your application already carries that value.
+
+Samples normally range from `-1f` to `1f`. Do not mutate an input array while inference reads it. Preserve the hardware recording rate; relabelling 48 kHz samples as 16 kHz is not resampling. The recognizer handles its model-rate conversion. Playback uses the generated rate, which can differ from the input rate.
+
+The SDK does not request microphone permission, record or play audio. Existing application audio code can supply/consume PCM; [sample adapters](../sample/composeApp/README.md) illustrate AudioRecord/AudioTrack, AVFoundation and JavaSound.
+
+## Local files or one capability
+
+If the same tree is already installed on disk, provide its root once:
+
+```kotlin
+import io.github.debanshu.siren.speech.SherpaModels
+
+val models = SherpaModels.local("/absolute/path/to/models")
+```
+
+Pass `models` to `createSpeechEngine(context, models)` on Android or `createSpeechEngine(models)` on iOS/JVM. To omit a capability, use `SherpaModels.bundled(recognition = false)` or `SherpaModels.bundled(synthesis = false)`. A custom resource folder is `SherpaModels.bundled(directory = "speech-models")`.
+
+These helpers only describe the known Whisper/Kitten layout. They do not download, copy or load models themselves, and disabling a capability does not remove files already packaged by the application. See [configuration](model-configuration.md) for custom filenames, settings and other model families.
+
+## Lifecycle and support
+
+`use` closes the engine automatically after success, failure or cancellation. It performs cleanup in a non-cancellable context and preserves an operation failure if cleanup also fails. Do not reuse the engine after the scope.
+
+For a screen that performs many separate operations, keep a lifecycle-owned engine and call `close()` when that owner finishes. An engine serializes operations and teardown. Cancellation cannot instantly interrupt synchronous native decoding; cleanup waits for it to return.
+
+Built-in Whisper accepts 0.2–20-second recordings. The sample's 500-character TTS limit is application policy. Streaming and background/audio-route behavior require application-specific work.
+
+Android's floor is API 26. The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributors use JDK 21. The pinned sample uses iOS 18.5 arm64 targets. Native JVM inference is verified on macOS arm64 and Linux x64; four other desktop payloads are packaged but execution-untested. See [evidence](development.md).
 
 ## Recent Changes
 
-Added the first-release installation guide with explicit Android/iOS/JVM factories, complete model bundles, shared PCM operations and application-owned lifecycle/audio.
+Reduced the basic path to a model bundle, one-line engine creation and scoped calls. Bundled/local helpers, PCM transcription and automatic cleanup preserve custom APIs for advanced cases.

@@ -1,0 +1,133 @@
+{
+  "date": "2026-11-22",
+  "version": "0.1.0",
+  "status": "local verification only; not published",
+  "remoteWrites": false,
+  "apiChanges": [
+    "platform createSpeechEngine factories with bundled defaults",
+    "SherpaModels.bundled/local metadata helpers",
+    "SpeechEngine.use cancellation-safe scoped cleanup",
+    "transcribe(FloatArray, sampleRate) extension"
+  ],
+  "unitTests": {
+    "sdk": [
+      {
+        "suite": "TEST-io.github.debanshu.siren.speech.JvmSpeechEngineNativeTest.xml",
+        "tests": 1,
+        "skipped": 1,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "TEST-io.github.debanshu.siren.speech.SherpaModelsTest.xml",
+        "tests": 6,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "TEST-io.github.debanshu.siren.speech.SpeechEngineExtensionsTest.xml",
+        "tests": 4,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "TEST-io.github.debanshu.siren.speech.SpeechEngineTest.xml",
+        "tests": 6,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "sample": [
+      {
+        "suite": "TEST-io.github.debanshu.siren.sample.SpeechControllerTest.xml",
+        "tests": 5,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ]
+  },
+  "apiBaselineCheck": {
+    "passed": true,
+    "targets": [
+      "android",
+      "jvm",
+      "iosArm64",
+      "iosSimulatorArm64"
+    ],
+    "priorSignaturesRetained": true
+  },
+  "relocatedConsumer": {
+    "passed": true,
+    "outsideCheckout": true,
+    "repository": "copied local staging artifacts; not Maven Central",
+    "tests": [
+      {
+        "suite": "TEST-consumer.PublishedApiTest.xml",
+        "tests": 4,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "TEST-consumer.PublishedJvmNativeTest.xml",
+        "tests": 1,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "androidApk": true,
+    "dynamicIosTargets": [
+      "iosArm64",
+      "iosSimulatorArm64"
+    ],
+    "nativeResult": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59930 matched=6/6 transcript=The quick brown fox jumps over the lazy dog."
+  },
+  "sampleBuilds": {
+    "androidDebugApk": true,
+    "androidDebugTestApk": true,
+    "desktopJvmJar": true
+  },
+  "artifacts": [
+    {
+      "platform": "android",
+      "path": "siren/build/outputs/aar/siren.aar",
+      "sha256": "0b7e74f025f7253da289ecb08857a0ded211f15666f952976af1bff2c7a3f0f6",
+      "bytes": 25376743,
+      "licenseFiles": 21,
+      "modelWeightFiles": []
+    },
+    {
+      "platform": "jvm",
+      "path": "siren/build/libs/siren-jvm-0.1.0.jar",
+      "sha256": "b5288d53e6e4c038fbd5fe2fb0f7eec04c4c0fdd26d398e2987723889c353cc0",
+      "bytes": 60105788,
+      "licenseFiles": 21,
+      "modelWeightFiles": []
+    },
+    {
+      "platform": "iosArm64",
+      "path": "build/staging-repository/io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-cinterop-sherpaNative.klib",
+      "sha256": "61badd116d095add71ea1e4a7c748eb80f7bb06a3450232bcf124e457d1a73e8",
+      "bytes": 16498221,
+      "licenseFiles": 21,
+      "modelWeightFiles": []
+    },
+    {
+      "platform": "iosSimulatorArm64",
+      "path": "build/staging-repository/io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-cinterop-sherpaNative.klib",
+      "sha256": "ef129593789f7b00670f2a5e155314bf04413815a90bf12f6d84849e07b9d7ff",
+      "bytes": 33557306,
+      "licenseFiles": 21,
+      "modelWeightFiles": []
+    }
+  ],
+  "physicalAudioRetested": false,
+  "nativeRedistributionGateChanged": false,
+  "centralPublicationExecuted": false,
+  "mediumUpdated": false
+}

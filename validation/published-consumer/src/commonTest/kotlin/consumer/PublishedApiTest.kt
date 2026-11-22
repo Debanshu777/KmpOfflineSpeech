@@ -7,18 +7,22 @@ import io.github.debanshu.siren.speech.ModelSpeechEngine
 import io.github.debanshu.siren.speech.SherpaModels
 import io.github.debanshu.siren.speech.SpeechRecognizer
 import io.github.debanshu.siren.speech.WhisperModel
+import io.github.debanshu.siren.speech.transcribe
+import io.github.debanshu.siren.speech.use
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 class PublishedApiTest {
     @Test fun customProvidersWorkThroughPublishedContracts() = runTest {
         val engine = customEngine()
-        assertEquals("Consumer recognizer", engine.capabilities.recognitionLabel)
-        assertEquals("Consumer synthesizer", engine.capabilities.synthesisLabel)
-        val audio = engine.synthesize("external consumer")
-        assertEquals(22_050, audio.sampleRate)
-        assertEquals("17@22050", engine.transcribe(audio))
-        engine.close()
+        val audio = engine.use {
+            assertEquals("Consumer recognizer", it.capabilities.recognitionLabel)
+            assertEquals("Consumer synthesizer", it.capabilities.synthesisLabel)
+            val audio = it.synthesize("external consumer")
+            assertEquals(22_050, audio.sampleRate)
+            assertEquals("17@22050", it.transcribe(audio.samples, audio.sampleRate))
+            audio
+        }
         assertFailsWith<IllegalStateException> { engine.transcribe(audio) }
     }
 
@@ -48,5 +52,15 @@ class PublishedApiTest {
         assertEquals(2, models.synthesis?.speakerId)
         assertEquals(1.2f, models.synthesis?.speed)
         assertEquals(3, models.threads)
+    }
+
+    @Test fun standardLayoutsNeedNoIndividualModelMapping() {
+        val bundled = SherpaModels.bundled(synthesis = false)
+        assertEquals(ModelFile.Bundled("models/whisper/tiny-encoder.int8.onnx"), bundled.recognition?.encoder)
+        assertNull(bundled.synthesis)
+        val local = SherpaModels.local("/consumer/models", recognition = false, threads = 3)
+        assertNull(local.recognition)
+        assertEquals(ModelFile.Local("/consumer/models/kitten/model.int8.onnx"), local.synthesis?.model)
+        assertEquals(3, local.threads)
     }
 }

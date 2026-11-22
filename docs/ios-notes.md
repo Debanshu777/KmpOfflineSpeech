@@ -1,6 +1,6 @@
 # iOS integration notes
 
-The SDK `createIosSpeechEngine(models)` composes optional Whisper/Kitten providers through the pinned sherpa C API. It requires an explicit `SherpaModels`; no weights or preset are supplied by `:siren`. The sample passes `SampleModels.bundledDemo()` to the factory, then injects the engine into `sample.platform.IosSpeechPlatform` for AVFoundation audio and permission handling.
+The SDK `createSpeechEngine()` composes optional Whisper/Kitten providers through the pinned sherpa C API using the standard `SherpaModels.bundled()` layout. The app supplies the weights in its application resources. Explicit model descriptors and the original `createIosSpeechEngine(models)` remain available. The sample passes its `SampleModels.bundledDemo()` wrapper to the factory, then injects the engine into `sample.platform.IosSpeechPlatform` for AVFoundation audio and permission handling.
 
 ## SDK and audio native payloads
 
@@ -58,4 +58,4 @@ Use only one booted simulator when targeting `booted`. The executable prints JSO
 
 ## Recent Changes
 
-Embedded SDK/audio static archives in separate KLIBs and verified both iOS dynamic consumer links from relocated artifacts; the sample host retains only Kotlin framework/system linkage.
+Documented the default iOS factory and app-owned bundled model files. Both dynamic consumer links remain covered by relocated-artifact validation.

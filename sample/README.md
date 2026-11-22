@@ -7,7 +7,7 @@ The sample demonstrates the UI-free [`:siren` SDK](../siren/README.md). It owns 
 - [`sample/iosApp`](iosApp/README.md): SwiftUI host consuming `SirenApp.framework`.
 - [`:sample:desktopApp`](desktopApp/README.md): Compose Desktop launcher with JavaSound audio from the shared JVM sample source set.
 
-`SampleModels.bundledDemo()` explicitly configures Whisper tiny and Kitten nano. Pass that descriptor to `createAndroidSpeechEngine(context, models)`, `createIosSpeechEngine(models)` or `createJvmSpeechEngine(models)`, then inject the engine into the sample audio host. The SDK has no default weights or preset. See [model configuration](../docs/model-configuration.md).
+`SampleModels.bundledDemo()` delegates to the SDK's `SherpaModels.bundled()` layout for Whisper tiny and Kitten nano. The sample packages those files; the SDK packages no weights and performs no model download. An SDK app using this layout can call `createSpeechEngine(context)` on Android or `createSpeechEngine()` on iOS/JVM. The sample keeps explicit engine injection for its audio host. See [model configuration](../docs/model-configuration.md).
 
 ## Run
 
@@ -41,4 +41,4 @@ Connected acoustic/UI journeys require explicit opt-in and a suitable unlocked d
 
 ## Recent Changes
 
-Kept sample presets, weights, UI and hardware audio separate from the `0.1.0` SDK candidate and distinguished application packaging from Maven release versioning.
+Reused the SDK's standard bundled model descriptor instead of duplicating seven paths, while keeping sample weights, UI and hardware audio in the application.

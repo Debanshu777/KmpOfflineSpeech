@@ -324,47 +324,37 @@ commonMain.dependencies {
 }
 ```
 
-*Release status: 0.1.0 is prepared but Maven Central publication is pending.*
+*Release status: 0.1.0 is prepared locally, not published to Maven Central. The dependency is intended for a future release.*
 
-Package the model files from the first section in your app. In the Android host, configure their paths and pass in the `PcmAudio` captured earlier:
+Package the `models/whisper` and `models/kitten` files from the first section in your app. Siren knows that standard layout, so you no longer map seven paths or write cleanup scaffolding. In an Android coroutine, using the recording captured earlier:
 
 ```kotlin
-import android.content.Context
-import io.github.debanshu.siren.audio.PcmAudio
-import io.github.debanshu.siren.speech.*
-fun bundled(path: String) = ModelFile.Bundled("models/$path")
-val models = SherpaModels(
-    recognition = WhisperModel(
-        bundled("whisper/tiny-encoder.int8.onnx"),
-        bundled("whisper/tiny-decoder.int8.onnx"),
-        bundled("whisper/tiny-tokens.txt"),
-    ),
-    synthesis = KittenModel(
-        bundled("kitten/model.int8.onnx"), bundled("kitten/voices.bin"),
-        bundled("kitten/tokens.txt"), bundled("kitten/lexicon-en-us.txt"),
-    ),
-)
-suspend fun replyToRecording(context: Context, recording: PcmAudio): PcmAudio {
-    val engine = createAndroidSpeechEngine(context, models)
-    return try {
-        engine.synthesize(engine.transcribe(recording))
-    } finally {
-        engine.close()
-    }
+import io.github.debanshu.siren.speech.createSpeechEngine
+import io.github.debanshu.siren.speech.transcribe
+import io.github.debanshu.siren.speech.use
+
+val replyAudio = createSpeechEngine(context).use { engine ->
+    val text = engine.transcribe(recording.samples, recording.sampleRate)
+    engine.synthesize(text)
 }
 ```
 
-Call `replyToRecording` from a coroutine, then send its returned PCM to your playback adapter. Siren supplies the inference runtime; your app supplies the weights and hardware audio. There is no Compose dependency in the SDK.
+On iOS or desktop, create it with `createSpeechEngine()` instead; the inference block is the same. Android takes a host-supplied context rather than requiring a global initialization step.
 
-The sample’s `SampleModels.bundledDemo()` explicitly selects both bundled models; the SDK factories require a configuration. To remove one capability, change the engine configuration rather than the screen:
+`use` closes automatically after the operation, including after failure or cancellation. Send the independent returned PCM to your playback adapter at its sample rate. Siren supplies the inference runtime and standard file-layout metadata; your app supplies the weights, microphone and speaker. There is no hidden model download or Compose dependency.
+
+If your model tree is already installed on disk, point to its root once:
 
 ```kotlin
-val models = SampleModels.bundledDemo().copy(recognition = null)
-val engine = createAndroidSpeechEngine(applicationContext, models)
-val platform = createAndroidSpeechPlatform(this, engine)
+import io.github.debanshu.siren.speech.SherpaModels
+
+val models = SherpaModels.local("/absolute/path/to/models")
+val audio = createSpeechEngine(context, models).use { engine ->
+    engine.synthesize("Hello from local model files.")
+}
 ```
 
-This is synthesis-only; use `synthesis = null` for recognition-only. iOS uses `IosSpeechPlatform(createIosSpeechEngine(models))`; desktop creates its engine with `createJvmSpeechEngine(models)`. For another compatible export, descriptors accept bundled or local files. For a different model family, implement `SpeechRecognizer` or `SpeechSynthesizer` and compose a `ModelSpeechEngine`. The [configuration guide](https://github.com/Debanshu777/Siren/blob/main/docs/model-configuration.md) shows those cases. Runtime selection does not remove assets already packaged by the sample build.
+For synthesis-only, use `SherpaModels.bundled(recognition = false)`; for recognition-only, set `synthesis = false`. Custom descriptors and provider interfaces remain available for other filenames, exports or model families. The [configuration guide](https://github.com/Debanshu777/Siren/blob/main/docs/model-configuration.md) covers those advanced cases. Runtime selection does not remove already packaged assets. A long-lived screen can own one engine across actions and close it on disposal instead of closing after each operation scope.
 
 The Pixel 9 UI run completed recording → transcription → speech playback and returned to Ready. Earlier acoustic testing misheard “brown” as “round”; the [verification notes](https://github.com/Debanshu777/Siren/blob/main/docs/development.md) preserve both results. The iOS host was built and launched in the simulator, with a separate native model roundtrip. Desktop inference also passed on macOS arm64, including a consumer outside the SDK checkout. The Linux x64 model roundtrip also passed in CI. Physical iPhone and desktop microphone/playback remain unverified, as do the remaining desktop architectures.
 

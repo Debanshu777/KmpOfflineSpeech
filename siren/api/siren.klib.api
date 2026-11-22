@@ -137,6 +137,11 @@ final class io.github.debanshu.siren.speech/SherpaModels { // io.github.debanshu
     final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/SherpaModels.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/SherpaModels.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.github.debanshu.siren.speech/SherpaModels.toString|toString(){}[0]
+
+    final object Companion { // io.github.debanshu.siren.speech/SherpaModels.Companion|null[0]
+        final fun bundled(kotlin/String = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Int = ...): io.github.debanshu.siren.speech/SherpaModels // io.github.debanshu.siren.speech/SherpaModels.Companion.bundled|bundled(kotlin.String;kotlin.Boolean;kotlin.Boolean;kotlin.Int){}[0]
+        final fun local(kotlin/String, kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Int = ...): io.github.debanshu.siren.speech/SherpaModels // io.github.debanshu.siren.speech/SherpaModels.Companion.local|local(kotlin.String;kotlin.Boolean;kotlin.Boolean;kotlin.Int){}[0]
+    }
 }
 
 final class io.github.debanshu.siren.speech/SpeechCapabilities { // io.github.debanshu.siren.speech/SpeechCapabilities|null[0]
@@ -189,4 +194,7 @@ final class io.github.debanshu.siren.speech/WhisperModel { // io.github.debanshu
     final fun toString(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.toString|toString(){}[0]
 }
 
-final fun io.github.debanshu.siren.speech/createIosSpeechEngine(io.github.debanshu.siren.speech/SherpaModels): io.github.debanshu.siren.speech/SpeechEngine // io.github.debanshu.siren.speech/createIosSpeechEngine|createIosSpeechEngine(io.github.debanshu.siren.speech.SherpaModels){}[0]
+final fun io.github.debanshu.siren.speech/createIosSpeechEngine(io.github.debanshu.siren.speech/SherpaModels = ...): io.github.debanshu.siren.speech/SpeechEngine // io.github.debanshu.siren.speech/createIosSpeechEngine|createIosSpeechEngine(io.github.debanshu.siren.speech.SherpaModels){}[0]
+final fun io.github.debanshu.siren.speech/createSpeechEngine(io.github.debanshu.siren.speech/SherpaModels = ...): io.github.debanshu.siren.speech/SpeechEngine // io.github.debanshu.siren.speech/createSpeechEngine|createSpeechEngine(io.github.debanshu.siren.speech.SherpaModels){}[0]
+final suspend fun (io.github.debanshu.siren.speech/SpeechEngine).io.github.debanshu.siren.speech/transcribe(kotlin/FloatArray, kotlin/Int): kotlin/String // io.github.debanshu.siren.speech/transcribe|transcribe@io.github.debanshu.siren.speech.SpeechEngine(kotlin.FloatArray;kotlin.Int){}[0]
+final suspend fun <#A: kotlin/Any?> (io.github.debanshu.siren.speech/SpeechEngine).io.github.debanshu.siren.speech/use(kotlin.coroutines/SuspendFunction1<io.github.debanshu.siren.speech/SpeechEngine, #A>): #A // io.github.debanshu.siren.speech/use|use@io.github.debanshu.siren.speech.SpeechEngine(kotlin.coroutines.SuspendFunction1<io.github.debanshu.siren.speech.SpeechEngine,0:0>){0§<kotlin.Any?>}[0]

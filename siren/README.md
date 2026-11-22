@@ -1,66 +1,73 @@
 # Siren SDK
 
-`:siren` is the UI-free inference module for `io.github.debanshu777:siren`. Its Kotlin packages are `io.github.debanshu.siren.audio` and `.speech`, built with explicit API mode. It has no Compose dependency, UI/components, hardware audio, microphone permissions or model weights.
+`:siren` supplies UI-free speech inference for Android, iOS and JVM. Its package is `io.github.debanshu.siren`, with explicit API mode and no Compose dependency, model weights, microphone handling or playback implementation.
 
-**Release status:** candidate `0.1.0` is prepared locally and is not published to Maven Central. The intended future shared dependency is:
+**Candidate `0.1.0` is local and unpublished.** The intended future dependency is:
 
 ```kotlin
 implementation("io.github.debanshu777:siren:0.1.0")
 ```
 
-After publication, use `mavenCentral()` in your repositories. Until then, build from source or use a local staged repository. See [getting started](../docs/getting-started.md) for platform initialization, model acquisition and PCM examples.
+See [getting started](../docs/getting-started.md) for source/local staging status and model-bundle placement.
 
-## Public API
+## Basic use
 
-| Type | Responsibility |
+Put the known Whisper tiny INT8/Kitten nano INT8 bundle under your application's `models/` resources. Siren knows its filenames through `SherpaModels.bundled()`; no path-by-path configuration is required.
+
+In an Android coroutine:
+
+```kotlin
+import io.github.debanshu.siren.speech.createSpeechEngine
+import io.github.debanshu.siren.speech.use
+
+val audio = createSpeechEngine(context).use { engine ->
+    engine.synthesize("Hello from Siren.")
+}
+```
+
+On iOS/JVM use `createSpeechEngine()` without Android context. `use` closes automatically, including after errors/cancellation, and returns independent `PcmAudio`. Your app plays its mono float samples at the returned rate. With the `speech.transcribe` extension imported, `engine.transcribe(samples, sampleRate)` accepts application-recorded PCM directly.
+
+Defaults add only file-layout metadata, not weights, loading or network access. Applications must supply the models. Files/native sessions open when the relevant operation runs.
+
+## Optional configuration and providers
+
+```kotlin
+import io.github.debanshu.siren.speech.SherpaModels
+
+val local = SherpaModels.local("/absolute/path/to/models")
+val voiceOnly = SherpaModels.bundled(recognition = false)
+val differentFolder = SherpaModels.bundled(directory = "speech-models")
+```
+
+Pass an override as the factory's `models` argument. Both helpers map the standard `whisper/`/`kitten/` folders. Typed `WhisperModel`, `KittenModel` and `ModelFile` constructors remain for custom compatible exports. `SpeechRecognizer`/`SpeechSynthesizer` and `ModelSpeechEngine` remain the extension point for other model families. See [configuration](../docs/model-configuration.md).
+
+The original `createAndroidSpeechEngine`, `createIosSpeechEngine` and `createJvmSpeechEngine` names are preserved and also default to the bundled layout. No sample module is required. `SampleModels.bundledDemo()` is only a sample wrapper.
+
+`use` is for a scope that should finish and close. Long-lived UI/audio owners can keep an engine across actions and close it on disposal. Calls/teardown are serialized; native decoding may finish before cancellation cleanup. JVM classpath model copies are engine-owned and removed on close; Local files stay caller-owned.
+
+## Runtime artifacts
+
+| Target | SDK payload |
 | --- | --- |
-| `PcmAudio` | Caller-owned mono float samples plus their actual sample rate |
-| `SpeechRecognizer`, `SpeechSynthesizer` | Independently replaceable providers with labels and cleanup |
-| `ModelSpeechEngine` | Optional capabilities, serialized provider calls and close |
-| `SherpaModels`, `WhisperModel`, `KittenModel` | Explicit compatible-export configuration for built-in adapters |
-| `ModelFile.Bundled`, `ModelFile.Local` | Application resources or absolute filesystem paths |
+| Android | Wrapper classes, arm64-v8a/x86_64 JNI, notices and consumer keep rules |
+| iOS | sherpa/ONNX static archives in target-specific cinterop KLIBs |
+| JVM | Java wrapper and six native resource sets; upstream OS/architecture selection |
 
-Create an engine with `createAndroidSpeechEngine(context, models)`, `createIosSpeechEngine(models)` or `createJvmSpeechEngine(models, classLoader)`. Every factory requires explicit models; the JVM class loader is optional. Native sessions/files open lazily when an operation runs. Factories do not download weights or operate audio devices.
+SDK artifacts contain no model weights, UI or hardware audio. `prepareAndroidRuntime`, `prepareIosSpeech` and `prepareJvmRuntime` prepare runtimes only. Native consumers require no SDK-checkout linker paths.
 
-The demo preset `SampleModels.bundledDemo()` lives only in [`sample/`](../sample/README.md). A consumer can configure just one capability or implement another concrete model adapter. Changing an ONNX filename does not make an unrelated graph compatible with Whisper/Kitten. See [model configuration](../docs/model-configuration.md).
+JVM payloads cover macOS/Linux/Windows arm64 and x64. Inference is verified on [macOS arm64](verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](verification/jvm-native-linux-x64-2026-11-22.json); the other four are packaged/hash-verified but execution-untested. Android starts at API 26; the pinned iOS sample uses 18.5. Desktop physical audio remains unverified. See [development evidence](../docs/development.md).
 
-The engine owns its providers. Close it before replacement or disposal; inference and close are serialized. Synchronous native decoding may finish before cancellation cleanup can complete. Returned PCM is independent of native session lifetime. JVM bundled weights are materialized into engine-owned temporary files and removed on close; Local paths stay caller-owned.
-
-## Platform artifacts
-
-- **Android:** verified upstream wrapper classes, arm64-v8a/x86_64 JNI libraries, notices/provenance and consumer keep rules are embedded in the SDK AAR. No model assets or UI resources are included.
-- **iOS:** target-specific cinterop KLIBs embed sherpa and ONNX Runtime static archives with required Apple system-library linkage. Consumers do not need SDK-checkout `-F` paths.
-- **JVM:** the JAR embeds the Java wrapper and six `sherpa-onnx/native/<classifier>` resource sets. Upstream loading chooses OS/architecture and loads ONNX before JNI. No native checkout override is needed.
-
-JVM classifiers are `osx-aarch64`, `osx-x64`, `linux-aarch64`, `linux-x64`, `win-arm64` and `win-x64`. Native inference is verified on [macOS arm64](verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](verification/jvm-native-linux-x64-2026-11-22.json); the other four payloads are packaged/hash-verified but execution-untested. Android's floor is API 26. The sample's pinned iOS baseline is 18.5. Wasm is unsupported.
-
-Hardware capture/playback stays in the application. The desktop sample was packaged/launched, but desktop microphone/speaker behavior is unverified. See [development evidence](../docs/development.md) for precise target/toolchain scope.
-
-## Build and validate from source
-
-From the repository root:
+## Source checks
 
 ```bash
-./gradlew :siren:jvmTest
-./gradlew :siren:compileKotlinIosSimulatorArm64
+./gradlew :siren:jvmTest :siren:checkKotlinAbi
 ./gradlew :siren:publishAllPublicationsToStagingRepository
 ```
 
-The staging task writes a file Maven repository under `build/staging-repository`; it does not publish remotely. Version comes from root `gradle.properties`.
+Local staging writes `build/staging-repository`, not Central. For opt-in native JVM testing, prepare weights separately with `prepareSpeechModels`, then use `:siren:jvmTest -Pnative=true -PmodelsDir="$(pwd)/models"`. Default SDK tests do not load models.
 
-Native JVM verification is opt-in and requires separate compatible weights:
-
-```bash
-./gradlew prepareSpeechModels
-./gradlew :siren:jvmTest -Pnative=true -PmodelsDir="$(pwd)/models"
-```
-
-Default SDK tests and runtime-only preparation do not obtain model weights. The [relocated consumer](../validation/published-consumer-verification.json) proves native JVM inference, plain Android APK packaging and both iOS dynamic links through Maven coordinates outside this checkout. Release candidates must rerun these checks against their own artifacts.
-
-## Licensing and releases
-
-SDK source is [MIT](../LICENSE). Upstream native components, including Apache-2.0 sherpa-onnx code, carry separate redistribution notices; model weights have their own terms. Preserve [third-party notices](../THIRD_PARTY_NOTICES.md). See [release workflow and holds](../docs/releasing.md); local staging, Central validation and Central availability are distinct states.
+First-party source is [MIT](../LICENSE); preserve [native/model notices and audit status](../THIRD_PARTY_NOTICES.md). Public release remains deferred; [release preparation](../docs/releasing.md) records its separate gates.
 
 ## Recent Changes
 
-Prepared local `0.1.0` release documentation, explicit platform factories and native payload guidance. Public publication remains deferred and subject to native redistribution readiness.
+Added default platform factories, bundled/local layout helpers, scoped automatic close and direct PCM transcription while preserving named factories, custom descriptors and SPI.

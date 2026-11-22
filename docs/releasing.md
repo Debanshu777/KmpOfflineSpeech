@@ -36,6 +36,27 @@ When the local changes are reviewed, push them to `main`. Configure these Action
 
 Keep values out of source, logs and issue/chat messages. ShaderX's repository secrets cannot be read back and copied through GitHub's API.
 
+### Where the five values come from
+
+GitHub exposes secret names and timestamps, not their saved values. Recover the originals from your own backup or replace them in the Siren repository; existing ShaderX secrets can stay as they are.
+
+| Secret | Source |
+| --- | --- |
+| `MAVEN_CENTRAL_USERNAME` | Generated token username from [Central Portal user tokens](https://central.sonatype.com/usertoken), not the account login |
+| `MAVEN_CENTRAL_PASSWORD` | The matching generated token password; credentials are shown only when created |
+| `GPG_KEY_CONTENTS` | ASCII-armored export of the signing **private** key from the original machine/key backup |
+| `SIGNING_KEY_ID` | The signing key ID shown by `gpg --list-secret-keys --keyid-format SHORT` |
+| `SIGNING_PASSWORD` | The passphrase chosen when protecting that private key |
+
+On the Mac holding that key, copy its export directly to the clipboard rather than printing private material in logs:
+
+```bash
+gpg --list-secret-keys --keyid-format SHORT
+gpg --armor --export-secret-keys YOUR_KEY_ID | pbcopy
+```
+
+Paste the full private-key block only into `GPG_KEY_CONTENTS` in GitHub's secret form. Do not commit it or paste it into chat. An expired/lost Central token needs a replacement; a lost private key or passphrase requires a new signing setup and distribution of its public key. See [Sonatype's token instructions](https://central.sonatype.org/publish/generate-portal-token/), [GPG guidance](https://central.sonatype.org/publish/requirements/gpg/) and [publisher signing configuration](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
+
 After the native redistribution review is complete and CI passes, run **Release Siren** manually from `main`, entering the exact configured version as `confirmVersion`. Pushes and pull requests run checks; they do not publish.
 
 The release workflow validates the version, clean checkout, dispatched commit, curated changelog, absent release tag and absent Central coordinate. It checks credentials and native redistribution, tests source/API/sample builds, exercises native models and validates relocated artifact consumers. It then reserves the tag atomically, publishes signed artifacts, verifies public delivery and resolves them from a separate Central-only consumer before creating the GitHub release. Central propagation is polled with a bounded timeout. Reports are uploaded even when a step fails.
@@ -48,4 +69,4 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
-Added local release validation, API baselines, signed Central configuration and a manually dispatched, gated release workflow.
+Documented the origins of all five publishing secrets, including generated Central token credentials and the original GPG private key/passphrase. Publication remains deferred.

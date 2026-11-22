@@ -14,8 +14,10 @@ From the repository root:
 
 The first build prepares pinned demo weights and SDK native runtime inputs through
 Gradle. `stageDesktopModels` copies the explicit sample preset under classpath
-`models/` resources; the SDK resolves those `ModelFile.Bundled` paths through the
-class loader. The SDK contains no model preset or weights.
+`models/` resources; `SampleModels.bundledDemo()` delegates to the SDK's
+`SherpaModels.bundled()` descriptor, and the SDK resolves those paths through the
+class loader. An app packaging this layout can use `createSpeechEngine()` with
+no per-file configuration. The SDK contains no model weights and downloads none.
 
 `createDistributable` builds an application image for the current host OS. For
 example, macOS produces
@@ -66,5 +68,5 @@ confirmation is tracked separately. JavaSound hardware paths remain unverified.
 
 ## Recent Changes
 
-Added the shared Compose desktop host, bounded JavaSound capture/playback,
-automatic sample resources and a model-only desktop runtime check.
+Reused the SDK's standard bundled descriptor for desktop model resources and
+documented the default factory; audio and model-only verification scopes remain separate.

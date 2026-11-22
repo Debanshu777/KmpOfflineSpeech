@@ -52,7 +52,8 @@ read directly; the fixture does not download models or native runtimes.
 
 - JVM tests compile and execute third-party recognizer/synthesizer implementations
   against the published SPI, including independent capabilities and configurable
-  model descriptors.
+  model descriptors. They exercise scoped `use` cleanup and
+  `transcribe(samples, sampleRate)` without constructing `PcmAudio`.
 - Android compiles the published platform factory; the plain Android app builds
   an APK containing the SDK's transitive JNI payload, without a separate sherpa
   dependency or copied SDK AAR.
@@ -61,6 +62,11 @@ read directly; the fixture does not download models or native runtimes.
   ONNX Runtime or checkout `-F`/`-L` flags. The SDK's cinterop artifacts must supply
   their own native archive bytes and system linkage.
 
+Platform probes compile `createSpeechEngine(context)` on Android and
+`createSpeechEngine()` on iOS/JVM, plus the original platform-specific factories
+with explicit descriptors. The standard layout helpers are tested through the
+published API rather than a project dependency.
+
 The default checks do not run speech models. To test the published JVM native payload with consumer-owned models, also copy the prepared model directory outside the SDK checkout, then run from the relocated fixture:
 
 ```sh
@@ -68,7 +74,20 @@ The default checks do not run speech models. To test the published JVM native pa
   -Pnative=true -PmodelsDir=/absolute/path/to/copied/models --offline jvmTest
 ```
 
-The opt-in check stages these files as consumer classpath resources, synthesizes and transcribes using the published SDK JAR, then closes the engine. It does not install apps, record microphones or verify audible output. A successful dynamic link establishes dependency closure
+The opt-in check stages these files as consumer classpath resources and uses the
+minimum integration API against the published SDK JAR:
+
+```kotlin
+createSpeechEngine().use { engine ->
+    val audio = engine.synthesize("The quick brown fox jumps over the lazy dog.")
+    engine.transcribe(audio.samples, audio.sampleRate)
+}
+```
+
+It supplies no model descriptor or native library path. The fixture owns the
+seven model files under the standard classpath `models/` layout; the SDK downloads
+none. `use` closes the engine on success, failure or cancellation. This check does
+not install apps, record microphones or verify audible output. A successful dynamic link establishes dependency closure
 for these built targets; it is not a public Maven release or a compatibility
 claim for arbitrary toolchains.
 
@@ -102,5 +121,5 @@ consumer; the fixture and SDK do not introduce Compose or UIKit-facing APIs.
 
 ## Recent Changes
 
-Added separate staged and Central-only consumer modes with typed Gradle runners;
-the Central mode refreshes online resolution and supplies no local SDK repository.
+Exercised the default factory, standard bundled/local descriptors, scoped cleanup
+and raw PCM overload through published artifacts, while preserving legacy factory probes.

@@ -14,7 +14,11 @@ Siren is a UI-free Kotlin Multiplatform speech SDK with a separate teaching samp
 
 Mirror packages in directories. Preserve Android application ID `dev.debanshu.speech.sample` and iOS host bundle ID `dev.debanshu.offlinespeech`. Historical verification files retain original identifiers.
 
-Models are independently optional. Android, iOS and JVM factories require explicit `SherpaModels`; `SampleModels.bundledDemo()` belongs only to the sample. JVM bundled files are classpath resources; its engine owns materialized temporary copies, while Local files remain caller-owned. New model families implement `SpeechRecognizer`/`SpeechSynthesizer` and concrete configuration. Audio/UI must use capabilities and labels rather than assume Whisper/Kitten. Descriptors do not download weights. A null provider does not imply a smaller package.
+Basic integration uses `createSpeechEngine(context)` on Android and `createSpeechEngine()` on iOS/JVM, defaulting to `SherpaModels.bundled()`. The user-requested SDK helpers `bundled(directory="models", recognition=true, synthesis=true, threads=2)` and `local(directory, recognition=true, synthesis=true, threads=2)` intentionally describe the standard Whisper tiny/Kitten nano layout. These are file/configuration presets only: no weights, hidden downloads, eager model loading, UI or global Android context. `SampleModels.bundledDemo()` is a sample wrapper, not a required SDK dependency.
+
+Recognition/synthesis remain independently optional. Keep original named factories with default model arguments and retain custom descriptors/SPI for advanced model families. JVM bundled files are classpath resources; materialized copies are engine-owned while Local files remain caller-owned. Audio/UI uses capabilities and labels. Runtime omission does not imply a smaller package.
+
+Prefer suspending `engine.use { engine -> ... }` for short-lived examples; it closes in NonCancellable cleanup and preserves an operation failure with any cleanup failure suppressed. Import `speech.use` and `speech.transcribe` when showing scoped/direct-PCM calls. `transcribe(samples, sampleRate)` accepts caller-owned mono FloatArray plus actual rate; capture/playback stay in the application. Long-lived controllers own one engine and close at disposal. Do not introduce extra factory-wrapper classes, seven-path mapping or manual finally blocks into the basic quickstart.
 
 ## Native distribution and validation
 

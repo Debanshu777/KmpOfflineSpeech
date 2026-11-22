@@ -14,6 +14,8 @@ public final class io/github/debanshu/siren/audio/PcmAudio {
 public final class io/github/debanshu/siren/speech/JvmSpeechEngineKt {
 	public static final fun createJvmSpeechEngine (Lio/github/debanshu/siren/speech/SherpaModels;Ljava/lang/ClassLoader;)Lio/github/debanshu/siren/speech/SpeechEngine;
 	public static synthetic fun createJvmSpeechEngine$default (Lio/github/debanshu/siren/speech/SherpaModels;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lio/github/debanshu/siren/speech/SpeechEngine;
+	public static final fun createSpeechEngine (Lio/github/debanshu/siren/speech/SherpaModels;Ljava/lang/ClassLoader;)Lio/github/debanshu/siren/speech/SpeechEngine;
+	public static synthetic fun createSpeechEngine$default (Lio/github/debanshu/siren/speech/SherpaModels;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lio/github/debanshu/siren/speech/SpeechEngine;
 }
 
 public final class io/github/debanshu/siren/speech/KittenModel {
@@ -77,6 +79,7 @@ public final class io/github/debanshu/siren/speech/ModelSpeechEngine : io/github
 }
 
 public final class io/github/debanshu/siren/speech/SherpaModels {
+	public static final field Companion Lio/github/debanshu/siren/speech/SherpaModels$Companion;
 	public fun <init> ()V
 	public fun <init> (Lio/github/debanshu/siren/speech/WhisperModel;Lio/github/debanshu/siren/speech/KittenModel;I)V
 	public synthetic fun <init> (Lio/github/debanshu/siren/speech/WhisperModel;Lio/github/debanshu/siren/speech/KittenModel;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -91,6 +94,13 @@ public final class io/github/debanshu/siren/speech/SherpaModels {
 	public final fun getThreads ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/debanshu/siren/speech/SherpaModels$Companion {
+	public final fun bundled (Ljava/lang/String;ZZI)Lio/github/debanshu/siren/speech/SherpaModels;
+	public static synthetic fun bundled$default (Lio/github/debanshu/siren/speech/SherpaModels$Companion;Ljava/lang/String;ZZIILjava/lang/Object;)Lio/github/debanshu/siren/speech/SherpaModels;
+	public final fun local (Ljava/lang/String;ZZI)Lio/github/debanshu/siren/speech/SherpaModels;
+	public static synthetic fun local$default (Lio/github/debanshu/siren/speech/SherpaModels$Companion;Ljava/lang/String;ZZIILjava/lang/Object;)Lio/github/debanshu/siren/speech/SherpaModels;
 }
 
 public final class io/github/debanshu/siren/speech/SpeechCapabilities {
@@ -116,6 +126,11 @@ public abstract interface class io/github/debanshu/siren/speech/SpeechEngine {
 	public abstract fun getCapabilities ()Lio/github/debanshu/siren/speech/SpeechCapabilities;
 	public abstract fun synthesize (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun transcribe (Lio/github/debanshu/siren/audio/PcmAudio;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/github/debanshu/siren/speech/SpeechEngineExtensionsKt {
+	public static final fun transcribe (Lio/github/debanshu/siren/speech/SpeechEngine;[FILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun use (Lio/github/debanshu/siren/speech/SpeechEngine;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/github/debanshu/siren/speech/SpeechRecognizer {

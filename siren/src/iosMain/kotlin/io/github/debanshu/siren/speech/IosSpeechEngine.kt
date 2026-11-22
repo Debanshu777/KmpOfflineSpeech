@@ -16,7 +16,7 @@ import platform.Foundation.NSNumber
 import platform.posix.memset
 
 /** Each configured capability owns its native session only for the duration of a call. */
-public fun createIosSpeechEngine(models: SherpaModels): SpeechEngine =
+public fun createIosSpeechEngine(models: SherpaModels = SherpaModels.bundled()): SpeechEngine =
     ModelSpeechEngine(
         recognizer = models.recognition?.let { IosWhisperRecognizer(it, models.threads) },
         synthesizer = models.synthesis?.let { IosKittenSynthesizer(it, models.threads) },
@@ -150,3 +150,8 @@ private fun ModelFile.resolve(): String {
     require(size > 0L) { "A model file must not be empty: $resolved" }
     return resolved
 }
+
+/** Create an engine for the standard app-owned model bundle, or supply a custom configuration. */
+public fun createSpeechEngine(
+    models: SherpaModels = SherpaModels.bundled(),
+): SpeechEngine = createIosSpeechEngine(models)
