@@ -1,7 +1,7 @@
 {
   "date": "2026-11-23",
   "version": "0.1.0",
-  "status": "local candidate gates passed; full GitHub preflight pending",
+  "status": "Pre-publication gates passed on GitHub; not published",
   "publicationExecuted": false,
   "tagsCreated": false,
   "releasesCreated": false,
@@ -161,5 +161,15 @@
   },
   "androidMinimumSdk": 27,
   "androidMinimumRationale": "Pinned ONNX Runtime --android_api 27 and ELF Android API notes",
-  "api27ConsumerPassed": true
+  "api27ConsumerPassed": true,
+  "githubPreflight": {
+    "checkedCommit": "75602acf7cd22fe139b249703d0aed5df6e2cc56",
+    "url": "https://github.com/Debanshu777/Siren/actions/runs/45059983741",
+    "passed": true,
+    "publishRelease": false
+  },
+  "githubPlatformChecks": {
+    "url": "https://github.com/Debanshu777/Siren/actions/runs/45059952805",
+    "passed": true
+  }
 }

@@ -6,6 +6,10 @@ Version `0.1.0` is an unpublished release candidate. The release pipeline and in
 
 The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow uses an isolated [Gradle probe](../validation/signing-check/README.md), the saved signing secrets and your full public fingerprint. It verifies a signature against the published public key without publishing Siren. Maven credential presence is checked; authentication is not tested. Select `passphrase` for a protected key or explicitly `unprotected` for a key without one. Unprotected mode ignores `SIGNING_PASSWORD` and supplies an empty password to Gradle. Run this check after adding or rotating signing secrets. A green result does not waive the native redistribution or SDK artifact gates.
 
+## Verified candidate
+
+Candidate `0.1.0` passed [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741) and [Linux/macOS checks](https://github.com/Debanshu777/Siren/actions/runs/45059952805) at `75602ac`. Central authentication and namespace access, native inventory, API/source tests, relocated consumers, sample hosts and candidate signing passed. Publishing/tag/release steps were skipped; the Central coordinate and release tag remain absent. See [CI evidence](../validation/ci-publication-readiness-0.1.0.json). This is readiness for the publication step, not proof of server-side bundle validation or public delivery.
+
 ## Release configuration
 
 The library uses Vanniktech Maven Publish and Dokka, following ShaderX's publishing approach. `sirenVersion` in root `gradle.properties` controls every target publication. The group is `io.github.debanshu777`; consumers use the root artifact `siren`, which selects Android, JVM or an iOS target through Gradle metadata.

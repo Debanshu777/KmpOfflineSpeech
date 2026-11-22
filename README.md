@@ -108,6 +108,9 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
+The `0.1.0` candidate passed [Linux/macOS CI](https://github.com/Debanshu777/Siren/actions/runs/45059952805) and [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741), including candidate signing. It remains unpublished.
+
+
 Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
 
 

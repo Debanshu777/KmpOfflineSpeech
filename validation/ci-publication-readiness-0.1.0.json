@@ -1,0 +1,236 @@
+{
+  "date": "2026-11-23",
+  "version": "0.1.0",
+  "checkedCommit": "75602acf7cd22fe139b249703d0aed5df6e2cc56",
+  "readyForPublicationStep": true,
+  "preflight": {
+    "runId": 45059983741,
+    "url": "https://github.com/Debanshu777/Siren/actions/runs/45059983741",
+    "conclusion": "success",
+    "publishRelease": false,
+    "keyProtection": "unprotected",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Require main before loading publication credentials",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Run actions/checkout@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-java@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run gradle/actions/setup-gradle@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install configured Android SDK packages",
+        "conclusion": "success"
+      },
+      {
+        "name": "Validate configured version, main commit, tags, Central absence and release notes",
+        "conclusion": "success"
+      },
+      {
+        "name": "Check publishing credential names without printing values",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify Central authentication and namespace without uploading",
+        "conclusion": "success"
+      },
+      {
+        "name": "Check native redistribution provenance and exact notices",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test source, build tooling and public ABI; compile all sample hosts",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native JVM inference using consumer-owned demo models",
+        "conclusion": "success"
+      },
+      {
+        "name": "Stage all KMP publications and validate an independent relocated consumer",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify packaged Desktop application construction",
+        "conclusion": "success"
+      },
+      {
+        "name": "Sign all candidate publications locally without uploading",
+        "conclusion": "success"
+      },
+      {
+        "name": "Recheck coordinate and tag before immutable reservation",
+        "conclusion": "success"
+      },
+      {
+        "name": "Reserve the release tag atomically",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Publish signed artifacts through Central Portal",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Verify public Central artifacts, metadata and signatures",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Resolve Central coordinates in an independent consumer and verify JVM native, Android and iOS",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Create the GitHub release only after Central consumer validation",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Record successful nonpublishing preflight",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload release verification reports",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run gradle/actions/setup-gradle@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-java@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformChecks": {
+    "runId": 45059952805,
+    "url": "https://github.com/Debanshu777/Siren/actions/runs/45059952805",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "build (ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "name": "build (macos-latest)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "candidateSigning": {
+    "publicationTasksExecuted": 5,
+    "localSignaturesIndependentlyVerified": 30,
+    "privateKeyOrPasswordRecorded": false
+  },
+  "centralAuthenticationVerified": true,
+  "centralNamespace": "io.github.debanshu777",
+  "nativeInventoryNoticeTexts": 33,
+  "nativeCompilerReviews": 4,
+  "androidMinimumSdk": 27,
+  "publicationExecuted": false,
+  "tagsCreated": false,
+  "releasesCreated": false,
+  "serverUploadValidationNotRun": true,
+  "ciReports": {
+    "nativeAuditReady": true,
+    "noticeTexts": 33,
+    "compilerReviews": 4,
+    "consumerPassed": true,
+    "consumerDependencyResolutionOffline": false,
+    "releaseVersion": "0.1.0",
+    "releaseCommit": "75602acf7cd22fe139b249703d0aed5df6e2cc56",
+    "tests": {
+      "buildTools": [
+        {
+          "suite": "TEST-NativeRedistributionNoticesTest.xml",
+          "tests": 6,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-SirenReleaseChecksTest.xml",
+          "tests": 7,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-SpeechArtifactsTest.xml",
+          "tests": 10,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "sdk": [
+        {
+          "suite": "TEST-io.github.debanshu.siren.speech.JvmSpeechEngineNativeTest.xml",
+          "tests": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-io.github.debanshu.siren.speech.SherpaModelsTest.xml",
+          "tests": 6,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-io.github.debanshu.siren.speech.SpeechEngineExtensionsTest.xml",
+          "tests": 4,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-io.github.debanshu.siren.speech.SpeechEngineTest.xml",
+          "tests": 6,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ],
+      "consumer": [
+        {
+          "suite": "TEST-consumer.PublishedApiTest.xml",
+          "tests": 4,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        },
+        {
+          "suite": "TEST-consumer.PublishedJvmNativeTest.xml",
+          "tests": 1,
+          "skipped": 0,
+          "failures": 0,
+          "errors": 0
+        }
+      ]
+    }
+  },
+  "finalAbsenceChecks": {
+    "releaseTagAbsent": true,
+    "centralPomHttpStatus": 404
+  }
+}
