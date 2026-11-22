@@ -4,5 +4,5 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
-rootProject.name = "KmpOfflineSpeech"
-include(":composeApp", ":androidApp")
+rootProject.name = "SirenProject"
+include(":siren", ":sample:composeApp", ":sample:androidApp", ":sample:desktopApp")

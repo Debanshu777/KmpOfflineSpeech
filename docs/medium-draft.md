@@ -1,12 +1,12 @@
 # Run Speech-to-Text and Text-to-Speech Models on device in Kotlin Multiplatform
 
-Load Whisper and KittenTTS on Android and iOS, then connect them to a small Compose screen.
+Load Whisper and KittenTTS on Android, iOS and desktop, then connect them to a small Compose screen.
 
 I wanted a small demo that could record a sentence, turn it into editable text, and read it back on the device. This is the speech integration behind that demo, starting from an existing Kotlin Multiplatform app.
 
-We’ll use Whisper for recognition, KittenTTS for synthesis, and sherpa-onnx to run both. The [complete project](https://github.com/Debanshu777/KmpOfflineSpeech) is available if you want the full adapters and build files. Here, I’ll focus on the model files, the platform calls, and the UI that connects them.
+We’ll use Whisper for recognition, KittenTTS for synthesis, and sherpa-onnx to run both. First, I’ll walk through the model files, platform calls and a small UI. The [complete project](https://github.com/Debanshu777/Siren) is available alongside the guide. At the end, I’ll show how Siren turns this wiring into an SDK you can reuse.
 
-![Record, transcribe and play in the actual Android app](images/speech-demo.gif)
+![Record, transcribe and play in the actual Android app](images/siren-demo.gif)
 
 *The actual Android app. For this repeatable recording, the phone’s microphone captures a synthesized sentence played through its speaker.*
 
@@ -29,42 +29,41 @@ models/
 
 Download Whisper’s encoder, decoder and tokens from this [pinned export](https://huggingface.co/csukuangfj/sherpa-onnx-whisper-tiny/tree/65176e2deb88badc814a94058666cadccc29b61c). Kitten needs the [Nano archive](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2) plus the separate [English lexicon](https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/lexicon-en-us.txt). The ONNX file alone isn’t enough: Kitten also needs its voice data, tokens and lexicon.
 
-## 2. Prepare the Android and iOS runtimes
+## 2. Prepare the runtimes
 
 Android uses the [sherpa-onnx 2.0.1 AAR](https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-2.0.1.aar), which includes its native runtime. On iOS, use `SherpaOnnxC.xcframework` and the matching `onnxruntime.xcframework` referenced by the [tagged package manifest](https://github.com/k2-fsa/sherpa-onnx/blob/v2.0.1/Package.swift).
 
-I’ve kept preparation in Gradle. In the companion project, these tasks download and verify the pinned files:
+I’ve kept preparation in Gradle. The companion project has two parts:
+
+```text
+siren/                 # model configuration, inference and native runtime
+sample/composeApp/     # Compose UI, controller, microphone and playback
+sample/androidApp/     # Android host
+sample/iosApp/         # iOS host
+sample/desktopApp/     # desktop JVM host
+```
+
+The SDK has no UI dependency and ships no model weights. The sample selects its own files. These tasks prepare the runtime and the sample's assets:
 
 ```bash
-./gradlew prepareAndroidSpeech
-./gradlew prepareIosSpeech
+./gradlew prepareAndroidRuntime prepareAndroidSpeech
+./gradlew prepareIosSpeech prepareSpeechModels
+./gradlew prepareJvmRuntime
 ```
 
-For your own app, bring over the [dependency manifest](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/scripts/dependencies.json), the [Gradle preparation tasks](https://github.com/Debanshu777/KmpOfflineSpeech/tree/main/buildSrc), and their [registration in the root build](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/build.gradle.kts). They produce the Android AAR and model assets, plus the iOS frameworks and models. The checksums and download handling live there so they don’t take over this tutorial.
-
-In `composeApp/build.gradle.kts`, wire the generated AAR into `androidMain.dependencies`:
+For your own project, bring over the [dependency manifest](https://github.com/Debanshu777/Siren/blob/main/scripts/dependencies.json), the [typed preparation tasks](https://github.com/Debanshu777/Siren/tree/main/buildSrc), and their [root build registration](https://github.com/Debanshu777/Siren/blob/main/build.gradle.kts). They verify downloads before extraction. On Android, the runtime task extracts the Kotlin wrapper JAR and supported JNI libraries from the upstream AAR. In the SDK build:
 
 ```kotlin
-val prepareAndroidSpeech = rootProject.tasks
-    .named<PrepareAndroidSpeech>("prepareAndroidSpeech")
-
+val runtime = rootProject.tasks
+    .named<PrepareAndroidRuntime>("prepareAndroidRuntime")
 // Inside androidMain.dependencies:
-implementation(files(prepareAndroidSpeech.flatMap { it.runtimeAar })
-    .builtBy(prepareAndroidSpeech))
+implementation(files(runtime.flatMap { it.classesJar }).builtBy(runtime))
+// Inside KotlinMultiplatformAndroidComponentsExtension.onVariants:
+variant.sources.jniLibs?.addGeneratedSourceDirectory(
+    runtime, PrepareAndroidRuntime::jniLibsDirectory)
 ```
 
-Also register the generated assets directory. This makes Android assembly wait for preparation:
-
-```kotlin
-extensions.configure<KotlinMultiplatformAndroidComponentsExtension> {
-    onVariants { variant ->
-        variant.sources.assets?.addGeneratedSourceDirectory(
-            prepareAndroidSpeech, PrepareAndroidSpeech::assetsDirectory)
-    }
-}
-```
-
-Use the fully qualified `com.android.build.api.variant.KotlinMultiplatformAndroidComponentsExtension` or import it. On iOS, add the prepared `models` folder to the host app as a folder resource, preserving paths such as `models/whisper/tiny-tokens.txt`. Keep downloaded weights and binaries out of Git.
+Keep the wrapper's JNI classes with the [consumer rules](https://github.com/Debanshu777/Siren/blob/main/siren/consumer-rules.pro). The [SDK build](https://github.com/Debanshu777/Siren/blob/main/siren/build.gradle.kts) also packages runtime notices. The sample registers `PrepareAndroidSpeech.assetsDirectory` as generated Android assets; on iOS, its host includes the prepared `models` folder as a folder resource. Preserve paths such as `models/whisper/tiny-tokens.txt` and keep downloaded weights out of Git.
 
 ## 3. Define the shared speech interface
 
@@ -72,23 +71,28 @@ In `commonMain`, represent a mono recording as samples plus its actual sample ra
 
 ```kotlin
 data class PcmAudio(val samples: FloatArray, val sampleRate: Int)
-interface SpeechPlatform {
+interface SpeechEngine {
+    val capabilities: SpeechCapabilities
+    suspend fun transcribe(audio: PcmAudio): String
+    suspend fun synthesize(text: String): PcmAudio
+    suspend fun close()
+}
+interface SpeechPlatform : SpeechEngine {
     suspend fun requestMicrophonePermission(): Boolean
     suspend fun startRecording()
     suspend fun stopRecording(): PcmAudio
-    suspend fun transcribe(audio: PcmAudio): String
-    suspend fun synthesize(text: String): PcmAudio
     suspend fun play(audio: PcmAudio)
     suspend fun stop()
-    suspend fun close()
 }
 ```
+
+`SpeechCapabilities` reports which operations are available and their model labels. Siren keeps PCM in `io.github.debanshu.siren.audio`, inference contracts in `.speech`, and the demo’s UI/audio hosts in `.sample`. The [full engine contract](https://github.com/Debanshu777/Siren/blob/main/siren/src/commonMain/kotlin/io/github/debanshu/siren/speech/SpeechEngine.kt) also defines separate recognition and synthesis providers.
 
 Use float PCM in roughly `-1f..1f`, and reject empty recordings or invalid rates. Keep the captured rate: labelling 48 kHz samples as 16 kHz changes their timing. Pass the original rate to sherpa, which resamples internally.
 
 ## 4. Load and run the models on Android
 
-The AAR provides the `com.k2fsa.sherpa.onnx` classes. Copy the packaged assets to `context.filesDir/models` on `Dispatchers.IO`; the configuration below uses filesystem paths. Run model creation and inference on `Dispatchers.Default` so they don’t block the screen.
+The extracted wrapper provides the `com.k2fsa.sherpa.onnx` classes. Native configuration uses filesystem paths, so copy bundled assets into private app storage on `Dispatchers.IO`, or use caller-supplied local files. Run model creation and inference on `Dispatchers.Default` so they don’t block the screen.
 
 For Whisper, supply the encoder, decoder and token paths:
 
@@ -149,33 +153,19 @@ try {
 } finally { tts.release() }
 ```
 
-Use the generated sample rate for playback. This demo creates a session per call, trading repeated loading for straightforward cleanup. The [Android adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/androidMain/kotlin/com/debanshu777/speech/AndroidSpeechPlatform.kt) contains the complete functions.
+Use the generated sample rate for playback. This demo creates a session per call, trading repeated loading for straightforward cleanup. The [Android engine](https://github.com/Debanshu777/Siren/blob/main/siren/src/androidMain/kotlin/io/github/debanshu/siren/speech/AndroidSpeechEngine.kt) contains the complete providers and resolves their configured file paths.
 
 ## 5. Call the same models from iOS
 
-On iOS, Kotlin/Native calls sherpa’s C API. The sample’s `speech_audio.h` includes `sherpa-onnx/c-api/c-api.h`; its `speech.def` contains:
+On iOS, Kotlin/Native calls sherpa’s C API. The SDK’s `sherpa.def` starts with:
 
 ```properties
-headers = speech_audio.h
-package = com.debanshu777.speech.native
+headers = sherpa-onnx/c-api/c-api.h
+package = io.github.debanshu.siren.internal.native
+linkerOpts = -lc++ -framework Foundation -framework CoreML -framework CoreFoundation -framework Accelerate
 ```
 
-Choose the device or simulator slice in the shared Gradle build:
-
-```kotlin
-val slice = if (target.name == "iosArm64")
-    "ios-arm64" else "ios-arm64_x86_64-simulator"
-val sherpa = rootProject.file("libs/ios/SherpaOnnxC.xcframework/$slice")
-val ort = rootProject.file("libs/ios/onnxruntime.xcframework/$slice")
-val interop = target.compilations.getByName("main")
-    .cinterops.create("speechNative") {
-        defFile("src/iosMain/cinterop/speech.def")
-        compilerOpts("-I${file("src/iosMain/cinterop")}",
-            "-I$sherpa/SherpaOnnxC.framework/Headers")
-    }
-```
-
-Link `SherpaOnnxC`, `onnxruntime`, C++, the sample’s audio bridge and its Apple framework dependencies. Make cinterop and framework linking depend on the matching `prepareIosAudioIosArm64` or `prepareIosAudioIosSimulatorArm64` task. The exact [linker options and task wiring](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/build.gradle.kts) are in the shared build file.
+Select the device or simulator XCFramework slice and pass its headers to cinterop. Siren’s [Gradle wiring](https://github.com/Debanshu777/Siren/blob/main/siren/build.gradle.kts) generates the final definition with `staticLibraries` and `libraryPaths`, embedding both native archives in the resulting KLIB. That lets another Kotlin project link the SDK without referring back to this checkout’s frameworks. The sample’s AVFoundation bridge has its own cinterop and stays outside the SDK.
 
 Resolve model paths under `NSBundle.mainBundle.resourcePath`. Inside `memScoped`, with `ExperimentalForeignApi` enabled, zero the config before filling it:
 
@@ -233,13 +223,31 @@ config.max_num_sentences = 1
 config.silence_scale = 0.2f
 ```
 
-Create the TTS handle with `SherpaOnnxCreateOfflineTts`. Zero a `SherpaOnnxGenerationConfig`, set `sid = 0` and `speed = 1f`, then call `SherpaOnnxOfflineTtsGenerateWithConfig`. Copy the returned samples into a Kotlin `FloatArray` and retain their sample rate before destroying the generated audio and TTS handle. The [iOS adapter](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/com/debanshu777/speech/IosSpeechPlatform.kt) shows the full allocation and cleanup sequence.
+Create the TTS handle with `SherpaOnnxCreateOfflineTts`. Zero a `SherpaOnnxGenerationConfig`, set the speaker ID and speed, then call `SherpaOnnxOfflineTtsGenerateWithConfig`. Copy the returned samples into a Kotlin `FloatArray` and retain their sample rate before destroying the generated audio and TTS handle. The [iOS engine](https://github.com/Debanshu777/Siren/blob/main/siren/src/iosMain/kotlin/io/github/debanshu/siren/speech/IosSpeechEngine.kt) shows the full allocation and cleanup sequence.
 
-## 6. Connect the microphone and speaker
+## 6. Run the models on desktop
+
+Desktop uses sherpa’s separate [Java wrapper and native JARs](https://github.com/k2-fsa/sherpa-onnx/releases/tag/v2.0.1). Keep the native resources under `sherpa-onnx/native/<os-arch>/`; the upstream loader selects the platform, extracts the libraries and loads ONNX Runtime before JNI. The [JVM preparation task](https://github.com/Debanshu777/Siren/blob/main/buildSrc/src/main/kotlin/PrepareJvmRuntime.kt) packages these resources without model weights.
+
+The Java API uses builders rather than Android’s Kotlin configuration classes:
+
+```kotlin
+val whisper = OfflineWhisperModelConfig.builder()
+    .setEncoder(encoderPath).setDecoder(decoderPath)
+    .setLanguage("en").setTask("transcribe").build()
+val model = OfflineModelConfig.builder().setWhisper(whisper)
+    .setTokens(tokensPath).setNumThreads(2).setProvider("cpu").build()
+val recognizer = OfflineRecognizer(
+    OfflineRecognizerConfig.builder().setOfflineModelConfig(model).build())
+```
+
+Create a stream, accept the PCM at its actual rate, decode and release the stream and recognizer as on Android. Kitten uses the Java TTS builders. The [complete JVM adapter](https://github.com/Debanshu777/Siren/blob/main/siren/src/jvmMain/kotlin/io/github/debanshu/siren/speech/JvmSpeechEngine.kt) also materializes classpath model resources into engine-owned temporary files and removes them on close. The sample uses JavaSound for capture and playback; its operating system handles microphone permission.
+
+## 7. Connect the microphone and speaker
 
 Android’s adapter records mono PCM16 with `AudioRecord`, converts shorts using `sample / 32768f`, and plays generated float PCM through `AudioTrack`. Stop and release capture before transcription; finish queued playback before releasing the output track.
 
-On iOS, a small [AVFoundation bridge](https://github.com/Debanshu777/KmpOfflineSpeech/tree/main/composeApp/src/iosMain/cinterop) captures the hardware format, mixes channels to mono, and preserves the rate. Kotlin copies and frees its returned buffer. Playback uses `AVAudioPlayer`.
+On iOS, a small [AVFoundation bridge](https://github.com/Debanshu777/Siren/tree/main/sample/composeApp/src/iosMain/cinterop) captures the hardware format, mixes channels to mono, and preserves the rate. Kotlin copies and frees its returned buffer. Playback uses `AVAudioPlayer`.
 
 Android needs `RECORD_AUDIO` in the manifest and a runtime permission request. iOS needs recording permission and this `Info.plist` entry:
 
@@ -248,9 +256,9 @@ Android needs `RECORD_AUDIO` in the manifest and a runtime permission request. i
 <string>Record a short clip for speech recognition on this device.</string>
 ```
 
-## 7. Add a small Compose screen
+## 8. Add a small Compose screen
 
-The UI only needs a Record button, an editable transcript, and Speak. A shared [SpeechController](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/commonMain/kotlin/com/debanshu777/speech/SpeechController.kt) owns the current operation and exposes a `StateFlow<SpeechUiState>`.
+The UI only needs a Record button, an editable transcript, and Speak. A shared [SpeechController](https://github.com/Debanshu777/Siren/blob/main/sample/composeApp/src/commonMain/kotlin/io/github/debanshu/siren/sample/SpeechController.kt) owns the current operation and exposes a `StateFlow<SpeechUiState>`.
 
 Here’s the wiring using that controller. This is a smaller view of the same interaction shown in the GIF; the finished app adds the circular control and elapsed timer.
 
@@ -270,7 +278,7 @@ fun SpeechScreen(platform: SpeechPlatform) {
         .verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
-            enabled = idle || recording,
+            enabled = (idle || recording) && state.capabilities.recognition,
             onClick = {
                 if (recording) controller.transcribe() else controller.record()
             },
@@ -283,7 +291,7 @@ fun SpeechScreen(platform: SpeechPlatform) {
             modifier = Modifier.fillMaxWidth(),
         )
         Button(onClick = controller::speak,
-            enabled = idle && state.text.isNotBlank()) { Text("Speak") }
+            enabled = idle && state.text.isNotBlank() && state.capabilities.synthesis) { Text("Speak") }
         if (!idle) {
             TextButton(onClick = controller::stop,
                 enabled = state.phase != Phase.Stopping) { Text("Cancel") }
@@ -298,12 +306,39 @@ fun SpeechScreen(platform: SpeechPlatform) {
 
 The disabled controls prevent overlapping actions. The controller stops recordings at 20 seconds and limits TTS input to 500 characters. It serializes operations and cleanup because cancelling a coroutine doesn’t instantly stop a native decode. `ON_STOP` stops audio when the app leaves the foreground; disposal closes the adapter.
 
-Pass an `AndroidSpeechPlatform` from the Android activity or an `IosSpeechPlatform` from the iOS entry point. Both implement the contract above, so this Compose code stays in `commonMain`. See the [Android host](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/androidApp/src/main/kotlin/com/debanshu777/speech/android/MainActivity.kt) for permission callback registration and the [iOS entry point](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/composeApp/src/iosMain/kotlin/com/debanshu777/speech/MainViewController.kt) for its adapter creation.
+Pass an `AndroidSpeechPlatform` from the Android activity or an `IosSpeechPlatform` from the iOS entry point. Both implement the contract above, so this Compose code stays in `commonMain`. See the [Android host](https://github.com/Debanshu777/Siren/blob/main/sample/androidApp/src/main/kotlin/io/github/debanshu/siren/sample/android/MainActivity.kt) for permission callback registration and the [iOS entry point](https://github.com/Debanshu777/Siren/blob/main/sample/composeApp/src/iosMain/kotlin/io/github/debanshu/siren/sample/MainViewController.kt) for its adapter creation.
 
 ## Try the complete flow
 
 Record a sentence, transcribe it, change a few words, then tap Speak. Repeat with the network off. Also try denying microphone access and cancelling playback.
 
-The Pixel 9 UI run completed recording → transcription → speech playback and returned to Ready. Earlier acoustic testing misheard “brown” as “round”; the [verification notes](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/docs/development.md) preserve both results. The iOS host was built and launched in the simulator, with a separate native model roundtrip. Physical iPhone audio remains unverified.
+## Use Siren to skip the repeated wiring
 
-This is a short, foreground-only demo; streaming and audio-route recovery can come later. The [README](https://github.com/Debanshu777/KmpOfflineSpeech#readme) has build requirements and run commands, and [third-party notices](https://github.com/Debanshu777/KmpOfflineSpeech/blob/main/THIRD_PARTY_NOTICES.md) cover the bundled runtimes and models.
+The code above became **Siren**, a UI-free Kotlin Multiplatform SDK. It keeps file resolution, model configuration, native inference and cleanup behind a shared `SpeechEngine`. Your app supplies the model files and owns its screen, microphone and speaker. That is the work it saves when you add speech to another app.
+
+With a `SherpaModels` configuration, the Android call site becomes:
+
+```kotlin
+val engine = createAndroidSpeechEngine(applicationContext, models)
+try {
+    val transcript = engine.transcribe(recording)
+    val replyAudio = engine.synthesize(transcript)
+    // Send replyAudio to your own playback adapter.
+} finally {
+    engine.close()
+}
+```
+
+The SDK is available as source, with local Maven staging for consumer validation; it is not on Maven Central yet. The sample’s `SampleModels.bundledDemo()` explicitly selects both bundled models; the SDK factories require a configuration. To remove one capability, change the engine configuration rather than the screen:
+
+```kotlin
+val models = SampleModels.bundledDemo().copy(recognition = null)
+val engine = createAndroidSpeechEngine(applicationContext, models)
+val platform = createAndroidSpeechPlatform(this, engine)
+```
+
+This is synthesis-only; use `synthesis = null` for recognition-only. iOS uses `IosSpeechPlatform(createIosSpeechEngine(models))`; desktop creates its engine with `createJvmSpeechEngine(models)`. For another compatible export, descriptors accept bundled or local files. For a different model family, implement `SpeechRecognizer` or `SpeechSynthesizer` and compose a `ModelSpeechEngine`. The [configuration guide](https://github.com/Debanshu777/Siren/blob/main/docs/model-configuration.md) shows those cases. Runtime selection does not remove assets already packaged by the sample build.
+
+The Pixel 9 UI run completed recording → transcription → speech playback and returned to Ready. Earlier acoustic testing misheard “brown” as “round”; the [verification notes](https://github.com/Debanshu777/Siren/blob/main/docs/development.md) preserve both results. The iOS host was built and launched in the simulator, with a separate native model roundtrip. Desktop inference also passed on macOS arm64, including a consumer outside the SDK checkout. Physical iPhone and desktop microphone/playback remain unverified; the other desktop runtime payloads are packaged but untested.
+
+This is a short, foreground-only demo; streaming and audio-route recovery can come later. The [README](https://github.com/Debanshu777/Siren#readme) has build requirements and run commands, and [third-party notices](https://github.com/Debanshu777/Siren/blob/main/THIRD_PARTY_NOTICES.md) cover the bundled runtimes and models.

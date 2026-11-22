@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-22",
+  "platform": {
+    "os": "macOS",
+    "architecture": "arm64"
+  },
+  "sourceClasspathSmoke": {
+    "passed": true,
+    "sampleRate": 24000,
+    "samples": 59936,
+    "transcript": "The quick brown fox jumps over the lazy dog.",
+    "scope": "desktop classpath models and JVM SDK; no microphone or speaker"
+  },
+  "packagedClasspathSmoke": {
+    "passed": true,
+    "sampleRate": 24000,
+    "samples": 59898,
+    "transcript": "The quick brown fox jumps over the lazy dog.",
+    "scope": "desktop classpath models and JVM SDK; no microphone or speaker"
+  },
+  "packaging": {
+    "passed": true,
+    "command": "JAVA_HOME=/path/to/supported-full-jdk ./gradlew :sample:desktopApp:createDistributable --offline",
+    "jdkVendor": "JetBrains s.r.o.",
+    "jdkVersion": "21.0.10",
+    "jdkVendorGuardDisabled": false,
+    "appBundle": "sample/desktopApp/build/compose/binaries/main/app/Siren.app",
+    "packagedMicrophoneUsageDescription": true
+  },
+  "packagedClasspathCommand": "/path/to/full-jdk/bin/java -cp \"/absolute/path/to/Siren.app/Contents/app/*\" io.github.debanshu.siren.sample.desktop.NativeSpeechSmokeKt",
+  "launch": {
+    "nativeExecutableStarted": true,
+    "visualConfirmation": true,
+    "executable": "sample/desktopApp/build/compose/binaries/main/app/Siren.app/Contents/MacOS/Siren",
+    "note": "Actual packaged Siren window inspected in Ready state, with record control, transcript and playback controls visible."
+  },
+  "audioHardware": {
+    "microphoneOpened": false,
+    "speakerOpened": false
+  },
+  "notTested": [
+    "JavaSound microphone capture",
+    "JavaSound speaker playback",
+    "Linux runtime",
+    "Windows runtime",
+    "Desktop audio-device changes or interruption recovery"
+  ],
+  "screenshot": "docs/images/desktop-siren-macos.jpg"
+}

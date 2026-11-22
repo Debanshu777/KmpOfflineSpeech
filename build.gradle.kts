@@ -16,20 +16,36 @@ val prepareSpeechModels = tasks.register<PrepareSpeechModels>("prepareSpeechMode
     offline.set(gradle.startParameter.isOffline)
     modelDirectory.set(layout.projectDirectory.dir("models"))
 }
-tasks.register<PrepareAndroidSpeech>("prepareAndroidSpeech") {
+tasks.register<PrepareAndroidRuntime>("prepareAndroidRuntime") {
     group = "speech setup"
-    description = "Prepare the official speech AAR and generated Android model assets"
+    description = "Prepare the SDK's pinned wrapper JAR, supported JNI libraries and runtime notices"
     manifestFile.set(speechManifest)
     downloadCache.set(speechCache)
     offline.set(gradle.startParameter.isOffline)
+    runtimeAar.set(layout.projectDirectory.file("siren/build/generated/androidRuntime/sherpa-onnx-2.0.1.aar"))
+    classesJar.set(layout.projectDirectory.file("siren/build/generated/androidRuntime/sherpa-onnx-classes.jar"))
+    jniLibsDirectory.set(layout.projectDirectory.dir("siren/build/generated/androidRuntime/jniLibs"))
+    noticesDirectory.set(layout.projectDirectory.dir("siren/build/generated/androidRuntime/notices"))
+}
+tasks.register<PrepareJvmRuntime>("prepareJvmRuntime") {
+    group = "speech setup"
+    description = "Prepare the portable SDK JVM wrapper and six pinned desktop native resource sets"
+    manifestFile.set(speechManifest)
+    downloadCache.set(speechCache)
+    offline.set(gradle.startParameter.isOffline)
+    wrapperJar.set(layout.projectDirectory.file("siren/build/generated/jvmRuntime/sherpa-onnx-jvm-2.0.1.jar"))
+    embeddedClassesDirectory.set(layout.projectDirectory.dir("siren/build/generated/jvmRuntime/classes"))
+    resourcesDirectory.set(layout.projectDirectory.dir("siren/build/generated/jvmRuntime/resources"))
+}
+tasks.register<PrepareAndroidSpeech>("prepareAndroidSpeech") {
+    group = "speech setup"
+    description = "Prepare sample-only Android model assets"
     modelDirectory.set(prepareSpeechModels.flatMap { it.modelDirectory })
-    runtimeAar.set(layout.projectDirectory.file("composeApp/libs/sherpa-onnx-2.0.1.aar"))
-    assetsDirectory.set(layout.projectDirectory.dir("composeApp/build/generated/speechAssets"))
+    assetsDirectory.set(layout.projectDirectory.dir("sample/composeApp/build/generated/speechAssets"))
 }
 val prepareIosSpeech = tasks.register<PrepareIosSpeech>("prepareIosSpeech") {
     group = "speech setup"
-    description = "Prepare pinned Apple speech frameworks and models"
-    dependsOn(prepareSpeechModels)
+    description = "Prepare pinned SDK Apple speech runtime frameworks"
     manifestFile.set(speechManifest)
     downloadCache.set(speechCache)
     offline.set(gradle.startParameter.isOffline)
@@ -44,7 +60,7 @@ listOf("IosArm64" to "iosArm64", "IosSimulatorArm64" to "iosSimulatorArm64").for
         target.set(targetName)
         deploymentTarget.set("18.5")
         toolchainIdentity.set(providers.exec { commandLine("xcodebuild", "-version") }.standardOutput.asText)
-        bridgeDirectory.set(layout.projectDirectory.dir("composeApp/src/iosMain/cinterop"))
+        bridgeDirectory.set(layout.projectDirectory.dir("sample/composeApp/src/iosMain/cinterop"))
         val slice = if (targetName == "iosArm64") "ios-arm64" else "ios-arm64_x86_64-simulator"
         sherpaHeaders.set(prepareIosSpeech.flatMap { it.sherpaFramework.dir("$slice/SherpaOnnxC.framework/Headers") })
         archiveFile.set(layout.projectDirectory.file("libs/ios/audio/$targetName/libspeech_audio.a"))

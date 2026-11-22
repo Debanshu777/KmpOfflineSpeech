@@ -1,0 +1,4 @@
+headers = speech_audio.h
+headerFilter = speech_audio.h
+package = io.github.debanshu.siren.sample.internal.audio
+linkerOpts = -lc++ -framework Foundation -framework AVFoundation -framework AudioToolbox

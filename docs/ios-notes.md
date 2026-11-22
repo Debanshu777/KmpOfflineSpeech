@@ -1,53 +1,44 @@
 # iOS integration notes
 
-The shared Kotlin UI calls `IosSpeechPlatform`. Recognition and synthesis call the
-pinned sherpa-onnx C API through Kotlin/Native cinterop. The small Objective-C++
-file only captures and plays audio using AVFoundation; it contains no model logic.
+The SDK `createIosSpeechEngine(models)` composes optional Whisper/Kitten providers through the pinned sherpa C API. It requires an explicit `SherpaModels`; no weights or preset are supplied by `:siren`. The sample passes `SampleModels.bundledDemo()` to the factory, then injects the engine into `sample.platform.IosSpeechPlatform` for AVFoundation audio and permission handling.
 
-Kotlin sources use `com.debanshu777.speech`; `speech.def` generates bindings in `com.debanshu777.speech.native`, which the adapter imports. The exported Swift framework remains `SpeechApp` with `MainViewControllerKt.MainViewController()` as its entry point. The host bundle ID remains `dev.debanshu.offlinespeech`; see [package and installation identities](architecture.md#packages-and-installation-identities).
+## SDK and audio native payloads
 
-The Gradle tasks `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64`
-compile that audio file using full Xcode. They depend on `prepareIosSpeech`, which
-prepares the pinned frameworks and models. Native cinterop and linking invoke the
-matching task automatically, so opening and building the Xcode host prepares its
-own inputs. For explicit setup, run `./gradlew prepareIosSpeech`. Gradle compiles
-the Kotlin framework against the selected headers. The Xcode host links the static sherpa,
-ONNX Runtime and audio bridge libraries into the final application.
+`siren/src/iosMain/cinterop/sherpa.def` declares bindings in `io.github.debanshu.siren.internal.native`. For each target, `:siren:bundleSherpaCinteropIosArm64` or `:siren:bundleSherpaCinteropIosSimulatorArm64` prepares a generated definition and copies the sherpa/ONNX static archives beside it. The generated `staticLibraries`/`libraryPaths` entries embed those archive bytes into the cinterop KLIB.
 
-Open `iosApp/iosApp.xcodeproj`, select the OfflineSpeech scheme and an iOS 18.5+
-arm64 simulator on an Apple Silicon Mac, and run. A physical device also needs your development signing team.
-This sample declares `iosArm64` and `iosSimulatorArm64`; an Intel simulator target
-is not included.
-The host minimum is iOS 18.5 because the pinned Compose toolchain includes an ICU
-object built for that baseline. This is a sample compatibility choice, not a
-general minimum for sherpa-onnx or Kotlin Multiplatform.
-The checked-in host copies the `models` folder as a folder resource and builds
-the Kotlin framework in an Xcode build phase. Keep User Script Sandboxing disabled
-for that Gradle phase. No Xcode project generator is required.
+The sample's `sample/composeApp/src/iosMain/cinterop/audio.def` separately generates `.sample.internal.audio` bindings. `prepareIosAudioIosArm64` and `prepareIosAudioIosSimulatorArm64` compile the small Objective-C++ AVFoundation bridge with full Xcode. Sample `bundleAudioCinterop...` tasks embed that archive in its audio KLIB. The bridge contains no model inference.
 
-The microphone's native rate may be 44.1 or 48 kHz. Capture averages input channels
-to mono float samples and keeps the real sample rate. `SherpaOnnxAcceptWaveformOffline`
-resamples those samples for Whisper; labelling them as 16 kHz would distort the
-recording. The native buffer is capped at 20 seconds. Kitten's returned sample rate
-is used for playback instead of reusing the microphone rate.
+Cinterop processing and framework linking declare their preparation dependencies. `prepareIosSpeech` prepares runtime frameworks only; it does not download weights. Sample framework linking additionally prepares `models/`. Runtime-only SDK compilation can run independently:
 
-Inference runs on `Dispatchers.Default` under one mutex. Each call owns its native
-session and frees its stream/results/audio in `finally`. Cancelling a coroutine
-cannot interrupt a synchronous decode already in progress, but its result is
-discarded. `close()` waits for native work before releasing audio handles. This
-sample is intended for short foreground clips; it has no background recording or
-route/interruption recovery. Stop and retry after an interruption.
+```bash
+./gradlew :siren:compileKotlinIosSimulatorArm64
+```
+
+The sample exports static `SirenApp.framework`. Its Xcode host searches for that generated framework and links Apple system libraries; it has no raw sherpa/ONNX `-F` paths or local native archive search paths. The [recorded relocated consumer](../validation/published-consumer-verification.json) dynamically linked both arm64 iOS targets from copied Maven artifacts without checkout-native paths. This verifies dependency closure for that snapshot, not physical audio or arbitrary toolchains. See [distribution status](library-design.md).
+
+## Run the sample
+
+```bash
+open sample/iosApp/iosApp.xcodeproj
+```
+
+Choose the **Siren** scheme and an iOS 18.5+ arm64 simulator on an Apple Silicon Mac. Physical devices need your signing team. The build declares `iosArm64` and `iosSimulatorArm64`, not Intel simulator support. The 18.5 host minimum reflects an ICU object in the pinned Compose toolchain, not a universal sherpa/KMP minimum.
+
+The Xcode phase changes to the repository root and invokes `:sample:composeApp:embedAndSignAppleFrameworkForXcode`. Keep User Script Sandboxing disabled for that phase. Swift imports `SirenApp` and calls `MainViewControllerKt.MainViewController()`. The host bundle ID remains `dev.debanshu.offlinespeech`.
+
+The host copies root `models` as a folder resource, retaining paths such as `models/whisper/tiny-tokens.txt`. It declares `NSMicrophoneUsageDescription` and `CADisableMinimumFrameDurationOnPhone`. SDK users supplying `ModelFile.Local` own their file installation and need not package the sample models.
+
+## Audio and lifetime
+
+AVAudioEngine captures the input's actual rate, commonly 44.1 or 48 kHz, averages channels to mono and caps storage at 20 seconds. The SDK passes that rate to `SherpaOnnxAcceptWaveformOffline`, which resamples for Whisper. Merely labelling samples as 16 kHz would change their meaning. Playback uses the synthesizer's returned rate.
+
+SDK inference runs on Default under engine ownership. Each operation creates and frees its native session, streams/results and generated buffers in `finally`. Cancellation suppresses obsolete results after synchronous native work returns; teardown must wait. Sample audio handles stay on Main, and its controller closes the engine on disposal. Background recording and automatic route/interruption recovery are not implemented.
 
 ## Native runtime smoke test
 
-The recorded [iOS native result](ios-native-smoke.json) generated a short KittenTTS
-phrase at 24 kHz and passed the returned PCM and rate to Whisper, which recognized
-the phrase. This verifies the pinned C API runtime and model pair on an iOS
-simulator. It does not exercise the Kotlin adapter, microphone capture or speaker
-output. The [UI capture](demo.md) separately verifies the Compose app launches.
+The historical [C API result](ios-native-smoke.json) checks a synthetic Kitten-to-Whisper roundtrip on a simulator. It does not validate an iPhone microphone/speaker or the extracted Kotlin SDK. The diagnostic intentionally links downloaded frameworks directly; this is separate from the sample/SDK KLIB distribution path.
 
-To reproduce from the repository root after setup, with an arm64 simulator already
-booted (and only one simulator booted when using `booted`):
+After `./gradlew prepareIosSpeech prepareSpeechModels`, with an arm64 simulator booted:
 
 ```sh
 mkdir -p build
@@ -63,10 +54,8 @@ xcrun --sdk iphonesimulator clang++ -std=c++17 -O2 \
 xcrun simctl spawn booted "$(pwd)/build/ios-native-smoke" "$(pwd)/models"
 ```
 
-The executable prints JSON and returns a nonzero exit status unless the transcript
-contains `quick`, `brown` and `fox`. Its optional argument is the model directory;
-without it the executable uses `models` relative to its working directory.
+Use only one booted simulator when targeting `booted`. The executable prints JSON and requires `quick`, `brown` and `fox` in the transcript. See [development](development.md) for current build/consumer evidence and [demo notes](demo.md) for capture provenance.
 
 ## Recent Changes
 
-- Renamed the shared Kotlin code and C interop bindings to `com.debanshu777.speech`, keeping the exported Swift entry point and host installation identity stable.
+Embedded SDK/audio static archives in separate KLIBs and verified both iOS dynamic consumer links from relocated artifacts; the sample host retains only Kotlin framework/system linkage.

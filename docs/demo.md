@@ -2,19 +2,25 @@
 
 Record up to 20 seconds, stop and transcribe, edit the transcript, then Speak. The playback button becomes Stop while generating or playing speech. Cancel discards recording or transcription; synchronous native work may finish before cleanup.
 
-For the code behind these interactions, see [the tutorial's minimal Compose screen](medium-draft.md#7-add-a-small-compose-screen). It connects the same controller actions without the finished app's visual styling.
+For the code behind these interactions, see [the tutorial's minimal Compose screen](medium-draft.md#8-add-a-small-compose-screen). It connects the same controller actions without the finished app's visual styling.
 
-![Record, transcribe and play in the actual Android app](images/speech-demo.gif)
+![Record, transcribe and play in the actual Android app](images/siren-demo.gif)
 
 This GIF records the real Android UI. For a repeatable capture, a test fixture synthesizes a fixed sentence and plays it through the phone's speaker while the normal controller records the microphone. It then presses the real Stop & transcribe and Speak controls. The fixture never inserts a transcript or changes the UI phase directly. GIFs are silent; the physical audio-path evidence is recorded separately.
 
 ## Screenshots
 
-![Focused recorder on an iOS simulator](images/ios-simulator.png)
+![Focused recorder on an iOS simulator](images/ios-siren-simulator.png)
 
-![Focused recorder on Pixel 9](images/android-pixel9.png)
+![Focused recorder on Pixel 9](images/android-siren-pixel9.png)
 
-Capture environment: Pixel 9 / Android 17 and iPhone 17 arm64 simulator / iOS 27, 2026-11-21. Android media is cropped to the actual application area, excluding the system status bar, developer refresh-rate overlay and gesture bar. No application controls or results are painted over. The iOS screenshot is a complete simulator capture. Screenshots establish appearance; the [verification notes](development.md) distinguish native, acoustic and UI journey checks.
+Capture environment: Pixel 9 / Android 17 and iPhone 17 arm64 simulator / iOS 27, 2026-11-22. Android media is cropped to the actual application area, excluding the system status bar, developer refresh-rate overlay and gesture bar. No application controls or results are painted over. The iOS screenshot is a complete simulator capture. Screenshots establish appearance; the [verification notes](development.md) distinguish native, acoustic and UI journey checks.
+
+These captures show the extracted Siren sample. Configured model labels and available controls come from the selected providers; see [model configuration](model-configuration.md). The earlier `speech-demo.gif`, `ios-simulator.png` and `android-pixel9.png` remain historical captures for the 2026-11-21 evidence.
+
+![Focused recorder in the packaged macOS sample](images/desktop-siren-macos.jpg)
+
+The macOS arm64 package built and launched on 2026-11-22. Both its classpath-model and packaged-JAR model-only checks passed; the screenshot verifies the actual screen. Desktop microphone and audible playback have not been checked. See [desktop evidence](../sample/desktopApp/verification/macos-arm64-2026-11-22.json).
 
 ## Selected design direction
 
@@ -30,12 +36,16 @@ This design pass follows [Unslop](https://github.com/heydamir/unslop/blob/main/s
 
 ## Reproduce the UI journey
 
-With an unlocked phone and its built-in speaker/microphone available:
+Use an unlocked phone, an audible media volume, and the built-in speaker/microphone. Install the APKs with Gradle, grant microphone access before starting the fixture, then run the opt-in test:
 
 ```bash
-ANDROID_SERIAL=YOUR_SERIAL ./gradlew :androidApp:connectedDebugAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.demo=true \
-  -Pandroid.testInstrumentationRunnerArguments.class=com.debanshu777.speech.android.SpeechUiDemoTest
+ANDROID_SERIAL=YOUR_SERIAL ./gradlew :sample:androidApp:installDebug :sample:androidApp:installDebugAndroidTest
+adb -s YOUR_SERIAL shell pm grant dev.debanshu.speech.sample android.permission.RECORD_AUDIO
+adb -s YOUR_SERIAL shell am instrument -w -r -e demo true \
+  -e class io.github.debanshu.siren.sample.android.SpeechUiDemoTest \
+  dev.debanshu.speech.sample.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-The explicit flag permits sound and microphone access. The test temporarily raises media volume and restores it in `finally`. Capture the app with Android's `screenrecord`, then export the verified UI interval as an animated GIF. The shipped GIF uses 480 × 960 pixels, 8 fps, and a repeating loop. See the [Android host notes](../androidApp/README.md) for the separate acoustic test and exact recognition results.
+The fixture uses live Compose semantics callbacks rather than Espresso or an accessibility automation service. It requires permission and audible volume in advance and leaves the volume unchanged. The regular connected suite removes the installed sample afterward, so the separate install step matters for this capture recipe.
+
+The 2026-11-22 run passed in 16.947 seconds and recognized “The quick brown fox jumps over the lazy dog.” (44 characters, all six content words). See the [recorded result](../sample/androidApp/verification/siren-sdk-ui-2026-11-22.json). Capture with Android’s `screenrecord` and export the interval from the visible Ready screen through final Ready. The shipped Siren GIF uses 480 × 960 pixels, 8 fps, a 14.5-second actual interval and a repeating loop. Status bars and the developer overlay are cropped; app content is not altered.

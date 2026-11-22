@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-22",
+  "scope": "Siren SDK/sample extraction",
+  "device": {
+    "model": "Pixel 9",
+    "android": 17
+  },
+  "tests": {
+    "nativeModelRoundtrip": {
+      "passed": true,
+      "seconds": 4.838
+    },
+    "configurableLocalFiles": {
+      "passed": true,
+      "seconds": 5.435
+    },
+    "realUiJourney": {
+      "passed": true,
+      "seconds": 16.947,
+      "runner": "direct AndroidJUnitRunner after Gradle installation",
+      "fixture": "Live Compose semantics OnClick actions; actual sample controller and audio adapters",
+      "transcript": "The quick brown fox jumps over the lazy dog.",
+      "characters": 44,
+      "contentWordsMatched": 6,
+      "contentWordsRequired": 4,
+      "returnedToReady": true,
+      "stages": [
+        "Ready",
+        "Opening microphone",
+        "Listening",
+        "Transcribing",
+        "Generating speech",
+        "Speaking",
+        "Ready"
+      ]
+    }
+  },
+  "audio": {
+    "microphone": "physical phone microphone",
+    "stimulus": "Kitten synthesis played through physical phone speaker",
+    "permission": "pregranted before instrumentation",
+    "mediaVolume": "existing 14/25; unchanged by test",
+    "transcriptInjected": false,
+    "uiPhaseInjected": false,
+    "accessibilityAutomation": false
+  },
+  "limitations": [
+    "Fixed-phrase acoustic smoke; not an accuracy benchmark",
+    "GIF is silent",
+    "Physical iPhone audio remains unverified"
+  ],
+  "earlierAttempts": "Initial UI fixture attempts failed before the flow due Android 17 Espresso reflection incompatibility and an occupied UiAutomation service. Replaced the test-only automation path; did not disable services.",
+  "capture": {
+    "gif": "docs/images/siren-demo.gif",
+    "width": 480,
+    "height": 960,
+    "fps": 8,
+    "seconds": 14.5,
+    "frames": 116,
+    "sourceTrimSeconds": [
+      10.5,
+      25
+    ],
+    "crop": {
+      "x": 0,
+      "y": 192,
+      "width": 1080,
+      "height": 2160
+    },
+    "verifiedFirstAndLast": "Actual Siren Ready screens; unchanged application pixels"
+  }
+}

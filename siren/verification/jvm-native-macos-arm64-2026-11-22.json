@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "date": "2026-11-22",
+  "platform": "macOS arm64",
+  "sherpa_onnx_version": "2.0.1",
+  "command": "./gradlew :siren:jvmTest --tests '*JvmSpeechEngineNativeTest*' -Pnative=true -PmodelsDir=/absolute/model/root --console=plain",
+  "junit_timestamp_utc": "2026-11-22T16:27:51.133Z",
+  "result": {
+    "tests": 1,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0
+  },
+  "stdout": "SIREN_JVM_NATIVE os=Mac OS X arch=aarch64 rate=24000 samples=59645 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+  "generated_sample_rate_hz": 24000,
+  "generated_sample_count": 59645,
+  "matched_content_words": 6,
+  "recognized_text": "The quick brown fox jumps over the lazy dog.",
+  "model_source": "Caller-selected absolute Local files from the pinned sample model set. Model weights are not inside the SDK.",
+  "native_source": "Official desktop resources from the JVM classpath; test asserts no sherpa_onnx.native.path override is set.",
+  "sdk_jvm_jar_bytes": 59983498,
+  "sdk_jvm_jar_sha256": "a33f528d5f2ff002ea44fad59d3845d67ebe5d45d4b55194c2234cdd3ab21dae",
+  "packaged_platforms": [
+    "linux-aarch64",
+    "linux-x64",
+    "osx-aarch64",
+    "osx-x64",
+    "win-arm64",
+    "win-x64"
+  ],
+  "execution_verified_platforms": [
+    "osx-aarch64"
+  ],
+  "default_test_mode": "Separately verified six common SDK tests pass, and this native test is skipped when native=true is absent.",
+  "limitations": "One fixed English Kitten-to-Whisper in-memory roundtrip; no microphone, speaker, UI, latency benchmark, or execution verification of the other five platform payloads. Relocated published-artifact verification is recorded separately."
+}

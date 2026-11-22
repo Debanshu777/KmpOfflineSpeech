@@ -40,13 +40,75 @@ abstract class PrepareSpeechModels : SpeechDownloadTask() {
 }
 
 @CacheableTask
-abstract class PrepareAndroidSpeech : SpeechDownloadTask() {
-    @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE) abstract val modelDirectory: DirectoryProperty
+abstract class PrepareAndroidRuntime : SpeechDownloadTask() {
     @get:OutputFile abstract val runtimeAar: RegularFileProperty
-    @get:OutputDirectory abstract val assetsDirectory: DirectoryProperty
+    @get:OutputFile abstract val classesJar: RegularFileProperty
+    @get:OutputDirectory abstract val jniLibsDirectory: DirectoryProperty
+    @get:OutputDirectory abstract val noticesDirectory: DirectoryProperty
+
     @TaskAction fun prepare() {
         val artifact = SpeechArtifact(SpeechArtifacts.manifest(manifestFile.get().asFile)["runtimes"].asJsonObject["android"].asJsonObject)
-        SpeechArtifacts.copyFile(fetch(artifact), runtimeAar.get().asFile)
+        val archive = fetch(artifact)
+        require(runtimeAar.get().asFile.name == artifact.name) { "Runtime archive output must preserve the pinned artifact name" }
+        // AARs are ZIP files; the safe extractor dispatches on a .zip suffix.
+        val zip = temporaryDir.resolve("runtime.zip")
+        SpeechArtifacts.copyFile(archive, zip)
+        val extracted = temporaryDir.resolve("runtime-extracted").apply { deleteRecursively() }
+        SpeechArtifacts.extract(zip, extracted)
+        val wrapper = extracted.resolve("classes.jar")
+        check(wrapper.isFile && wrapper.length() > 0) { "The pinned runtime contains no classes.jar" }
+        val upstreamRules = extracted.resolve("proguard.txt")
+        check(!upstreamRules.exists() || upstreamRules.readText().isBlank()) {
+            "Upstream consumer rules changed; reconcile the SDK consumer rules before updating the runtime"
+        }
+        val jni = temporaryDir.resolve("jniLibs").apply { deleteRecursively(); mkdirs() }
+        val supportedAbis = listOf("arm64-v8a", "x86_64")
+        val expectedLibraries = setOf("libonnxruntime.so", "libsherpa-onnx-c-api.so", "libsherpa-onnx-cxx-api.so", "libsherpa-onnx-jni.so")
+        for (abi in supportedAbis) {
+            val source = extracted.resolve("jni/$abi")
+            val libraries = source.listFiles()?.filter { it.isFile && it.extension == "so" }.orEmpty()
+            check(libraries.map { it.name }.toSet() == expectedLibraries) { "Unexpected native runtime libraries for $abi" }
+            libraries.forEach { library ->
+                check(library.length() > 0) { "Empty native runtime library: ${library.name}" }
+                SpeechArtifacts.copyFile(library, jni.resolve("$abi/${library.name}"))
+            }
+        }
+        val notices = temporaryDir.resolve("runtime-notices").apply { deleteRecursively(); mkdirs() }
+        extracted.walkTopDown().filter { file ->
+            file.isFile && listOf("license", "notice", "copying", "copyright").any(file.name.lowercase()::startsWith)
+        }.forEach { file ->
+            SpeechArtifacts.copyFile(file, notices.resolve("META-INF/siren/upstream/${file.relativeTo(extracted).invariantSeparatorsPath}"))
+        }
+        artifact.json["notices"]?.asJsonArray?.forEach { value ->
+            val notice = SpeechArtifact(value.asJsonObject)
+            require(notice.destination.startsWith("META-INF/siren/")) { "Runtime notices must stay in their metadata namespace" }
+            SpeechArtifacts.copyFile(fetch(notice), notices.resolve(SpeechArtifacts.relative(notice.destination).toString()))
+        }
+        notices.resolve("META-INF/siren/runtime-provenance.txt").apply {
+            parentFile.mkdirs()
+            writeText("""
+                Upstream runtime: ${artifact.name}
+                Source: ${artifact.json["url"].asString}
+                SHA-256: ${artifact.sha256}
+                Packaged ABIs: ${supportedAbis.joinToString(", ")}
+                The upstream classes.jar and selected native library bytes are copied without modification.
+                No model weights, model assets, application UI, or Android resources are included.
+                Retain the accompanying upstream license and notice files when redistributing this runtime.
+            """.trimIndent() + "\n")
+        }
+        SpeechArtifacts.copyFile(archive, runtimeAar.get().asFile)
+        SpeechArtifacts.copyFile(wrapper, classesJar.get().asFile)
+        SpeechArtifacts.publish(jni, jniLibsDirectory.get().asFile)
+        SpeechArtifacts.publish(notices, noticesDirectory.get().asFile)
+    }
+}
+
+/** The sample's weights are deliberately separate from the SDK runtime preparation. */
+@CacheableTask
+abstract class PrepareAndroidSpeech : DefaultTask() {
+    @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE) abstract val modelDirectory: DirectoryProperty
+    @get:OutputDirectory abstract val assetsDirectory: DirectoryProperty
+    @TaskAction fun prepare() {
         val assets = temporaryDir.resolve("assets").apply { deleteRecursively(); mkdirs() }
         modelDirectory.get().asFile.copyRecursively(assets.resolve("models"))
         SpeechArtifacts.publish(assets, assetsDirectory.get().asFile)

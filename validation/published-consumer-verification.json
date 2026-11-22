@@ -1,0 +1,229 @@
+{
+  "scope": "Independent relocated consumer of locally staged Siren Maven artifacts",
+  "coordinates": "io.github.debanshu777:siren:0.1.0-SNAPSHOT",
+  "publicMavenRelease": false,
+  "isolation": {
+    "consumerOutsideCheckout": true,
+    "repositoryCopiedOutsideCheckout": true,
+    "coordinateOnlySdkDependencies": true,
+    "projectDependencies": false,
+    "dependencySubstitution": false,
+    "composeDependencies": false,
+    "checkoutNativeSearchPaths": false,
+    "modelsPresent": "Consumer-supplied model resources from a separate copied directory; no models in SDK artifacts"
+  },
+  "command": "ANDROID_HOME=/path/to/android-sdk ./gradlew -PsirenRepository=/absolute/path/to/copied/staging-repository -Pnative=true -PmodelsDir=/absolute/path/to/copied/models --offline jvmTest compileAndroidMain :androidApp:assembleDebug linkDebugFrameworkIosSimulatorArm64 linkDebugFrameworkIosArm64 --console=plain",
+  "buildSucceeded": true,
+  "jvm": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "nativeRoundtrip": {
+      "host": "macOS arm64",
+      "seconds": 2.303,
+      "sampleRate": 24000,
+      "samples": 59693,
+      "contentWordsMatched": 6,
+      "transcript": "The quick brown fox jumps over the lazy dog.",
+      "modelSource": "consumer classpath resources",
+      "nativeSource": "published SDK JAR classpath resources",
+      "nativePathOverride": false
+    },
+    "nativeEntries": [
+      "sherpa-onnx/native/linux-aarch64/libonnxruntime.so",
+      "sherpa-onnx/native/linux-aarch64/libsherpa-onnx-jni.so",
+      "sherpa-onnx/native/linux-x64/libonnxruntime.so",
+      "sherpa-onnx/native/linux-x64/libsherpa-onnx-jni.so",
+      "sherpa-onnx/native/osx-aarch64/libonnxruntime.dylib",
+      "sherpa-onnx/native/osx-aarch64/libsherpa-onnx-jni.dylib",
+      "sherpa-onnx/native/osx-x64/libonnxruntime.dylib",
+      "sherpa-onnx/native/osx-x64/libsherpa-onnx-jni.dylib",
+      "sherpa-onnx/native/win-arm64/onnxruntime.dll",
+      "sherpa-onnx/native/win-arm64/sherpa-onnx-jni.dll",
+      "sherpa-onnx/native/win-x64/onnxruntime.dll",
+      "sherpa-onnx/native/win-x64/sherpa-onnx-jni.dll"
+    ],
+    "sdkModelEntries": [],
+    "sdkJarBytes": 59983498
+  },
+  "android": {
+    "apiCompilationPassed": true,
+    "apkBuilt": true,
+    "nativeLibraries": [
+      "lib/arm64-v8a/libonnxruntime.so",
+      "lib/arm64-v8a/libsherpa-onnx-c-api.so",
+      "lib/arm64-v8a/libsherpa-onnx-cxx-api.so",
+      "lib/arm64-v8a/libsherpa-onnx-jni.so",
+      "lib/x86_64/libonnxruntime.so",
+      "lib/x86_64/libsherpa-onnx-c-api.so",
+      "lib/x86_64/libsherpa-onnx-cxx-api.so",
+      "lib/x86_64/libsherpa-onnx-jni.so"
+    ],
+    "noticeEntries": [
+      "assets/META-INF/siren/licenses/sherpa-onnx-LICENSE"
+    ],
+    "modelEntries": [
+      "DebugProbesKt.bin"
+    ]
+  },
+  "ios": [
+    {
+      "target": "iosSimulatorArm64",
+      "frameworkKind": "dynamic",
+      "binary": "build/bin/iosSimulatorArm64/debugFramework/SirenConsumer.framework/SirenConsumer",
+      "linked": true,
+      "unresolvedSpeechRuntimeSymbols": [],
+      "externalDependencies": [
+        "@rpath/SirenConsumer.framework/SirenConsumer",
+        "/usr/lib/libSystem.B.dylib",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libobjc.A.dylib",
+        "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "/System/Library/Frameworks/UIKit.framework/UIKit",
+        "/System/Library/Frameworks/CoreML.framework/CoreML",
+        "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+        "/System/Library/Frameworks/Accelerate.framework/Accelerate",
+        "/usr/lib/libresolv.9.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libbz2.1.0.dylib",
+        "/usr/lib/libcompression.dylib",
+        "/usr/lib/libate.dylib"
+      ]
+    },
+    {
+      "target": "iosArm64",
+      "frameworkKind": "dynamic",
+      "binary": "build/bin/iosArm64/debugFramework/SirenConsumer.framework/SirenConsumer",
+      "linked": true,
+      "unresolvedSpeechRuntimeSymbols": [],
+      "externalDependencies": [
+        "@rpath/SirenConsumer.framework/SirenConsumer",
+        "/usr/lib/libSystem.B.dylib",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libobjc.A.dylib",
+        "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "/System/Library/Frameworks/UIKit.framework/UIKit",
+        "/System/Library/Frameworks/CoreML.framework/CoreML",
+        "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+        "/System/Library/Frameworks/Accelerate.framework/Accelerate",
+        "/usr/lib/libresolv.9.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libbz2.1.0.dylib",
+        "/usr/lib/libcompression.dylib",
+        "/usr/lib/libate.dylib"
+      ]
+    }
+  ],
+  "kotlinNativeNote": "Kotlin/Native2.4.21 toolchain defaults link UIKit for iOS binaries; the fixture and SDK add no Compose or UIKit API dependency.",
+  "notTested": [
+    "Microphone or speaker hardware",
+    "App installation",
+    "Public Maven repository delivery",
+    "Other toolchains",
+    "JVM native execution on the five non-host OS/architecture payloads"
+  ],
+  "date": "2026-11-22",
+  "artifactHashes": [
+    {
+      "path": "io/github/debanshu777/siren/0.1.0-SNAPSHOT/siren-0.1.0-20261122.162643-2-sources.jar",
+      "sha256": "a7a2c0d1378d08d51c5d9a8d230e6b2b727ce7efe7901bab1f14f88f9590bc46"
+    },
+    {
+      "path": "io/github/debanshu777/siren/0.1.0-SNAPSHOT/siren-0.1.0-20261122.162643-2-kotlin-tooling-metadata.json",
+      "sha256": "0996f9b3cb5a459f47bc35b5f62f3cfa5b4942407f748b1a543279148d7b4f73"
+    },
+    {
+      "path": "io/github/debanshu777/siren/0.1.0-SNAPSHOT/siren-0.1.0-20261122.162643-2.jar",
+      "sha256": "009e67244ebcb3811dbf6361be968a40fc119befdc75a01cf4fefc7f2b3f1b97"
+    },
+    {
+      "path": "io/github/debanshu777/siren/0.1.0-SNAPSHOT/siren-0.1.0-20261122.162643-2.module",
+      "sha256": "3b959e17382eb62418814c8e4e62a4d53ccb7689f1a9c4f1d5acac53a26db372"
+    },
+    {
+      "path": "io/github/debanshu777/siren/0.1.0-SNAPSHOT/siren-0.1.0-20261122.162643-2.pom",
+      "sha256": "8bf1b9306eba68e9de9181f204c7fa2def064cf10c9400522523748948e5901f"
+    },
+    {
+      "path": "io/github/debanshu777/siren-android/0.1.0-SNAPSHOT/siren-android-0.1.0-20261122.162643-2.module",
+      "sha256": "b6339b42c9ad0e56ca54600f18e3ec59fbb70b29a0fdf3f44f31d16b383f0b49"
+    },
+    {
+      "path": "io/github/debanshu777/siren-android/0.1.0-SNAPSHOT/siren-android-0.1.0-20261122.162643-2.aar",
+      "sha256": "5a3bfe61e7920b73137733f5843c1ba681833408c8bbb9a53d7c15e1ce3c95d4"
+    },
+    {
+      "path": "io/github/debanshu777/siren-android/0.1.0-SNAPSHOT/siren-android-0.1.0-20261122.162643-2-sources.jar",
+      "sha256": "85a553112451751b2430ecb2cc32ae29a34f14178d5efe86d2f5d353d91e799d"
+    },
+    {
+      "path": "io/github/debanshu777/siren-android/0.1.0-SNAPSHOT/siren-android-0.1.0-20261122.162643-2.pom",
+      "sha256": "2ddbba819b81b7694b110da20dc95c12b6e48446b875045d51b153bd6bfdb65d"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2-sources.jar",
+      "sha256": "2d4eab4e5e3921610cb93491bf7b53f4556b233d28450741ae0d6752af0ef06e"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2.module",
+      "sha256": "6706a621ffd17612e2e5ace1f26630aeb21181269e9788b2a34c025a5cf836e3"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2-metadata.jar",
+      "sha256": "fa3e4d8260ff9a021b16ac2fd324628afb4cdbcf9a2a53aa96fd199c144dfe83"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2-cinterop-sherpaNative.klib",
+      "sha256": "e0ac9330c68ddfb03697d7e6c209b2630f785459c67cd67a2642913dba101f8e"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2.pom",
+      "sha256": "0c8a7072b909d68b870c79cbf0818fb06050d1518aea73281e69a0d2ae977987"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iosarm64/0.1.0-SNAPSHOT/siren-iosarm64-0.1.0-20261122.162643-2.klib",
+      "sha256": "02d8668a49b814b2f5f1056303bc0b678e3902421cb9c1a4cc56c151e587d44b"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2-cinterop-sherpaNative.klib",
+      "sha256": "18bc15c85acdb4af6594721f667b6c4ce1f06c8a71a3614f3229b62376faf8ff"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2-sources.jar",
+      "sha256": "2d4eab4e5e3921610cb93491bf7b53f4556b233d28450741ae0d6752af0ef06e"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2-metadata.jar",
+      "sha256": "fa3e4d8260ff9a021b16ac2fd324628afb4cdbcf9a2a53aa96fd199c144dfe83"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2.module",
+      "sha256": "38dbd8a35487748894ae0e10f5dcd619d678b09358059399f6577bc31d8da827"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2.pom",
+      "sha256": "6f722a46ddf94c095782a7d3d6009355bd14a619cb88d292607f57b306cf3c5a"
+    },
+    {
+      "path": "io/github/debanshu777/siren-iossimulatorarm64/0.1.0-SNAPSHOT/siren-iossimulatorarm64-0.1.0-20261122.162643-2.klib",
+      "sha256": "a7d16bdd4bb1304544443a8bfd6669fdd5a24cb66b04fe212bdbc889b22dc3d6"
+    },
+    {
+      "path": "io/github/debanshu777/siren-jvm/0.1.0-SNAPSHOT/siren-jvm-0.1.0-20261122.162643-3.module",
+      "sha256": "e9e32ed3bfea9ad870a6928cce6633554cdb19f0aca8fa7b3b9735a20d809052"
+    },
+    {
+      "path": "io/github/debanshu777/siren-jvm/0.1.0-SNAPSHOT/siren-jvm-0.1.0-20261122.162643-3-sources.jar",
+      "sha256": "456fe1d335a8ede9f257f7a2ea6249838020c5f3a1773e64db8b28c4a333c030"
+    },
+    {
+      "path": "io/github/debanshu777/siren-jvm/0.1.0-SNAPSHOT/siren-jvm-0.1.0-20261122.162643-3.pom",
+      "sha256": "c5eb88b7c7da3a731bbc7a18e7ea2285ed7fec80299f8e0aaba134dcbdef0a6e"
+    },
+    {
+      "path": "io/github/debanshu777/siren-jvm/0.1.0-SNAPSHOT/siren-jvm-0.1.0-20261122.162643-3.jar",
+      "sha256": "a33f528d5f2ff002ea44fad59d3845d67ebe5d45d4b55194c2234cdd3ab21dae"
+    }
+  ]
+}

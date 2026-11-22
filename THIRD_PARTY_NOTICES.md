@@ -1,6 +1,6 @@
 # Third-party components
 
-This repository contains sample source under MIT. Runtime binaries and model weights are downloaded by Gradle preparation tasks and are not covered by the sample's MIT license.
+First-party SDK and sample source in this repository is under MIT. Runtime binaries and model weights are downloaded by Gradle preparation tasks and are not covered by the project's MIT license.
 
 | Component | Upstream license/source |
 | --- | --- |
@@ -11,4 +11,6 @@ This repository contains sample source under MIT. Runtime binaries and model wei
 | Pronunciation lexicon | [sherpa TTS asset release](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models); retain accompanying upstream data notices when redistributing |
 | Kotlin, Compose and AndroidX | [Kotlin](https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt), [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/blob/master/LICENSE.txt), and [AndroidX](https://developer.android.com/jetpack/androidx) upstream notices |
 
-The prebuilt runtime bundles include other third-party components and notices. Preserve notices supplied by their releases when distributing binaries. For the exact artifact URLs, SHA-256 hashes and model revision, see `scripts/dependencies.json`. The setup script retains any supplied model notices in the extracted model directory; it does not relicense them.
+The prebuilt runtime bundles include other third-party components and notices. Preserve notices supplied by their releases when distributing binaries. For the exact artifact URLs, SHA-256 hashes and model revision, see `scripts/dependencies.json`. The Gradle preparation tasks retain any supplied model notices in the extracted model directory; it does not relicense them.
+
+The Android SDK artifact includes the pinned sherpa-onnx license and runtime provenance under `assets/META-INF/siren/`. The upstream Android AAR reports ONNX Runtime 1.28.2; the iOS lock follows the upstream Swift manifest’s 1.28.1 binary URL. Complete the transitive native-component notice audit and package all required notices before any public binary release. Current Maven output is local validation staging, not a released distribution. Model weights belong to the sample or consuming app, not the SDK artifact.

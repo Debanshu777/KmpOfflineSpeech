@@ -12,7 +12,77 @@
       "name": "sherpa-onnx-2.0.1.aar",
       "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-2.0.1.aar",
       "sha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
-      "destination": "composeApp/libs/sherpa-onnx-2.0.1.aar"
+      "destination": "siren/build/generated/androidRuntime/sherpa-onnx-2.0.1.aar",
+      "notices": [
+        {
+          "name": "sherpa-onnx-2.0.1-LICENSE",
+          "url": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/v2.0.1/LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "destination": "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+        }
+      ]
+    },
+    "jvm": {
+      "wrapper": {
+        "name": "sherpa-onnx-jvm-2.0.1.jar",
+        "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-jvm-2.0.1.jar",
+        "sha256": "8320e2457b6e38dd624fb619d3552e11ef78ffeb394622056126b16f2fd99d12",
+        "destination": "siren/build/generated/jvmRuntime/sherpa-onnx-jvm-2.0.1.jar"
+      },
+      "natives": [
+        {
+          "name": "sherpa-onnx-native-lib-linux-aarch64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-linux-aarch64-2.0.1.jar",
+          "sha256": "c09d51e7190f5b8bcc20cf0d25bcb2e66324737ace5ce9d678ae37b8c79d6c2f",
+          "platform": "linux-aarch64",
+          "destination": "sherpa-onnx/native/linux-aarch64"
+        },
+        {
+          "name": "sherpa-onnx-native-lib-linux-x64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-linux-x64-2.0.1.jar",
+          "sha256": "744330a68a7024d9412f029c23b06f847b8444787c94e5118e0fdaf1b4b2cb3f",
+          "platform": "linux-x64",
+          "destination": "sherpa-onnx/native/linux-x64"
+        },
+        {
+          "name": "sherpa-onnx-native-lib-osx-aarch64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-osx-aarch64-2.0.1.jar",
+          "sha256": "718a4ea4799341146ef9a0cc15daa70e6622ae4a16911952604035f396703499",
+          "platform": "osx-aarch64",
+          "destination": "sherpa-onnx/native/osx-aarch64"
+        },
+        {
+          "name": "sherpa-onnx-native-lib-osx-x64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-osx-x64-2.0.1.jar",
+          "sha256": "617a6263b4793495ea6a5f882cfc5dbf9e57cf4ad1e126104bddf8cf90846f72",
+          "platform": "osx-x64",
+          "destination": "sherpa-onnx/native/osx-x64"
+        },
+        {
+          "name": "sherpa-onnx-native-lib-win-arm64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-win-arm64-2.0.1.jar",
+          "sha256": "95a2a4fe4a368fb4d9f458f68fd8ed179f9f2c07bc448185633bc199066a38bb",
+          "platform": "win-arm64",
+          "destination": "sherpa-onnx/native/win-arm64"
+        },
+        {
+          "name": "sherpa-onnx-native-lib-win-x64-2.0.1.jar",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v2.0.1/sherpa-onnx-native-lib-win-x64-2.0.1.jar",
+          "sha256": "536f1c09025996a780b22f972b2e56e0e8b2064e1ceb534456ea7eba0a6ae4cd",
+          "platform": "win-x64",
+          "destination": "sherpa-onnx/native/win-x64"
+        }
+      ],
+      "notices": [
+        {
+          "name": "sherpa-onnx-2.0.1-LICENSE",
+          "url": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/v2.0.1/LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "destination": "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+        }
+      ]
     },
     "ios": [
       {

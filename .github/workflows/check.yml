@@ -1,4 +1,4 @@
-name: Check sample
+name: Check Siren
 on: [push, pull_request]
 permissions:
   contents: read
@@ -14,4 +14,6 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Install Android SDK packages
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
-      - run: ./gradlew checkSpeechSetup :composeApp:jvmTest :androidApp:assembleDebug --console=plain
+      - run: ./gradlew checkSpeechSetup :siren:jvmTest :sample:composeApp:jvmTest :sample:androidApp:assembleDebug :sample:androidApp:assembleDebugAndroidTest --console=plain
+      - name: Verify Linux desktop model roundtrip
+        run: ./gradlew :siren:jvmTest -Pnative=true -PmodelsDir="$GITHUB_WORKSPACE/models" --console=plain

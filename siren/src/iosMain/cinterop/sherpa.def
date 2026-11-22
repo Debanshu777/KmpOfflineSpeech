@@ -1,0 +1,4 @@
+headers = sherpa-onnx/c-api/c-api.h
+headerFilter = sherpa-onnx/c-api/**
+package = io.github.debanshu.siren.internal.native
+linkerOpts = -lc++ -framework Foundation -framework CoreML -framework CoreFoundation -framework Accelerate
