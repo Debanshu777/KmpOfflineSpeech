@@ -26,6 +26,8 @@ Added published-consumer probes for default factories, standard model layouts,
 automatic scoped close and the raw PCM transcription overload, retaining legacy
 factory coverage and separate local-staging/Central gates.
 
+Added a [Central credential check](central-check/README.md) using only read-only GET requests; authenticated namespace access is checked without uploading artifacts.
+
 Added an independent [signing-secret probe](signing-check/README.md) and manual
 workflow. It checks Gradle key/passphrase compatibility and public-key verification
 without publishing SDK artifacts or authenticating Maven Central credentials.

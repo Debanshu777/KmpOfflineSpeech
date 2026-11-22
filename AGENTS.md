@@ -74,6 +74,12 @@ not authentication verification, and a passed probe is not SDK release readiness
 Protected mode requires SIGNING_PASSWORD; explicitly selected unprotected mode
 uses an empty password and leaves key/secret values unchanged.
 
+`validation/central-check` verifies Central authentication and namespace access
+using a fixed HTTPS GET endpoint with a 401 unauthenticated control. It has no
+deployment/publication calls. Never print credentials, derived authorization
+headers or response bodies; retain only status/result metadata. The manual
+`central-check.yml` scopes the two Maven secrets to that one check step.
+
 Update the root README, affected module READMEs and relevant docs with every code/build/tooling change, including concise Recent Changes entries. Report checks actually run and distinguish pre-extraction evidence from checks of current artifacts.
 
 Preserve the canonical formatting of Kotlin-generated ABI references. `.gitattributes` allows their generated final blank line for Android/JVM dumps; do not trim it to satisfy a general whitespace check.
