@@ -85,3 +85,5 @@ headers or response bodies; retain only status/result metadata. The manual
 Update the root README, affected module READMEs and relevant docs with every code/build/tooling change, including concise Recent Changes entries. Report checks actually run and distinguish pre-extraction evidence from checks of current artifacts.
 
 Preserve the canonical formatting of Kotlin-generated ABI references. `.gitattributes` allows their generated final blank line for Android/JVM dumps; do not trim it to satisfy a general whitespace check.
+
+Preserve checksum-pinned upstream compiler notice bytes, including original CRLF, trailing whitespace and space-before-tab formatting. `.gitattributes` scopes the corresponding exceptions to those vendored notice directories; do not reformat them to satisfy general whitespace checks.
