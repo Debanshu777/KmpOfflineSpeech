@@ -109,6 +109,9 @@ commands. It does not build the SDK/native runtimes or establish release readine
 See the workflow run's job summary for the observed result. The full SDK release
 pipeline remains separately prepared locally until publication work resumes.
 
+
+Observed result: [signing-only CI run 45055771902](https://github.com/Debanshu777/Siren/actions/runs/45055771902) passed in explicit unprotected mode. Gradle signed the probe and GnuPG verified it against the expected published public key. `SIGNING_PASSWORD` was unused; Central credentials were checked for presence only. No publication, release or tag ran. See the [nonsecret verification record](../validation/signing-check-verification.json).
+
 ## Recorded verification
 
 These records describe their stated artifacts/runs, not every future release:

@@ -36,6 +36,8 @@ readiness. The workflow has read-only repository permissions and runs no tag,
 release or publication commands. Logs and the job summary provide the result;
 private material is never an artifact.
 
+The [recorded CI run](https://github.com/Debanshu777/Siren/actions/runs/45055771902) passed with explicit unprotected mode. It verified the saved private key and key ID against the published public key; no passphrase was used. [Verification record](../signing-check-verification.json).
+
 ## Recent Changes
 
 Added explicit protected/unprotected key modes to the isolated signing probe and

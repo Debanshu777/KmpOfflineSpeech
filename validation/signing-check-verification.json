@@ -1,0 +1,63 @@
+{
+  "workflow": "signing-check.yml",
+  "runId": 45055771902,
+  "url": "https://github.com/Debanshu777/Siren/actions/runs/45055771902",
+  "headSha": "77956d43df562dc09e2a92e7b668956258e4caf9",
+  "conclusion": "success",
+  "expectedFingerprint": "B0A877633B48643CD48BF7CEE5F9B7F951C22F86",
+  "keyProtection": "unprotected",
+  "signingPasswordUsed": false,
+  "mavenCredentialPresenceChecked": true,
+  "mavenCredentialAuthenticationTested": false,
+  "privateKeyAndKeyIdVerified": true,
+  "publishedPublicKeyVerificationPassed": true,
+  "publicationExecuted": false,
+  "releaseCreated": false,
+  "tagsCreated": false,
+  "steps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Require main and a valid public fingerprint",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-java@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run gradle/actions/setup-gradle@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check required secrets and sign a probe with Gradle",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify the signature using the published public key",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run gradle/actions/setup-gradle@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-java@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ]
+}
