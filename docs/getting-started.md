@@ -1,12 +1,24 @@
 # Add speech with Siren
 
-The basic integration is: add Siren, place the known model bundle in your app, then create an engine and call it. Individual model-path mapping and manual `finally` cleanup are unnecessary for this layout.
+For a quick use case, the default-ready build plugin supplies the SDK and both models. Create an engine and call it; the build handles model acquisition/packaging, and scoped `use` handles cleanup.
 
 Siren **0.1.0** is available from [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). The [release record](releasing.md) links public delivery and independent consumer verification.
 
+## Default-ready quick-start
+
+The [quick-start plugin](../siren-models-gradle-plugin/README.md#use-from-source) is local and unpublished. Include its source build in your settings, then add `id("io.github.debanshu777.siren.models")` to the existing shared-module plugins. It supplies the published SDK dependency and packages both default model bundles. No extra model configuration block or manual files are needed. Continue at [Create and use the engine](#create-and-use-the-engine).
+
+To manage your own models while retaining SDK setup:
+
+```kotlin
+sirenModels { bundleModels.set(false) }
+```
+
+Keep your own files/configuration and clean previous app build products once when changing this choice. You can also omit the plugin entirely and use the core dependency below.
+
 ## Add the dependency
 
-In your existing KMP project, use `mavenCentral()` and add Siren to `commonMain`:
+For the core-only route without the quick-start plugin, use `mavenCentral()` and add Siren to `commonMain`:
 
 ```kotlin
 commonMain.dependencies {
@@ -18,7 +30,7 @@ KMP selects the platform runtime artifact. You do not copy SDK native libraries 
 
 ## Place the model bundle
 
-A source-only [optional model helper](optional-models.md) can fetch and package the standard files during the Gradle build. This add-on is unpublished; manual placement below remains the path for the public SDK dependency alone.
+The quick-start plugin handles the following placement automatically. This section is for core-only integrations and apps opting out of bundled models.
 
 The default `createSpeechEngine` configuration knows this layout:
 

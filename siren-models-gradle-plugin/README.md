@@ -1,6 +1,6 @@
 # Optional Siren model packaging
 
-This standalone Gradle plugin prepares the default Whisper tiny INT8 and Kitten nano INT8 bundles for application builds. It packages selected files into Android assets and JVM resources, and copies them into iOS app resources through Kotlin's standard Xcode direct integration.
+This quick-start Gradle plugin supplies the Siren SDK dependency and packages Whisper tiny INT8 and Kitten nano INT8 by default. It packages selected files into Android assets and JVM resources, and copies them into iOS app resources through Kotlin's standard Xcode direct integration.
 
 The plugin is a **local, unpublished add-on**. Siren SDK 0.1.0 is already on Maven Central; this plugin is not part of that release. Its JAR contains build logic, a pinned catalog and a license text, not model weights. The core SDK remains unchanged.
 
@@ -22,15 +22,25 @@ plugins {
     // Your existing Kotlin Multiplatform / Android plugins.
     id("io.github.debanshu777.siren.models")
 }
-
-kotlin {
-    sourceSets.commonMain.dependencies {
-        implementation("io.github.debanshu777:siren:0.1.0")
-    }
-}
 ```
 
-Both model bundles are selected by default. Keep using `createSpeechEngine(context)` on Android and `createSpeechEngine()` on iOS/JVM. Your app still owns audio input/output and permissions.
+The plugin adds the published Siren 0.1.0 dependency automatically (`api` in KMP commonMain, `implementation` in Java). Ensure `mavenCentral()` is configured in your application dependency repositories; no separate Siren dependency declaration is needed. Both model bundles are selected by default. Keep using `createSpeechEngine(context)` on Android and `createSpeechEngine()` on iOS/JVM. Your app still owns audio input/output and permissions.
+
+## Opt out or customize
+
+To supply your own files while retaining automatic SDK setup:
+
+```kotlin
+sirenModels { bundleModels.set(false) }
+```
+
+This performs no model downloads and contributes no generated model files to Android/JVM packaging. The iOS model-copy task is skipped so it does not overwrite app-owned resources. Clean old app build products once when switching away from previously bundled models. Supply `SherpaModels.local(...)`, your own bundled files or custom providers to the engine as needed. Alternatively, remove the plugin and declare the core SDK dependency yourself.
+
+The default SDK version can be selected in one place:
+
+```kotlin
+sirenModels { sdkVersion.set("0.1.0") }
+```
 
 For recognition only:
 
@@ -67,8 +77,8 @@ From the Siren root:
 
 This tests the build plugin and stages its implementation and plugin-marker artifacts locally. It does not publish to Central or the Gradle Plugin Portal. The [independent consumer](../validation/models-consumer/README.md) verifies real models, Android/JVM packaging and iOS resource output. The [check workflow](../.github/workflows/models-check.yml) repeats artifact-based validation outside the checkout.
 
-[Local verification](../validation/optional-models-verification.json) passed 16 plugin tests, five Central SDK consumer tests, both iOS framework links, model hashes in every packaging output, synthesis-only removal and the actual Kotlin Xcode resource hook with configuration-cache reuse. The plugin JAR is 47,492 bytes and contains no weights. The workflow is prepared but has not executed remotely.
+[Current local verification](../validation/default-models-verification.json) passed 19 plugin tests, automatic SDK/model setup in a relocated Central SDK consumer, native synthesis/transcription, both iOS links and the actual Xcode resource hook. The whole-bundle opt-out built offline with a fresh empty model cache and no generated model files. App-owned resources and configuration-cache reuse are covered by functional tests. The plugin JAR is 51,480 bytes and contains no weights. The workflow is prepared but has not executed remotely. [Earlier selection/compression evidence](../validation/optional-models-verification.json) remains historical.
 
 ## Recent Changes
 
-Added optional build-time model acquisition and packaging, independent capability selection, hash verification, offline cache behavior and Xcode direct-integration resource copying. The add-on is unpublished.
+Made the quick-start supply the SDK and both models by default. Added a whole-bundle opt-out that preserves app-owned resources and a single SDK version setting. The add-on is unpublished.

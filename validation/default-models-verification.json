@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-23",
+  "status": "Default-ready quick-start and explicit model opt-out verified locally; unpublished",
+  "baseCommit": "c21ea27",
+  "pluginId": "io.github.debanshu777.siren.models",
+  "pluginVersion": "0.1.0",
+  "pluginPublished": false,
+  "publicSdkVersion": "0.1.0",
+  "sdkSourceOrPublishedArtifactsChanged": false,
+  "defaultSetup": {
+    "addsSdkDependency": true,
+    "explicitSdkDependencyInConsumer": false,
+    "bundleModels": true,
+    "recognition": true,
+    "synthesis": true,
+    "sdkVersionOverrideTested": true
+  },
+  "pluginArtifact": {
+    "bytes": 51480,
+    "sha256": "07bbb6e616d93033fb7157312ff3b17e9b25555c32d5edbc7487d59d98a2e1b4",
+    "containsWeights": false
+  },
+  "pluginTests": [
+    {
+      "name": "io.github.debanshu.siren.gradle.ModelArtifactsTest",
+      "tests": 11,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "io.github.debanshu.siren.gradle.SirenModelsPluginTest",
+      "tests": 8,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "independentConsumer": {
+    "outsideCheckout": true,
+    "pluginResolvedFromStagedMavenMarker": true,
+    "sdkResolvedFromCentral": true,
+    "jvmTestTaskPassed": true,
+    "nativeOutput": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59988 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+    "iosDeviceAndSimulatorDynamicLinksPassed": true
+  },
+  "defaultModels": {
+    "bundleModels": true,
+    "passed": true,
+    "modelFiles": 7,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 137564418,
+    "androidApkCompressedModelBytes": 90608967,
+    "jvmJarCompressedModelBytes": 85709167,
+    "androidApkBytes": 160193972,
+    "jvmJarBytes": 85720286,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "modelOptOut": {
+    "bundleModels": false,
+    "passed": true,
+    "modelFiles": 0,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 0,
+    "androidApkCompressedModelBytes": 0,
+    "jvmJarCompressedModelBytes": 0,
+    "androidApkBytes": 69578041,
+    "jvmJarBytes": 4483,
+    "iosResourcesVerified": false,
+    "sdkVersion": "0.1.0",
+    "modelDownloadCacheCreated": false,
+    "offlineBuildPassed": true,
+    "sdkAutomaticallySupplied": true
+  },
+  "xcodeIntegration": {
+    "actualKotlinEmbedTaskPassed": true,
+    "modelHashesVerified": true,
+    "modelFiles": 7,
+    "frameworkEmbedded": true,
+    "otherAppResourcesPreserved": true,
+    "installedAppOrPhysicalAudioTested": false
+  },
+  "userOwnedModelPreservationVerifiedByFunctionalTest": true,
+  "workflowAdded": ".github/workflows/models-check.yml",
+  "remoteWorkflowExecuted": false
+}

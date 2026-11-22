@@ -11,7 +11,14 @@ class SirenModelsPluginTest {
     private fun fixture(block: (File) -> Unit) {
         val root = Files.createTempDirectory("siren-model-plugin-").toFile()
         try {
-            root.resolve("settings.gradle.kts").writeText("rootProject.name = \"model-consumer\"\n")
+            root.resolve("settings.gradle.kts").writeText("""
+                rootProject.name = "model-consumer"
+                dependencyResolutionManagement { repositories { maven { url = uri("repository") } } }
+            """.trimIndent())
+            // Resource-only tests use a tiny local coordinate; the separate consumer runs the real SDK.
+            val sdk = root.resolve("repository/io/github/debanshu777/siren/0.1.0").apply { mkdirs() }
+            sdk.resolve("siren-0.1.0.pom").writeText("""<project><modelVersion>4.0.0</modelVersion><groupId>io.github.debanshu777</groupId><artifactId>siren</artifactId><version>0.1.0</version></project>""")
+            java.util.jar.JarOutputStream(sdk.resolve("siren-0.1.0.jar").outputStream()).use { }
             root.resolve("build.gradle.kts").writeText("""
                 plugins { java; id("io.github.debanshu777.siren.models") }
                 sirenModels { recognition.set(false); synthesis.set(false) }
@@ -74,4 +81,48 @@ class SirenModelsPluginTest {
         assertEquals(original, notice.readText())
         assertFalse(notice.parentFile.resolve("whisper").exists())
     }
+
+    @Test fun quickStartAddsTheSdkAndEnablesBothModelsByDefault() = fixture { root ->
+        val build = root.resolve("build.gradle.kts")
+        build.writeText(build.readText().replace("sirenModels { recognition.set(false); synthesis.set(false) }", "") + """
+
+            val sdk = configurations.getByName("implementation").dependencies.single { it.group == "io.github.debanshu777" && it.name == "siren" }
+            println("QUICKSTART=" + sirenModels.bundleModels.get() + ":" + sirenModels.recognition.get() + ":" + sirenModels.synthesis.get() + ":" + sdk.version)
+        """.trimIndent())
+        assertContains(runner(root, "help").build().output, "QUICKSTART=true:true:true:0.1.0")
+        assertFalse(root.resolve(".gradle/siren-models-cache").exists())
+    }
+
+    @Test fun sdkVersionCanBeOverriddenWithoutASecondDependency() = fixture { root ->
+        val build = root.resolve("build.gradle.kts")
+        build.appendText("""
+
+            sirenModels { sdkVersion.set("0.1.1") }
+            val sdk = configurations.getByName("implementation").dependencies.single { it.group == "io.github.debanshu777" && it.name == "siren" }
+            println("SELECTED_SDK=" + sdk.version)
+        """.trimIndent())
+        assertContains(runner(root, "help").build().output, "SELECTED_SDK=0.1.1")
+    }
+
+    @Test fun modelOptOutClearsGeneratedFilesAndPreservesAppOwnedModels() = fixture { root ->
+        runner(root, "jar").build()
+        val build = root.resolve("build.gradle.kts")
+        build.writeText(build.readText().replace("recognition.set(false); synthesis.set(false)", "bundleModels.set(false)"))
+        root.resolve("src/main/resources/models/custom.bin").apply { parentFile.mkdirs(); writeText("app-owned") }
+        val target = root.resolve("xcode")
+        val appModel = target.resolve("Custom.app/models/custom.onnx").apply { parentFile.mkdirs(); writeText("app-owned-ios") }
+        val environment = System.getenv() + mapOf("TARGET_BUILD_DIR" to target.absolutePath,
+            "UNLOCALIZED_RESOURCES_FOLDER_PATH" to "Custom.app")
+        val result = runner(root, "jar", "copySirenModelsForXcode").withEnvironment(environment).build()
+        assertEquals(TaskOutcome.SKIPPED, result.task(":copySirenModelsForXcode")!!.outcome)
+        assertFalse(root.resolve(".gradle/siren-models-cache").exists())
+        assertTrue(root.resolve("build/generated/siren-models/assets").walkTopDown().none { it.isFile })
+        JarFile(root.resolve("build/libs/model-consumer.jar")).use { jar ->
+            assertNull(jar.getJarEntry("models/SIREN-MODELS-NOTICE.txt"))
+            assertNotNull(jar.getJarEntry("models/custom.bin"))
+        }
+        assertEquals("app-owned-ios", appModel.readText())
+        assertContains(runner(root, "jar", "copySirenModelsForXcode").withEnvironment(environment).build().output, "Reusing configuration cache")
+    }
+
 }

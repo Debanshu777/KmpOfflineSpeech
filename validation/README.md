@@ -20,7 +20,7 @@ checkout framework paths; the Android APK included its JNI payload and no models
 
 The earlier unpublished `0.1.0` candidate has separate [local release-preparation evidence](release-preparation-0.1.0.json), including API baselines, 20 build-tool tests, notice/source-availability packaging, four consumer JVM tests and both iOS links. Earlier snapshot evidence remains unchanged.
 
-The [optional model consumer](models-consumer/README.md) validates build-time acquisition/packaging with the public SDK. Its plugin can be resolved from staged implementation/marker artifacts outside this checkout. The add-on is unpublished.
+The [quick-start model consumer](models-consumer/README.md) validates automatic SDK dependency setup and default/opt-out model packaging with the public SDK. Its plugin can be resolved from staged implementation/marker artifacts outside this checkout. The add-on is unpublished. [Default/opt-out verification](default-models-verification.json) records the latest automatic SDK setup and packaging checks.
 
 ## Recent Changes
 

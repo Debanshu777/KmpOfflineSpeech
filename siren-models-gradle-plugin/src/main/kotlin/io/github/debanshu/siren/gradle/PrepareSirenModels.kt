@@ -9,6 +9,7 @@ import java.io.File
 
 @CacheableTask
 abstract class PrepareSirenModels : DefaultTask() {
+    @get:Input abstract val bundleModels: Property<Boolean>
     @get:Input abstract val recognition: Property<Boolean>
     @get:Input abstract val synthesis: Property<Boolean>
     @get:Input abstract val offline: Property<Boolean>
@@ -25,6 +26,10 @@ abstract class PrepareSirenModels : DefaultTask() {
         val catalog = JsonParser.parseString(catalogJson).asJsonObject
         val models = catalog["models"].asJsonObject
         val stage = temporaryDir.resolve("assets").apply { deleteRecursively(); mkdirs() }
+        if (!bundleModels.get()) {
+            ModelArtifacts.publish(stage, assetsDirectory.get().asFile)
+            return
+        }
         val root = stage.resolve("models").apply { mkdirs() }
         fun fetch(artifact: ModelArtifact): File = ModelArtifacts.fetch(artifact, downloadCache.get().asFile, offline.get())
         models["files"].asJsonArray.forEach { value ->

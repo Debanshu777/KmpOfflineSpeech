@@ -64,6 +64,15 @@ jobs:
         run: |
           export SDK_NAME="iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)"
           ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" embedAndSignAppleFrameworkForXcode verifyModelPackaging -Precognition=false -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
+      - name: Retain selected-model packaging evidence
+        run: cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging-selected.json"
+      - name: Verify whole-bundle opt-out with an empty model cache
+        run: >-
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer"
+          :clean :androidApp:clean verifyModelPackaging -PbundleModels=false
+          -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository"
+          -PmodelCache="$RUNNER_TEMP/unused-model-cache"
+          --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
       - name: Upload verification reports
         if: always()
         uses: actions/upload-artifact@v5

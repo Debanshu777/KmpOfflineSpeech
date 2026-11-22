@@ -1,8 +1,8 @@
 # Siren — speech for Kotlin Multiplatform
 
-Run **speech-to-text and text-to-speech on device** in Android, iOS and JVM apps. Siren handles compatible Whisper/Kitten model configuration, native inference and cleanup. Your app supplies the model files and audio input/output.
+Run **speech-to-text and text-to-speech on device** in Android, iOS and JVM apps. Siren handles compatible Whisper/Kitten model configuration, native inference and cleanup. The quick-start build setup supplies default models; your app owns audio input/output. Custom models remain configurable.
 
-The SDK has **no UI, Compose dependency, bundled weights or hidden downloads**.
+The core SDK has **no UI, Compose dependency or runtime downloads**. The quick-start plugin packages default models during the app build.
 
 [![CI](https://github.com/Debanshu777/Siren/actions/workflows/check.yml/badge.svg)](https://github.com/Debanshu777/Siren/actions/workflows/check.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.debanshu777/siren)](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0)
@@ -16,27 +16,21 @@ The SDK has **no UI, Compose dependency, bundled weights or hidden downloads**.
 
 ## Get started
 
-Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). [Release notes](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0).
+Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). The default-ready Gradle add-on below is **local and unpublished**, with [source setup](siren-models-gradle-plugin/README.md#use-from-source). The public SDK dependency alone retains its original model-file requirements.
 
-### 1. Add the dependency
+### 1. Use the quick-start build setup
 
-With `mavenCentral()` configured, add to your KMP shared module:
+After including the source plugin build in your settings, add it to the shared module's existing plugins:
 
 ```kotlin
-commonMain.dependencies {
-    implementation("io.github.debanshu777:siren:0.1.0")
+plugins {
+    id("io.github.debanshu777.siren.models")
 }
 ```
 
-### 2. Put the model bundle in your app
+This supplies the SDK dependency and both default model bundles. Ensure `mavenCentral()` is in your dependency repositories. Normal app builds fetch, verify and package Whisper tiny INT8 and Kitten nano INT8 automatically. No file placement, model-loading calls or extra initialization are needed. The installed app can use the models offline from first launch.
 
-For automatic build-time packaging, the [optional Gradle model helper](docs/optional-models.md) is available from source. It is a local, unpublished add-on; the published SDK dependency alone still requires app-owned model files.
-
-Use the [standard bundle](docs/getting-started.md#place-the-model-bundle): Whisper tiny INT8 and Kitten nano INT8 files under `models/whisper/` and `models/kitten/`. Android reads assets, iOS reads application resources, and JVM reads classpath resources. Siren already knows the seven filenames; you do not map them individually.
-
-The SDK does not include or download these weights. For an existing local bundle, use the [one-line local-directory override](docs/model-configuration.md#change-the-directory-or-capability).
-
-### 3. Create an engine and call it
+### 2. Call the engine
 
 From a coroutine in `androidMain`, pass your app's mono recording and its actual sample rate:
 
@@ -51,11 +45,17 @@ val replyAudio = createSpeechEngine(context).use { engine ->
 }
 ```
 
-On iOS or desktop, use `createSpeechEngine()` instead; the block stays the same. For text-to-speech alone, call `engine.synthesize("Hello from Siren.")` inside the scope.
+On iOS or desktop, use `createSpeechEngine()` instead. For text-to-speech alone, call `engine.synthesize("Hello from Siren.")` inside the scope. `use` closes automatically; play the independent returned samples at `replyAudio.sampleRate` through your app's audio adapter.
 
-`use` closes the engine automatically, including after failure or cancellation. The returned `PcmAudio` holds independent mono float samples and their playback rate. Your app records the input and plays `replyAudio.samples` at `replyAudio.sampleRate`.
+### Bring your own models
 
-See [the complete quickstart](docs/getting-started.md) for resource placement and longer-lived engines. Custom filenames, optional capabilities and other model providers are covered in [advanced configuration](docs/model-configuration.md).
+To keep the SDK setup and remove default-model packaging:
+
+```kotlin
+sirenModels { bundleModels.set(false) }
+```
+
+Supply your own bundle or local model configuration. You can also omit the plugin and add the [core dependency directly](docs/getting-started.md#add-the-dependency). Independent recognition/synthesis selection, SDK version overrides and iOS build integration are covered in the [quick-start guide](siren-models-gradle-plugin/README.md). Clean previous app build products once when changing packaging choices.
 
 ## Platform support
 
@@ -95,7 +95,7 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
-Prepared an optional Gradle add-on that verifies and packages selected models during app builds. The add-on remains unpublished; Siren 0.1.0 and its core runtime are unchanged.
+Made the prepared quick-start add-on supply the SDK and both models by default, with `bundleModels.set(false)` for custom model ownership. The add-on remains unpublished; the public core runtime is unchanged.
 
 Published [Siren 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) to Maven Central with signed Android, iOS and JVM artifacts. The [release pipeline](https://github.com/Debanshu777/Siren/actions/runs/45062849601) verified public delivery and a separate Central-only consumer. The quickstart uses one scoped engine for transcription and synthesis.
 

@@ -14,6 +14,8 @@ import javax.inject.Inject
 
 /** Optional app-build configuration. This adds no runtime API or network permission. */
 abstract class SirenModelsExtension @Inject constructor(objects: ObjectFactory) {
+    val bundleModels: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
+    val sdkVersion: Property<String> = objects.property(String::class.java).convention("0.1.0")
     val recognition: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     val synthesis: Property<Boolean> = objects.property(Boolean::class.java).convention(true)
     val cacheDirectory: DirectoryProperty = objects.directoryProperty()
@@ -26,19 +28,28 @@ class SirenModelsPlugin : Plugin<Project> {
         val prepare = project.tasks.register("prepareSirenModels", PrepareSirenModels::class.java) { task ->
             task.group = "siren models"
             task.description = "Download, verify and stage the selected app-owned speech models"
+            task.bundleModels.set(extension.bundleModels)
             task.recognition.set(extension.recognition)
             task.synthesis.set(extension.synthesis)
             task.offline.set(project.gradle.startParameter.isOffline)
             task.downloadCache.set(extension.cacheDirectory)
             task.assetsDirectory.set(project.layout.buildDirectory.dir("generated/siren-models/assets"))
         }
+        val sdkDependency = extension.sdkVersion.map { version ->
+            require(version.isNotBlank()) { "A Siren SDK version is required" }
+            "io.github.debanshu777:siren:$version"
+        }
         project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+            project.extensions.getByType(KotlinMultiplatformExtension::class.java).sourceSets.named("commonMain") { source ->
+                source.dependencies { api(sdkDependency) }
+            }
             project.extensions.getByType(KotlinMultiplatformExtension::class.java).sourceSets
                 .matching { it.name == "jvmMain" }.configureEach { source ->
                     source.resources.srcDir(prepare.flatMap { it.assetsDirectory })
                 }
         }
         project.pluginManager.withPlugin("java") {
+            project.dependencies.add("implementation", sdkDependency)
             project.extensions.getByType(SourceSetContainer::class.java).named("main") { source ->
                 source.resources.srcDir(prepare.flatMap { it.assetsDirectory })
             }
@@ -62,8 +73,10 @@ class SirenModelsPlugin : Plugin<Project> {
                 require(folder.toString().endsWith(".app")) { "Siren models must be copied into an iOS .app resource directory" }
                 directory.resolve(folder.toString()).resolve("models")
             }
+        val bundleModels = extension.bundleModels
         val iosModels = project.tasks.register("copySirenModelsForXcode", Sync::class.java) { task ->
             task.group = "siren models"
+            task.onlyIf("Bundled Siren models are enabled") { bundleModels.get() }
             task.description = "Package selected models into the Xcode app, or stage them locally outside Xcode"
             task.from(prepare.flatMap { it.assetsDirectory.dir("models") })
             task.into(xcodeModels.orElse(project.layout.buildDirectory.dir("generated/siren-models/ios/models").map { it.asFile }))

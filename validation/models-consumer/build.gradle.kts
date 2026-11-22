@@ -17,8 +17,6 @@ plugins {
     id("com.android.application") version "9.5.1" apply false
 }
 
-val sirenVersion = providers.gradleProperty("sirenVersion").getOrElse("0.1.0")
-
 kotlin {
     android {
         namespace = "io.github.debanshu.siren.validation.consumer"
@@ -35,9 +33,6 @@ kotlin {
         }
     }
     sourceSets {
-        commonMain.dependencies {
-            api("io.github.debanshu777:siren:$sirenVersion")
-        }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
@@ -52,6 +47,8 @@ tasks.withType<Test>().configureEach {
 }
 
 sirenModels {
+    providers.gradleProperty("sirenVersion").orNull?.let { sdkVersion.set(it) }
+    bundleModels.set(providers.gradleProperty("bundleModels").map(String::toBoolean).orElse(true))
     providers.gradleProperty("modelCache").orNull?.let { cacheDirectory.set(file(it)) }
     recognition.set(providers.gradleProperty("recognition").map(String::toBoolean).orElse(true))
     synthesis.set(providers.gradleProperty("synthesis").map(String::toBoolean).orElse(true))
@@ -59,11 +56,13 @@ sirenModels {
 
 abstract class VerifyModelPackaging : DefaultTask() {
     @get:Input abstract val catalog: Property<String>
+    @get:Input abstract val bundleModels: Property<Boolean>
+    @get:Input abstract val sdkVersion: Property<String>
     @get:Input abstract val recognition: Property<Boolean>
     @get:Input abstract val synthesis: Property<Boolean>
     @get:InputFile abstract val androidApk: RegularFileProperty
     @get:InputFile abstract val jvmJar: RegularFileProperty
-    @get:InputDirectory abstract val iosModels: DirectoryProperty
+    @get:Optional @get:InputDirectory abstract val iosModels: DirectoryProperty
     @get:OutputFile abstract val report: RegularFileProperty
 
     @TaskAction fun verify() {
@@ -72,9 +71,9 @@ abstract class VerifyModelPackaging : DefaultTask() {
         (data["files"] as List<*>).forEach { raw ->
             val entry = raw as Map<*, *>
             val path = entry["destination"].toString().removePrefix("models/")
-            if (path.startsWith("whisper/") && recognition.get() || path.startsWith("kitten/") && synthesis.get()) expected[path] = entry
+            if (bundleModels.get() && (path.startsWith("whisper/") && recognition.get() || path.startsWith("kitten/") && synthesis.get())) expected[path] = entry
         }
-        if (synthesis.get()) ((data["kitten_archive"] as Map<*, *>)["files"] as List<*>).forEach { raw ->
+        if (bundleModels.get() && synthesis.get()) ((data["kitten_archive"] as Map<*, *>)["files"] as List<*>).forEach { raw ->
             val entry = raw as Map<*, *>
             expected["kitten/${entry["name"]}"] = entry
         }
@@ -91,6 +90,10 @@ abstract class VerifyModelPackaging : DefaultTask() {
                     "Packaged model differs from pinned bytes: $path"
                 }
             }
+            if (!bundleModels.get()) {
+                check(zip.entries().asSequence().none { it.name.startsWith(prefix) }) { "Opted-out archive contains generated models" }
+                return@use 0L
+            }
             check(zip.getEntry(prefix + "SIREN-MODELS-NOTICE.txt") != null)
             if (recognition.get()) check(zip.getEntry(prefix + "whisper/LICENSE") != null)
             else check(zip.entries().asSequence().none { it.name.startsWith(prefix + "whisper/") })
@@ -100,23 +103,26 @@ abstract class VerifyModelPackaging : DefaultTask() {
         }
         val androidCompressed = archive(androidApk.get().asFile, "assets/models/")
         val jvmCompressed = archive(jvmJar.get().asFile, "models/")
-        val ios = iosModels.get().asFile
+        val ios = iosModels.orNull?.asFile
         expected.forEach { (path, metadata) ->
-            val file = ios.resolve(path)
+            val file = checkNotNull(ios).resolve(path)
             check(file.isFile && file.length() == (metadata["bytes"] as Number).toLong() && hash(file.inputStream()) == metadata["sha256"]) {
                 "iOS resource differs from pinned bytes: $path"
             }
         }
-        if (!recognition.get()) check(!ios.resolve("whisper").exists())
-        if (!synthesis.get()) check(!ios.resolve("kitten").exists())
+        if (bundleModels.get()) {
+            if (!recognition.get()) check(!checkNotNull(ios).resolve("whisper").exists())
+            if (!synthesis.get()) check(!checkNotNull(ios).resolve("kitten").exists())
+        } else check(ios == null)
         report.get().asFile.apply { parentFile.mkdirs() }.writeText(JsonOutput.prettyPrint(JsonOutput.toJson(mapOf(
-            "passed" to true, "modelFiles" to expected.size, "recognition" to recognition.get(), "synthesis" to synthesis.get(),
+            "bundleModels" to bundleModels.get(), "passed" to true, "modelFiles" to expected.size, "recognition" to recognition.get(), "synthesis" to synthesis.get(),
             "rawModelBytes" to expected.values.sumOf { (it["bytes"] as Number).toLong() },
             "androidApkCompressedModelBytes" to androidCompressed, "jvmJarCompressedModelBytes" to jvmCompressed,
             "androidApkBytes" to androidApk.get().asFile.length(), "jvmJarBytes" to jvmJar.get().asFile.length(),
-            "iosResourcesVerified" to true, "sdkVersion" to "0.1.0"
+            "iosResourcesVerified" to bundleModels.get(), "sdkVersion" to sdkVersion.get()
         ))) + "\n")
-        logger.lifecycle("Verified ${expected.size} pinned models in Android APK, JVM JAR and iOS resource output")
+        if (bundleModels.get()) logger.lifecycle("Verified ${expected.size} pinned models in Android APK, JVM JAR and iOS resource output")
+        else logger.lifecycle("Verified model opt-out: no generated Android/JVM model files; iOS copying disabled")
     }
 }
 
@@ -124,10 +130,13 @@ val prepareModels = tasks.named<PrepareSirenModels>("prepareSirenModels")
 tasks.register<VerifyModelPackaging>("verifyModelPackaging") {
     dependsOn("jvmJar", ":androidApp:assembleDebug", "copySirenModelsForXcode")
     catalog.set(prepareModels.map { it.catalogJson })
+    bundleModels.set(sirenModels.bundleModels)
+    sdkVersion.set(sirenModels.sdkVersion)
     recognition.set(sirenModels.recognition)
     synthesis.set(sirenModels.synthesis)
     androidApk.set(project(":androidApp").layout.buildDirectory.file("outputs/apk/debug/androidApp-debug.apk"))
     jvmJar.set(tasks.named<Jar>("jvmJar").flatMap { it.archiveFile })
-    iosModels.set(layout.dir(tasks.named<Sync>("copySirenModelsForXcode").map { it.destinationDir }))
+    val bundled = sirenModels.bundleModels
+    iosModels.set(layout.dir(tasks.named<Sync>("copySirenModelsForXcode").map { it.destinationDir }).filter { bundled.get() })
     report.set(layout.buildDirectory.file("reports/model-packaging.json"))
 }
