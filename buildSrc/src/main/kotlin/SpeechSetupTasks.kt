@@ -47,7 +47,8 @@ abstract class PrepareAndroidRuntime : SpeechDownloadTask() {
     @get:OutputDirectory abstract val noticesDirectory: DirectoryProperty
 
     @TaskAction fun prepare() {
-        val artifact = SpeechArtifact(SpeechArtifacts.manifest(manifestFile.get().asFile)["runtimes"].asJsonObject["android"].asJsonObject)
+        val manifest = SpeechArtifacts.manifest(manifestFile.get().asFile)
+        val artifact = SpeechArtifact(manifest["runtimes"].asJsonObject["android"].asJsonObject)
         val archive = fetch(artifact)
         require(runtimeAar.get().asFile.name == artifact.name) { "Runtime archive output must preserve the pinned artifact name" }
         // AARs are ZIP files; the safe extractor dispatches on a .zip suffix.
@@ -74,6 +75,7 @@ abstract class PrepareAndroidRuntime : SpeechDownloadTask() {
             }
         }
         val notices = temporaryDir.resolve("runtime-notices").apply { deleteRecursively(); mkdirs() }
+        NativeRedistributionNotices.stage(manifest, notices, ::fetch)
         extracted.walkTopDown().filter { file ->
             file.isFile && listOf("license", "notice", "copying", "copyright").any(file.name.lowercase()::startsWith)
         }.forEach { file ->
@@ -119,18 +121,29 @@ abstract class PrepareAndroidSpeech : DefaultTask() {
 abstract class PrepareIosSpeech : SpeechDownloadTask() {
     @get:OutputDirectory abstract val sherpaFramework: DirectoryProperty
     @get:OutputDirectory abstract val onnxFramework: DirectoryProperty
+    @get:OutputDirectory abstract val noticesDirectory: DirectoryProperty
     @TaskAction fun prepare() {
-        val artifacts = SpeechArtifacts.manifest(manifestFile.get().asFile)["runtimes"].asJsonObject["ios"].asJsonArray
+        val manifest = SpeechArtifacts.manifest(manifestFile.get().asFile)
+        val artifacts = manifest["runtimes"].asJsonObject["ios"].asJsonArray
         require(artifacts.size() == 2)
+        val notices = temporaryDir.resolve("ios-notices").apply { deleteRecursively(); mkdirs() }
+        NativeRedistributionNotices.stage(manifest, notices, ::fetch)
         artifacts.forEachIndexed { index, value ->
             val artifact = SpeechArtifact(value.asJsonObject)
             val destination = (if (index == 0) sherpaFramework else onnxFramework).get().asFile
             require(destination.name == File(artifact.destination).name)
             val extracted = temporaryDir.resolve("framework-$index").apply { deleteRecursively() }
             SpeechArtifacts.extract(fetch(artifact), extracted)
+            // License files may be siblings of an XCFramework, so inspect the whole release archive.
+            extracted.walkTopDown().filter { file ->
+                file.isFile && listOf("license", "notice", "copying", "copyright").any(file.name.lowercase()::startsWith)
+            }.forEach { file ->
+                SpeechArtifacts.copyFile(file, notices.resolve("META-INF/siren/ios-upstream/$index/${file.relativeTo(extracted).invariantSeparatorsPath}"))
+            }
             val framework = extracted.walkTopDown().filter { it.isDirectory && it.name.endsWith(".xcframework") }.toList().single()
             SpeechArtifacts.publish(framework, destination)
         }
+        SpeechArtifacts.publish(notices, noticesDirectory.get().asFile)
     }
 }
 

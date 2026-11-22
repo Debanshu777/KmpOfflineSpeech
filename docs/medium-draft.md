@@ -316,20 +316,47 @@ Record a sentence, transcribe it, change a few words, then tap Speak. Repeat wit
 
 The code above became **Siren**, a UI-free Kotlin Multiplatform SDK. It keeps file resolution, model configuration, native inference and cleanup behind a shared `SpeechEngine`. Your app supplies the model files and owns its screen, microphone and speaker. That is the work it saves when you add speech to another app.
 
-With a `SherpaModels` configuration, the Android call site becomes:
+With `mavenCentral()` in your dependency repositories, add Siren to `commonMain`:
 
 ```kotlin
-val engine = createAndroidSpeechEngine(applicationContext, models)
-try {
-    val transcript = engine.transcribe(recording)
-    val replyAudio = engine.synthesize(transcript)
-    // Send replyAudio to your own playback adapter.
-} finally {
-    engine.close()
+commonMain.dependencies {
+    implementation("io.github.debanshu777:siren:0.1.0")
 }
 ```
 
-The SDK is available as source, with local Maven staging for consumer validation; it is not on Maven Central yet. The sample’s `SampleModels.bundledDemo()` explicitly selects both bundled models; the SDK factories require a configuration. To remove one capability, change the engine configuration rather than the screen:
+*Release status: 0.1.0 is prepared but Maven Central publication is pending.*
+
+Package the model files from the first section in your app. In the Android host, configure their paths and pass in the `PcmAudio` captured earlier:
+
+```kotlin
+import android.content.Context
+import io.github.debanshu.siren.audio.PcmAudio
+import io.github.debanshu.siren.speech.*
+fun bundled(path: String) = ModelFile.Bundled("models/$path")
+val models = SherpaModels(
+    recognition = WhisperModel(
+        bundled("whisper/tiny-encoder.int8.onnx"),
+        bundled("whisper/tiny-decoder.int8.onnx"),
+        bundled("whisper/tiny-tokens.txt"),
+    ),
+    synthesis = KittenModel(
+        bundled("kitten/model.int8.onnx"), bundled("kitten/voices.bin"),
+        bundled("kitten/tokens.txt"), bundled("kitten/lexicon-en-us.txt"),
+    ),
+)
+suspend fun replyToRecording(context: Context, recording: PcmAudio): PcmAudio {
+    val engine = createAndroidSpeechEngine(context, models)
+    return try {
+        engine.synthesize(engine.transcribe(recording))
+    } finally {
+        engine.close()
+    }
+}
+```
+
+Call `replyToRecording` from a coroutine, then send its returned PCM to your playback adapter. Siren supplies the inference runtime; your app supplies the weights and hardware audio. There is no Compose dependency in the SDK.
+
+The sample’s `SampleModels.bundledDemo()` explicitly selects both bundled models; the SDK factories require a configuration. To remove one capability, change the engine configuration rather than the screen:
 
 ```kotlin
 val models = SampleModels.bundledDemo().copy(recognition = null)

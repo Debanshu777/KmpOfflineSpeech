@@ -45,10 +45,10 @@ State paths include `Idle -> Starting -> Recording -> Transcribing -> Idle` and 
 
 ## Distribution and scope
 
-`:siren` uses explicit API mode and repository-local Maven staging at `io.github.debanshu777:siren:0.1.0-SNAPSHOT`. There is no public release. The [relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, plain Android packaging and both iOS dynamic links. It used a copied fixture, Maven repository and separate classpath model inputs outside this checkout, without project substitution or native checkout paths. See [distribution status](library-design.md).
+`:siren` uses explicit API mode, API baselines, Vanniktech publication/signing and Dokka artifacts. Candidate `io.github.debanshu777:siren:0.1.0` is prepared locally, not published; publication is deferred. Local staging remains under `build/staging-repository`. The [recorded relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, plain Android packaging and both iOS dynamic links using copied artifacts and separate models outside the checkout. Candidates must validate their own version; historical snapshots do not establish public Central delivery. See [distribution status](library-design.md).
 
 Android's floor is API 26; the pinned sample uses iOS 18.5 on arm64 devices/simulators. JVM supports native inference with six packaged desktop classifiers. The [macOS arm64 native check](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; Linux x64 inference also passed in CI; the other four payloads are packaged/hash-verified but execution-untested. Desktop physical microphone/speaker behavior remains manually unverified. Wasm, background audio, streaming and automatic route recovery are not claimed. All UI and hardware concerns remain sample-only.
 
 ## Recent Changes
 
-Added the portable JVM native provider, classpath model ownership and sample-only JavaSound/desktop host, with packaged-platform availability separated from execution/hardware evidence.
+Added first-release API/publication structure while preserving UI-free inference, sample-owned audio/models and target-specific verification limits.

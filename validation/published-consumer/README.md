@@ -2,15 +2,21 @@
 
 This standalone fixture uses Kotlin 2.4.21, AGP 9.5.1 and the same Gradle wrapper
 as Siren. It has no Compose plugin or dependency. Both its KMP library and its
-independent Android app depend only on `io.github.debanshu777:siren:0.1.0-SNAPSHOT`.
-An optional `-PsirenVersion=...` selects a different staged version.
+independent Android app depend only on `io.github.debanshu777:siren:0.1.0`.
+An optional `-PsirenVersion=...` selects another version. This version is prepared
+locally; its presence here does not establish a public Central release.
 
-`-PsirenRepository=/absolute/path` is required. That file Maven repository is the
-exclusive source for the Siren group; the fixture has no `mavenLocal`, SDK project
+By default, Maven Central is the exclusive source for the Siren group.
+`-PsirenRepository=/absolute/path` instead selects a file Maven repository as the
+exclusive source for that group. The fixture has no `mavenLocal`, SDK project
 dependency, included build, substitution or checkout-native linker/header paths.
 Google and Maven Central provide ordinary Kotlin/Android dependencies.
 
 ## Reproduce outside the checkout
+
+The root task `./gradlew validatePublishedSirenConsumer` automates local staging,
+copying and all host-supported checks below, including the JVM model roundtrip.
+It uses no publishing credentials. The manual recipe is:
 
 First publish **locally** from the Siren repository root:
 
@@ -66,6 +72,24 @@ The opt-in check stages these files as consumer classpath resources, synthesizes
 for these built targets; it is not a public Maven release or a compatibility
 claim for arbitrary toolchains.
 
+## Check a publicly delivered release
+
+After a version is publicly available, run from a relocated copy of this fixture:
+
+```sh
+./gradlew --refresh-dependencies -PsirenVersion=0.1.0 \
+  -Pnative=true -PmodelsDir=/absolute/path/to/copied/models \
+  jvmTest compileAndroidMain :androidApp:assembleDebug \
+  linkDebugFrameworkIosSimulatorArm64 linkDebugFrameworkIosArm64
+```
+
+Do not supply `sirenRepository` or `--offline` for this check. The root
+`validateCentralSirenConsumer` task performs this online check after verifying
+Central delivery of the configured version, copying only the fixture and
+consumer-owned models outside the checkout. It neither stages nor publishes SDK
+artifacts. The prepared release workflow requires it before creating a GitHub
+release. This release-only check has not been run against a public `0.1.0`.
+
 Expected artifacts are `build/test-results/jvmTest/`,
 `androidApp/build/outputs/apk/debug/androidApp-debug.apk` and
 `build/bin/<iosTarget>/debugFramework/SirenConsumer.framework`.
@@ -78,5 +102,5 @@ consumer; the fixture and SDK do not introduce Compose or UIKit-facing APIs.
 
 ## Recent Changes
 
-Added an independent artifact-only consumer, external-copy recipe, three JVM SPI
-tests, optional published JVM native roundtrip, a plain Android app and both iOS dynamic framework link checks.
+Added separate staged and Central-only consumer modes with typed Gradle runners;
+the Central mode refreshes online resolution and supplies no local SDK repository.

@@ -1,79 +1,123 @@
-# Development and verification
+# Development, verification and releases
 
-Use JDK 21+, Android SDK platform 37.0/build tools 37.0.0, and full Xcode for iOS. The checked-in Gradle wrapper manages the build. Typed tasks in `buildSrc` download verified artifacts and compile the native audio bridge before the platform tasks that consume them.
+Use JDK 21+, Android SDK platform 37.0/build tools 37.0.0, and full Xcode on Apple Silicon for iOS. Desktop packaging additionally needs a full JDK accepted by Compose/jpackage; see the [desktop host guide](../sample/desktopApp/README.md). The Gradle wrapper and build files pin tool versions.
+
+## Source and API gate
+
+From the repository root:
 
 ```bash
-./gradlew checkSpeechSetup :siren:jvmTest :sample:composeApp:jvmTest :sample:androidApp:assembleDebug
-./gradlew :sample:composeApp:linkDebugFrameworkIosSimulatorArm64
-xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme Siren \
-  -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+./gradlew checkSpeechSetup :siren:checkKotlinAbi :siren:jvmTest \
+  :sample:composeApp:jvmTest :sample:androidApp:assembleDebug \
+  :sample:androidApp:assembleDebugAndroidTest :sample:desktopApp:jvmJar
 git diff --check
 ```
 
-Use `./gradlew prepareAndroidSpeech` or `./gradlew prepareIosSpeech` when preparing artifacts alone. Normal platform builds infer those dependencies. `--offline` works after both Gradle dependencies and the selected runtime/model downloads have been cached. Task outputs are declared, so unchanged preparation is up to date. See [build tools](../buildSrc/README.md) for task inputs, extraction checks and cache behavior.
+`:siren` uses explicit API mode. `checkKotlinAbi` compares public surfaces with `siren/api/android/siren.api`, `siren/api/jvm/siren.api` and `siren/api/siren.klib.api`. For an intentional public change, review compatibility and update with `:siren:updateKotlinAbi`; do not regenerate baselines merely to hide an unexpected failure. A text/API check does not establish every binary or behavioral compatibility property.
 
-The SDK JVM target tests provider composition, optional capabilities, configuration validation and native ownership rules. Its built-in desktop inference adapter has an explicit opt-in native test; see the [SDK evidence](../siren/verification/jvm-native-macos-arm64-2026-11-22.json). The sample JVM tests cover permission denial, recording timeout, capability-aware controls and cancellation waiting for native ownership. `checkSpeechSetup` runs the build-tool regression suite for checksum/size verification, cached downloads, extraction and publication. CI uses the Ubuntu runner's installed Android tools, installs the pinned SDK, then runs these tests and builds Android with Gradle. A separate opt-in JVM native roundtrip uses those prepared models to exercise the Linux desktop payload in CI.
+`checkSpeechSetup` invokes the separate `buildSrc` test build. Its regressions cover hashes, sizes, cache reuse, safe extraction and publication. SDK common tests exercise optional providers and ownership; sample tests cover permissions, limits, capability-aware controls and cancellation cleanup.
 
-## Device tests
+SDK runtime tasks `prepareAndroidRuntime`, `prepareJvmRuntime` and `prepareIosSpeech` do not prepare weights. Sample builds declare their own model dependencies. Network preparation occurs in typed task actions. `--offline` is useful after required Gradle and selected artifact inputs have been cached. See [build tools](../buildSrc/README.md).
 
-First-party packages now start with `io.github.debanshu.siren`. For class-filtered instrumentation runs, use `io.github.debanshu.siren.sample.android.SpeechUiDemoTest` as shown in the [capture notes](demo.md). Historical verification JSON keeps its original `dev.debanshu` test identifiers; it is a record of those runs rather than a current invocation template. The app IDs remain stable; see [architecture](architecture.md#packages-and-installation-identities).
+## Native and application checks
 
-The default connected suite performs model-only roundtrips using the sample preset and caller-supplied local paths/options. The acoustic test is explicitly enabled because it emits sound and opens the microphone:
+SDK JVM native inference requires separately prepared compatible models:
+
+```bash
+./gradlew prepareSpeechModels
+./gradlew :siren:jvmTest -Pnative=true -PmodelsDir="$(pwd)/models"
+./gradlew :sample:desktopApp:nativeSpeechSmoke
+```
+
+Default SDK JVM tests skip the opt-in native case. Native smoke tests do not open audio hardware. macOS arm64 and Linux x64 have recorded execution evidence; four other packaged desktop classifiers remain untested.
+
+For iOS:
+
+```bash
+./gradlew :sample:composeApp:linkDebugFrameworkIosSimulatorArm64
+xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme Siren \
+  -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+```
+
+Cinterop KLIBs embed native archive bytes. The Xcode host links the shared framework and system libraries, not raw checkout-native paths. A standalone direct C API diagnostic is described in [iOS notes](ios-notes.md#native-runtime-smoke-test); it has a different scope from Kotlin SDK or microphone tests.
+
+Android model-only instrumentation:
 
 ```bash
 ANDROID_SERIAL=YOUR_SERIAL ./gradlew :sample:androidApp:connectedDebugAndroidTest
 ```
 
-See [Android host notes](../sample/androidApp/README.md) for the exact acoustic opt-in command and recorded results. Keep the phone unlocked on a quiet desk with its built-in microphone and speaker available. The UI fixture requires an audible volume and leaves it unchanged. It never changes the lock state. A successful acoustic smoke test establishes the audio path, not word-perfect recognition or an accuracy benchmark.
+The real UI journey needs an unlocked phone, built-in audio devices, a pre-granted microphone permission and existing audible media volume. Connected Gradle tests can uninstall the sample afterward, so install and invoke this journey directly:
 
-## Manual recipe
+```bash
+ANDROID_SERIAL=YOUR_SERIAL ./gradlew :sample:androidApp:installDebug :sample:androidApp:installDebugAndroidTest
+adb -s YOUR_SERIAL shell pm grant dev.debanshu.speech.sample android.permission.RECORD_AUDIO
+adb -s YOUR_SERIAL shell am instrument -w -r -e demo true \
+  -e class io.github.debanshu.siren.sample.android.SpeechUiDemoTest \
+  dev.debanshu.speech.sample.test/androidx.test.runner.AndroidJUnitRunner
+```
 
-1. Tap Record and deny microphone access. Confirm an error and no recording. Enable access in Settings and return.
-2. Record a clear English phrase for 2–5 seconds, then stop. Confirm editable recognized text.
-3. Tap Speak. Confirm the edited text is played and the screen returns to Ready.
-4. Start playback and cancel. Repeat recording, transcription and synthesis after cancellation.
-5. Record without tapping Stop; confirm the elapsed-time ring and 20-second automatic stop.
-6. Background the app during recording/playback. Return and confirm it is ready. Cleanup during inference may wait for native work.
-7. Repeat without network connectivity. Android's merged manifest has no Internet permission; iOS reads models from its bundle.
+It uses actual callbacks/inference/audio, without injecting text/phases, accessibility automation or volume changes. See [capture notes](demo.md) and [Android host instructions](../sample/androidApp/README.md) for separate acoustic opt-in behavior. Permission denial, cancellation, timeout, backgrounding and offline behavior should also be checked manually on supported devices.
 
-Capture the actual app. See [demo and capture notes](demo.md); generated mockups are not evidence of app behavior.
+## Artifact and release validation
 
-## Verification status
+Version comes from `sirenVersion` in root `gradle.properties`. Candidate `0.1.0` is **prepared locally, not published**. Remote publication is deferred. Repository-local staging remains usable:
 
-### SDK/sample extraction — 2026-11-22
+```bash
+./gradlew :siren:publishAllPublicationsToStagingRepository
+```
 
-- `:siren:jvmTest`: 6 tests passed; `:sample:composeApp:jvmTest`: 5 tests passed.
-- `checkSpeechSetup`: 10 preparation regression tests passed.
-- Android sample and instrumentation APKs assembled after the split. The SDK native roundtrip and configurable Local-file roundtrip passed on Pixel 9 / Android 17.
-- `:siren:publishAllPublicationsToStagingRepository` generated local Maven publications; no remote Maven release was made. Artifact inspection found the wrapper JAR, supported JNI libraries and runtime notices in the Android AAR, no model weights, and no Compose dependencies in SDK module metadata. The iOS cinterop KLIB includes both native static archives.
-- The real UI journey passed in 16.947 seconds after Gradle installation and a microphone permission grant: the actual microphone captured the physical speaker stimulus, the screen showed “The quick brown fox jumps over the lazy dog.”, Speak played the recognized text and returned to Ready. The fixture uses live Compose callbacks without Espresso, accessibility automation or injected transcript/phase; see [result](../sample/androidApp/verification/siren-sdk-ui-2026-11-22.json) and [capture recipe](demo.md#reproduce-the-ui-journey). Earlier fixture attempts failed before the flow because of Android 17 test-framework/automation conflicts; those were test setup failures, not successful UI checks.
-- [Relocated artifact-consumer validation](../validation/published-consumer-verification.json) passed after JVM support was added: four JVM tests, including a real macOS arm64 model roundtrip using consumer classpath files and packaged SDK natives (24 kHz, 59,693 samples, all six expected content words), a plain Android APK and both dynamic iOS frameworks. It used copied local Maven artifacts outside this checkout, with no SDK project substitution or native checkout paths.
-- `:sample:composeApp:linkDebugFrameworkIosSimulatorArm64` and the moved Xcode Siren scheme built successfully. The app installed and launched in the iPhone 17 / iOS 27 simulator; the [current screenshot](demo.md) shows the actual sample.
+This writes `build/staging-repository` and can run unsigned without Central credentials. Vanniktech publication configuration produces root/target metadata, source/documentation artifacts and native cinterop publications. Central publication requires signing; do not disable signing or package validation to make a release pass.
 
-- Desktop: the shared screen compiled and the macOS arm64 distributable built using full JBR 21. A classpath-model smoke and a second check using only the packaged app’s JARs passed (24 kHz, 59,936 and 59,898 samples respectively, exact test sentence). The packaged app launched and its actual screen was inspected; [evidence](../sample/desktopApp/verification/macos-arm64-2026-11-22.json) and [screenshot](demo.md). Desktop microphone and speaker hardware remain unverified.
+The [independent consumer](../validation/published-consumer/README.md) must run against copied candidate artifacts outside the checkout, without project substitution or native checkout paths. The fixture accepts `-PsirenVersion=0.1.0` and an explicit `-PsirenRepository` directory. Check JVM native execution with separately supplied classpath models, plain Android APK contents, both iOS dynamic links, notices and absence of weights/Compose dependencies in SDK artifacts. Historical snapshot evidence is not a substitute for testing a changed candidate.
 
-- [GitHub CI](https://github.com/Debanshu777/Siren/actions/runs/45044942797) passed the Android/shared gate and the separate Linux x64 native model roundtrip on commit `8eb37bb`; [recorded result](../siren/verification/jvm-native-linux-x64-2026-11-22.json). It opens no audio devices.
+The [check workflow](../.github/workflows/check.yml) runs Ubuntu/macOS source/API, host-native and relocated-consumer checks; macOS also builds the desktop image. The prepared [release workflow](../.github/workflows/release.yml) is manual, main-only and concurrency-serialized. Preflight matches the stable property, rejects an existing coordinate/tag and extracts matching changelog notes. Secrets are scoped to the credential-presence check and signed-publish step, not ordinary builds/consumer checks. Do not print their values or commit keys. `verifyNativeRedistribution` must pass before upload.
 
-### Earlier sample verification — 2026-11-21
+Release management uses typed Gradle tasks:
 
-Verified before the SDK extraction:
+| Task | Purpose/report |
+| --- | --- |
+| `validateSirenRelease` | Main/SHA/version/tag/Central-absence checks; `build/reports/release/version.json` and curated notes |
+| `validatePublishedSirenConsumer` | Local staging plus isolated fixture/repository/models; `build/reports/validation/published-consumer.json` |
+| `verifyNativeRedistribution` | Fail-closed notice/provenance audit; `build/reports/native-redistribution.json` |
+| `verifySirenCentralPublication` | Public root/target artifacts, metadata, sources, documentation and signatures; `build/reports/release/central-delivery.json` |
+| `validateCentralSirenConsumer` | Separate relocated Central-only consumer with refreshed dependencies; `build/reports/validation/central-consumer.json` |
 
-- Gradle build-tool regression suite: 10 tests passed.
-- Shared JVM controller suite: 3 tests passed with the Gradle-only build.
-- The tutorial's minimal Compose screen compiled against the real controller for JVM and iOS simulator using Gradle. The excerpt is documentation; the app continues to use the focused recorder screen.
-- Gradle prepared the Android model assets/AAR from verified cache and compiled the device/simulator iOS audio bridges.
-- Pixel 9 / Android 17 model-only and acoustic roundtrip tests: 2 passed. The acoustic transcript was “The quick round fox jumps over the lazy dog.” The 16 kHz microphone captured 3.680 seconds of non-silent audio played through the 24 kHz output path. See the [Android host notes](../sample/androidApp/README.md) for exact diagnostics and acceptance criteria.
-- iOS native C API roundtrip passed; [recorded result](ios-native-smoke.json) and [reproduction](ios-notes.md#native-runtime-smoke-test). This test does not call the Kotlin UI adapter or microphone/speaker.
-- The opt-in [real UI journey](../sample/androidApp/verification/ui-journey-2026-11-21.json) passed one test with zero failures. The screen/controller recorded the physical speaker stimulus, transcribed “The quick brown fox jumps over the lazy dog.”, generated speech, played it and returned to Ready. The [GIF](demo.md) captures this run; no transcript or phase was injected.
-- The refined iOS simulator host built and launched through the Gradle-managed native preparation flow; its actual screen is captured in the demo notes.
-- A development-signed physical iPhone build succeeded, but installation was rejected because the device's free-development app slots were full. No existing apps were removed. Physical iPhone microphone/playback remains unverified; simulator verification is the selected scope for now.
+For local candidate testing, `./gradlew validatePublishedSirenConsumer` stages and copies its own inputs. On macOS it checks both iOS targets as well as JVM/Android; other hosts validate supported non-Apple publications. The future release workflow reserves `v0.1.0` only after validation, signs/publishes to Central, verifies public delivery, and runs `validateCentralSirenConsumer` before creating the GitHub release. That consumer resolves Siren from Central without a local/custom SDK repository or offline mode, refreshing dependencies. A failed post-reservation release requires inspecting the existing tag/deployment rather than blindly rerunning reservation.
 
-Device microphone/playback observations are recorded separately in the Android host notes, including the exact recognized text and the acoustic test's acceptance criterion. Do not replace a measured transcription with the expected phrase.
+A successful upload or Central validation is not proof that public downloads are available. Follow the deployment to its final published state, then resolve the public root and platform artifacts before marking the release available. Vanniktech documents these [separate Central stages](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
-After the package rename on the same date, the Gradle checks passed: 10 preparation regressions, 3 shared controller tests, Android app and instrumentation APK builds, and the full iOS simulator host build. The class-filtered native test also passed on Pixel 9 under the package recorded in its [new result](../sample/androidApp/verification/package-rename-native-smoke-2026-11-21.json). Microphone/playback was not repeated for this namespace refactor; the earlier acoustic and UI evidence above remains the record of those checks.
+Current native redistribution readiness is incomplete. Exact ONNX Runtime source/notice records and Linux commit fingerprints were recovered; remaining Sherpa/transitive/compiler component inventory and source-coverage review still blocks release readiness. Retained notice texts do not establish complete payload coverage. `verifyNativeRedistribution` reports to `build/reports/native-redistribution.json` and must block Central tasks while that hold remains. Source builds and unsigned local staging can continue; [third-party audit status](../THIRD_PARTY_NOTICES.md) is authoritative for current findings.
 
-## Updating dependencies
+When the user resumes publication, configure the [five repository publishing/signing secrets](releasing.md#future-github-release), commit/push the prepared main branch and dispatch the manual release with `confirmVersion=0.1.0`. Do not execute those remote steps during this preparation-only pass. The [release guide](releasing.md) explains readiness and retry behavior. The release record must identify candidate checks, deployment and public-resolution results before availability claims change.
 
-Update URL, hash and size together in `scripts/dependencies.json`, verify upstream provenance/licenses, then run the Gradle preparation and platform checks. Arbitrary ONNX graphs cannot replace these bundles solely because they end in `.onnx`.
+## Recorded verification
 
-Generated Android model assets now live under `sample/composeApp/build/generated/speechAssets`. When updating a checkout prepared by the earlier setup tools, remove the old ignored `composeApp/src/androidMain/assets/models` copy once to avoid duplicate assets. Do not commit model weights, runtime archives, `local.properties`, signing data or build directories.
+These records describe their stated artifacts/runs, not every future release:
+
+| Check | Observed result and scope |
+| --- | --- |
+| SDK/sample extraction | SDK 6/common and sample 5 JVM tests; preparation 10 regressions; Android app/test APKs built |
+| Android SDK native/configuration | Two model-only cases passed on Pixel 9/Android 17 |
+| Android real UI journey | Actual speaker-to-microphone recording, transcription and playback passed; [evidence](../sample/androidApp/verification/siren-sdk-ui-2026-11-22.json) |
+| Relocated Maven consumer | Four JVM tests including macOS native inference, Android APK with eight JNI entries/no models, both dynamic iOS links; [evidence](../validation/published-consumer-verification.json) |
+| macOS arm64 JVM | Native SDK roundtrip passed; [evidence](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) |
+| Linux x64 JVM | Native inference passed in [GitHub CI](https://github.com/Debanshu777/Siren/actions/runs/45044942797); [recorded result](../siren/verification/jvm-native-linux-x64-2026-11-22.json) |
+| macOS desktop sample | Source and packaged-JAR model checks, application image and actual window launch/inspection passed; [evidence](../sample/desktopApp/verification/macos-arm64-2026-11-22.json). Hardware audio unverified |
+| iOS sample | Moved host built, installed and launched on iPhone 17/iOS 27 simulator; [capture](demo.md). Physical iPhone audio unverified |
+
+Earlier [Android acoustic evidence](../sample/androidApp/verification/acoustic-roundtrip-2026-11-21.json) recognized “brown” as “round”; preserve the observed text rather than replacing it with the expected sentence. Other historical runs and captures remain linked from [Android notes](../sample/androidApp/README.md). A model roundtrip is neither a human accuracy benchmark nor proof of microphone/speaker operation. A signed iPhone build was produced earlier, but installation was rejected because free-development app slots were full; no existing apps were removed.
+
+## Dependency maintenance
+
+Update artifact URL, hash, size and provenance together in `scripts/dependencies.json`. Review redistribution notices and test the resulting payloads. Generated native libraries, weights, caches, local SDK paths, signing data and build outputs stay ignored. No separate setup interpreter is needed.
+
+## Recent Changes
+
+Added first-release version/API-baseline and artifact validation guidance, Central publication-state distinctions, explicit platform support evidence and reproducible native/UI checks.
+
+## Local release preparation — 2026-11-22
+
+The unpublished `0.1.0` candidate passed 20 build-tool regression tests, Android/JVM/native API baseline checks, local Maven publication with sources/Dokka documentation, and a relocated artifact consumer. That consumer passed four JVM tests (including actual classpath-model inference), Android APK packaging and both dynamic iOS framework links. The Android AAR, JVM JAR and both native cinterop KLIBs each contain 21 pinned license texts and the verified source-availability statement, with no model weights. See [recorded checks and artifact hashes](../validation/release-preparation-0.1.0.json).
+
+A Central-command dry-run confirmed mandatory signing and the native redistribution dependency; it executed no publication. The readiness gate correctly rejected the remaining Android compiler-runtime notice packaging and Windows static CRT/STL provenance gaps. Actual signing with maintainer keys, Central delivery/consumer checks, remote workflows and Medium edits were deferred at the user’s request.

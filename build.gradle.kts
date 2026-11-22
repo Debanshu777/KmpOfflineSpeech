@@ -4,6 +4,8 @@ plugins {
     id("org.jetbrains.compose") version "1.12.2" apply false
     id("com.android.kotlin.multiplatform.library") version "9.5.1" apply false
     id("com.android.application") version "9.5.1" apply false
+    id("com.vanniktech.maven.publish") version "0.36.0" apply false
+    id("org.jetbrains.dokka") version "2.2.0" apply false
 }
 
 val speechManifest = layout.projectDirectory.file("scripts/dependencies.json")
@@ -51,6 +53,7 @@ val prepareIosSpeech = tasks.register<PrepareIosSpeech>("prepareIosSpeech") {
     offline.set(gradle.startParameter.isOffline)
     sherpaFramework.set(layout.projectDirectory.dir("libs/ios/SherpaOnnxC.xcframework"))
     onnxFramework.set(layout.projectDirectory.dir("libs/ios/onnxruntime.xcframework"))
+    noticesDirectory.set(layout.projectDirectory.dir("siren/build/generated/iosRuntime/notices"))
 }
 listOf("IosArm64" to "iosArm64", "IosSimulatorArm64" to "iosSimulatorArm64").forEach { (suffix, targetName) ->
     tasks.register<PrepareIosAudio>("prepareIosAudio$suffix") {
@@ -73,3 +76,14 @@ tasks.register<GradleBuild>("checkSpeechSetup") {
     tasks = listOf("test")
     buildName = "speechSetupVerification"
 }
+
+tasks.register<VerifyNativeRedistribution>("verifyNativeRedistribution") {
+    group = "publishing"
+    description = "Verify pinned native redistribution notices and complete source coverage before Central upload"
+    manifestFile.set(speechManifest)
+    downloadCache.set(speechCache)
+    offline.set(gradle.startParameter.isOffline)
+    reportFile.set(layout.buildDirectory.file("reports/native-redistribution.json"))
+}
+
+apply(from = "gradle/release.gradle.kts")

@@ -103,8 +103,8 @@ The built-in Whisper adapters accept 0.2–20-second clips. The sample additiona
 
 ## Distribution status
 
-Public contracts and native providers live in `:siren`, with explicit API mode and no UI dependency. Local development artifacts are staged as `io.github.debanshu777:siren:0.1.0-SNAPSHOT` under `build/staging-repository`; no public release is available. See [distribution gates](library-design.md) for independent consumer and compatibility requirements.
+Public contracts and native providers live in `:siren`, with explicit API mode and no UI dependency. Candidate `io.github.debanshu777:siren:0.1.0` is prepared locally and not published; publication is deferred. Local staging writes `build/staging-repository`. See [getting started](getting-started.md) for intended installation and [release status](library-design.md) for readiness gates.
 
 ## Recent Changes
 
-Added explicit JVM factory/class-loader configuration and engine-owned resource materialization alongside Android/iOS, with sample-only presets and independent capabilities.
+Documented explicit Android/iOS/JVM factories and independent capabilities for local candidate `0.1.0`, retaining sample-only presets and unpublished status.

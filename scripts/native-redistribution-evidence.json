@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "audit_date": "2026-11-22",
+  "status": "incomplete",
+  "scope": "Read-only inspection of exact manifest-pinned runtime binaries; no execution-support or redistribution-completeness claim.",
+  "sherpa_source": {
+    "tag": "v2.0.1",
+    "revision": "af2d8d81dbfa61c4cea4c568da78f3982edca005",
+    "source_url": "https://github.com/k2-fsa/sherpa-onnx/commit/af2d8d81dbfa61c4cea4c568da78f3982edca005",
+    "android_embedded_short_revision": "af2d8d81",
+    "archive_sha256": "24ecc0fccf6344c2556e7c229c849e9f61bf9456b915615197d85f35e3f177e7"
+  },
+  "source_notice_inventory": [
+    {
+      "components": [
+        "kaldi-native-fbank",
+        "kaldi-decoder",
+        "kaldifst",
+        "utf8proc",
+        "simple-sentencepiece",
+        "json",
+        "Eigen"
+      ],
+      "method": "Searched pinned extracted source trees for LICENSE/NOTICE/COPYING/COPYRIGHT filenames; inspected root texts. No additional NOTICE file was found. Eigen nested benchmark/unsupported licenses are retained by root COPYING.* where applicable; exact compiled headers still belong to final inventory review.",
+      "result": "Current retained root license texts identified; source/license terms still apply."
+    },
+    {
+      "component": "openfst",
+      "tree_sha": "f702a6317d600ac953fdbb4978674c3a28b6115c",
+      "tree_truncated": false,
+      "method": "Recursive upstream GitHub source tree at pinned source ref",
+      "license_paths": [
+        "COPYING"
+      ]
+    },
+    {
+      "component": "hclust",
+      "tree_sha": "db76039198979ce8d03632ab6ef14fe6accb127c",
+      "tree_truncated": false,
+      "method": "Recursive upstream GitHub source tree at pinned source ref",
+      "license_paths": [
+        "LICENSE"
+      ]
+    },
+    {
+      "component": "kissfft",
+      "tree_sha": "febd4caeed32e33ad8b2e0bb5ea77542c40f18ec",
+      "tree_truncated": false,
+      "method": "Recursive upstream GitHub source tree at pinned source ref",
+      "license_paths": [
+        "COPYING",
+        "LICENSES",
+        "LICENSES/BSD-3-Clause",
+        "LICENSES/Unlicense"
+      ]
+    }
+  ],
+  "linkage": [
+    {
+      "id": "android/arm64-v8a/libonnxruntime.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 1b 00 00 00 72 32 37 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 33 37 35 30 37 32 34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n",
+      "binary_sha256": "33847ad43bffe204699fd4a27f7f3603452a8cdaf2f9a44983a0bc31ffcf2da1"
+    },
+    {
+      "id": "android/arm64-v8a/libsherpa-onnx-jni.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 1f1eca385035d0e1e562f152076405ced1b216cc\n",
+      "binary_sha256": "5db8f89f12b2c900a98c9e01e00c475c59db35e9437a62e36e27839ec48b5575"
+    },
+    {
+      "id": "android/arm64-v8a/libsherpa-onnx-c-api.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: ba56f48297b183319e3b482e61291dd3381e331c\n",
+      "binary_sha256": "0eadae93c4d595a26584d7eebde7b397b9a36d01eee3ebc7262e0d34df2fce10"
+    },
+    {
+      "id": "android/arm64-v8a/libsherpa-onnx-cxx-api.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libsherpa-onnx-c-api.so]; 0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 4de4272163c46432bc78eee582bb74d28fc313d7\n",
+      "binary_sha256": "de94e0952a124eb22e86d754e11aa0489a065affc837911a8ed5e7fd843baad6"
+    },
+    {
+      "id": "android/x86_64/libonnxruntime.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 1b 00 00 00 72 32 37 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 33 37 35 30 37 32 34 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n",
+      "binary_sha256": "087e84297cad64acb823c3d901d6e0cc934e91add7cdb20da802cd1c0bea5c3e"
+    },
+    {
+      "id": "android/x86_64/libsherpa-onnx-jni.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: fa34ea51f3ec2dde12e60c0db2aea4f93b257afc\n",
+      "binary_sha256": "878d61116f244131263eec24297ef05bf508d02bccdede2a4e3ad3202bbdaa48"
+    },
+    {
+      "id": "android/x86_64/libsherpa-onnx-c-api.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 037cf9c476b00a00d98b796b92908af8dfdc34a8\n",
+      "binary_sha256": "8285ecf2e6275374d4c8c5b46020cbb1de82db9bd6b6baad011fdc480cf10ba2"
+    },
+    {
+      "id": "android/x86_64/libsherpa-onnx-cxx-api.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libsherpa-onnx-c-api.so]; 0x0000000000000001 (NEEDED)       Shared library: [libandroid.so]; 0x0000000000000001 (NEEDED)       Shared library: [liblog.so]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so]",
+      "notes": "Displaying notes found in: .note.android.ident\n  Owner                Data size \tDescription\n  Android              0x00000084\tNT_ANDROID_TYPE_IDENT\n   description data: 15 00 00 00 72 33 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 31 36 32 34 38 33 37 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n\nDisplaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 4adcf95e2ffe4987117a7272b8141e1ff2474220\n",
+      "binary_sha256": "edcd50a1608458867d78213385f5e3013a39db7b7af43d4f87d72e4d84e5e3dc"
+    },
+    {
+      "id": "jvm/linux-aarch64/libonnxruntime.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libdl.so.2]; 0x0000000000000001 (NEEDED)       Shared library: [librt.so.1]; 0x0000000000000001 (NEEDED)       Shared library: [libpthread.so.0]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so.6]",
+      "notes": "",
+      "binary_sha256": "cfc800d4438f15e8d9017521326776ca7117d8783cb847ccccc2fc61ac4d540f"
+    },
+    {
+      "id": "jvm/linux-aarch64/libsherpa-onnx-jni.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libpthread.so.0]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so.2]; 0x0000000000000001 (NEEDED)       Shared library: [libstdc++.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libgcc_s.so.1]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [ld-linux-aarch64.so.1]",
+      "notes": "Displaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 27e7822c2090a707448e07353cb7f5cc65095e91\n",
+      "binary_sha256": "582ffcab6bc53924579b592bf629ece6fb56106b506a38e6c645ef3b9d712cab"
+    },
+    {
+      "id": "jvm/linux-x64/libonnxruntime.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libdl.so.2]; 0x0000000000000001 (NEEDED)       Shared library: [librt.so.1]; 0x0000000000000001 (NEEDED)       Shared library: [libpthread.so.0]; 0x0000000000000001 (NEEDED)       Shared library: [libstdc++.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libgcc_s.so.1]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [ld-linux-x86-64.so.2]",
+      "notes": "Displaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: f20e8b99f10a1c34ce44c26f06e999b82a44b7de\n",
+      "binary_sha256": "4b3607aebd1784b26b6f9b20e4bd974c7ab8287043e4d095cb7d2cb40b5e566e"
+    },
+    {
+      "id": "jvm/linux-x64/libsherpa-onnx-jni.so",
+      "needed": "0x0000000000000001 (NEEDED)       Shared library: [libpthread.so.0]; 0x0000000000000001 (NEEDED)       Shared library: [libonnxruntime.so]; 0x0000000000000001 (NEEDED)       Shared library: [libm.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libdl.so.2]; 0x0000000000000001 (NEEDED)       Shared library: [libstdc++.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [libgcc_s.so.1]; 0x0000000000000001 (NEEDED)       Shared library: [libc.so.6]; 0x0000000000000001 (NEEDED)       Shared library: [ld-linux-x86-64.so.2]",
+      "notes": "Displaying notes found in: .note.gnu.build-id\n  Owner                Data size \tDescription\n  GNU                  0x00000014\tNT_GNU_BUILD_ID (unique build ID bitstring)\n    Build ID: 9f9611d1ebf55d3e035cd66107a63276b55449e4\n",
+      "binary_sha256": "7bbbd7fda6c4de33415945da4aa52e55f6e041b4f7b703488f3e83d26c21d6e6"
+    },
+    {
+      "id": "jvm/osx-aarch64/libonnxruntime.dylib",
+      "needed": "@rpath/libonnxruntime.dylib (compatibility version 0.0.0, current version 0.0.0); /System/Library/Frameworks/CoreML.framework/Versions/A/CoreML (compatibility version 1.0.0, current version 1.0.0); /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4); /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5026.5.4); /usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0); /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0); /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0); /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0); ",
+      "notes": "",
+      "binary_sha256": "b0613d0ae53199a83b05fa48e169211498e9d40d54beaa372068ebe5ec5b0929"
+    },
+    {
+      "id": "jvm/osx-aarch64/libsherpa-onnx-jni.dylib",
+      "needed": "@rpath/libsherpa-onnx-jni.dylib (compatibility version 0.0.0, current version 0.0.0); /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0); @rpath/libonnxruntime.dylib (compatibility version 0.0.0, current version 0.0.0); /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0); ",
+      "notes": "",
+      "binary_sha256": "d129296ff949f8036715f600a9fe7e9cd8ff0ceb650b01c848a67df501879358"
+    },
+    {
+      "id": "jvm/osx-x64/libonnxruntime.dylib",
+      "needed": "@rpath/libonnxruntime.dylib (compatibility version 0.0.0, current version 0.0.0); /System/Library/Frameworks/CoreML.framework/Versions/A/CoreML (compatibility version 1.0.0, current version 1.0.0); /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 3502.1.255); /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 3502.1.255); /usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0); /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1900.180.0); /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1351.0.0); /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0); ",
+      "notes": "",
+      "binary_sha256": "2bf27180c09e6fd3f407c9ab25205ebf1ff95f2d53bfa35e35409b5849e0ac70"
+    },
+    {
+      "id": "jvm/osx-x64/libsherpa-onnx-jni.dylib",
+      "needed": "@rpath/libsherpa-onnx-jni.dylib (compatibility version 0.0.0, current version 0.0.0); /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0); @rpath/libonnxruntime.dylib (compatibility version 0.0.0, current version 0.0.0); /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0); ",
+      "notes": "",
+      "binary_sha256": "c506d0e05866a0c234777454f17511ef9d8907c32f2d1e3fc5394ef1a7eb30ad"
+    },
+    {
+      "id": "jvm/win-arm64/onnxruntime.dll",
+      "needed": "Name: KERNEL32.dll; Name: ADVAPI32.dll; Name: api-ms-win-core-path-l1-1-0.dll; Name: dbghelp.dll; Name: SETUPAPI.dll; Name: dxgi.dll",
+      "notes": "",
+      "binary_sha256": "968d081836cad9af537105f59e34d4997bca2ce6d78ff39d3e47660620e8a642"
+    },
+    {
+      "id": "jvm/win-arm64/sherpa-onnx-jni.dll",
+      "needed": "Name: onnxruntime.dll; Name: KERNEL32.dll",
+      "notes": "",
+      "binary_sha256": "5c22cdaa55dbd2193988dfb3c55b8771e56536f0bca8b18d9090627c64559847"
+    },
+    {
+      "id": "jvm/win-x64/onnxruntime.dll",
+      "needed": "Name: KERNEL32.dll; Name: ADVAPI32.dll; Name: api-ms-win-core-path-l1-1-0.dll; Name: dbghelp.dll; Name: SETUPAPI.dll; Name: dxgi.dll",
+      "notes": "",
+      "binary_sha256": "7f66f939a881baf4f46a2216496798edf4a1429878b646d12674aa62f27d8a25"
+    },
+    {
+      "id": "jvm/win-x64/sherpa-onnx-jni.dll",
+      "needed": "Name: onnxruntime.dll; Name: KERNEL32.dll",
+      "notes": "",
+      "binary_sha256": "cc409e5a56596b0587ee825e9bea93eedce9217a69df025ac5afe2fe0b825841"
+    }
+  ],
+  "android_runtime_findings": {
+    "sherpa_ndk": "r30",
+    "sherpa_ndk_build": "16248370",
+    "ort_ndk": "r27d",
+    "ort_ndk_build": "13750724",
+    "basis": "ELF.note.android.ident for both arm64-v8a andx86_64; DT_NEEDED lists contain no libc++_shared.so. Official build scripts leave ANDROID_STL unset; official Android documentation says CMake defaults to c++_static.",
+    "documentation": "https://developer.android.com/ndk/guides/cpp-support",
+    "r27d_notice_entries": {
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "archiveSize": 839006233,
+      "files": [
+        {
+          "name": "android-ndk-r27d/source.properties",
+          "bytes": 108,
+          "sha256": "fb5eec1ca5dac09442109cf79e9ce49faecd8b312dbc997e88903a394e14994a"
+        },
+        {
+          "name": "android-ndk-r27d/NOTICE.toolchain",
+          "bytes": 806124,
+          "sha256": "cbe3237be53c0a819f8df6aac5358fdee848eee3b6571b4e2ca20767ebd7465e"
+        },
+        {
+          "name": "android-ndk-r27d/NOTICE",
+          "bytes": 522923,
+          "sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323"
+        },
+        {
+          "name": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE",
+          "bytes": 130424,
+          "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1"
+        },
+        {
+          "name": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE",
+          "bytes": 501406,
+          "sha256": "d5f5557f82bc42ce657d0513ba9a7d0c55e64eb99d4998994d92f2b5c2b1fb3c"
+        }
+      ]
+    },
+    "r27d_retrieval": "Bounded HTTPS range requests to official839006233-byteZIP read its1475046-bytecentraldirectory and selected notice/version entries only. Entry length and CRC32 verified. No complete-toolchain download performed.",
+    "r30_local_sdk": {
+      "revision": "30.0.16248370",
+      "release": "r30",
+      "evidence": "Installed official SDK source.properties matches embedded ELF revision. These local notice bytes are identified, not yet imported into publication.",
+      "files": [
+        {
+          "path": "NOTICE",
+          "sha256": "a3c12eee897f63991da71464b690433a15d0d74a508ce0e275436279bdcaff58"
+        },
+        {
+          "path": "NOTICE.toolchain",
+          "sha256": "6b8633011d874b75629180e60de13ebfd546a10e56dc7d0380a35f6609f30617"
+        },
+        {
+          "path": "toolchains/llvm/prebuilt/darwin-x86_64/NOTICE",
+          "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1"
+        },
+        {
+          "path": "toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE",
+          "sha256": "0ed879a95b81b7d73beb4bc8ca5d1899ce5e3d65cedecbb9b642fc34d00005e8"
+        }
+      ]
+    }
+  },
+  "windows_runtime_findings": {
+    "x64_pe_linker": "14.44",
+    "arm64_pe_linker": "14.51",
+    "imports": "Both JNI DLLs import onnxruntime.dll and KERNEL32.dll; no MSVCP/VCRUNTIME imports. ORT DLLs import only Windows OS DLLs.",
+    "source_configuration": "Sherpa2.0.1 default SHERPA_ONNX_USE_STATIC_CRT=ON, CMAKE_MSVC_RUNTIME_LIBRARY selects /MT for Release. Official Windows JNI workflows do not override the default.",
+    "status": "Unconfirmed exact staticCRT/STL build/version and corresponding vendor license/notice provenance. Do not substitute a currentmain or a single VS2022 notice for both variants.",
+    "references": [
+      "https://learn.microsoft.com/en-us/cpp/c-runtime-library/crt-library-features",
+      "https://learn.microsoft.com/en-us/cpp/windows/redistributing-visual-cpp-files",
+      "https://raw.githubusercontent.com/microsoft/STL/vs-2022-17.14/NOTICE.txt"
+    ]
+  },
+  "source_availability": {
+    "text": "Eigen source availability\n\nThe pinned sherpa-onnx 2.0.1 source configuration references Eigen 5.0.1. Eigen is primarily licensed under the Mozilla Public License 2.0; retain its accompanying license and copyright notices.\n\nThe unmodified Eigen 5.0.1 Source Code Form is publicly available at:\nhttps://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz\nSHA-256: e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec\n\nDownload the archive above and verify that SHA-256 before extracting it. The archive includes the source files and their MPL 2.0 and other applicable license notices. The included COPYING.README describes the licensing; COPYING.MPL2 contains the MPL 2.0 text. Siren also retains Eigen's LICENSE and COPYING.* files under META-INF/siren/licenses/eigen/.\n\nThe inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; it does not change the incomplete status of the separate native-binary redistribution audit.\n",
+    "sha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+    "source_url": "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz",
+    "source_sha256": "e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec",
+    "source_verified": true
+  },
+  "remaining_holds": [
+    "Pin/package the identified Android compiler-runtime notices with their exact provenance.",
+    "Identify and reconcile exact Windows staticCRT/STL vendor notices/license provenance.",
+    "Finish per-payload inventory and required notice/source-availability review before changing any incomplete status."
+  ]
+}

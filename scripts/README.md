@@ -20,6 +20,10 @@ The first three prepare SDK runtime inputs only. JVM preparation pins the offici
 
 Run `./gradlew checkSpeechSetup` for checksum/cache/safe-extraction regressions. SDK JVM native inference can be checked with `:siren:jvmTest -Pnative=true -PmodelsDir=/absolute/model/root`; desktop `:sample:desktopApp:nativeSpeechSmoke` uses the actual classpath sample models without audio devices. See [development](../docs/development.md) and [distribution status](../docs/library-design.md) for evidence. Model weights are never part of the SDK publication; macOS arm64 and Linux x64 (CI) native inference are verified; the other four desktop payloads remain execution-untested.
 
+## Native release inventory
+
+The manifest also pins 21 retained license texts, exact runtime/source correspondences and the source-availability statement. [Binary/import evidence](native-redistribution-evidence.json) and [source availability](notices/SOURCE-AVAILABILITY.txt) support review. Gradle embeds these notices into Android assets, JVM resources and native cinterop KLIBs; `verifyNativeRedistribution` checks review completeness before Central upload. Android compiler-runtime notices still need packaging, and exact Windows static CRT/STL notice provenance remains unresolved. See [release preparation](../docs/releasing.md).
+
 ## Recent Changes
 
-Pinned the official JVM Java/native artifacts alongside Android/iOS, with all SDK runtime preparation independent of sample weight packaging.
+Added exact-commit license/source records, embedded source availability and concrete native audit evidence for the local `0.1.0` release candidate.

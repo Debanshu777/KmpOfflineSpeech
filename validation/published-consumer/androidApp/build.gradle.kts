@@ -18,5 +18,5 @@ android {
 }
 
 dependencies {
-    implementation("io.github.debanshu777:siren:${providers.gradleProperty("sirenVersion").getOrElse("0.1.0-SNAPSHOT")}")
+    implementation("io.github.debanshu777:siren:${providers.gradleProperty("sirenVersion").getOrElse("0.1.0")}")
 }

@@ -153,5 +153,450 @@
         }
       ]
     }
+  },
+  "redistribution": {
+    "status": "incomplete",
+    "audit_date": "2026-11-22",
+    "scope": "SDK native runtimes only; sample models excluded. Known pinned license texts are retained, but public binary release is blocked until every component and payload review is complete.",
+    "notices": [
+      {
+        "name": "sherpa-onnx-2.0.1-LICENSE",
+        "url": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/v2.0.1/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "bytes": 11358,
+        "destination": "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+      },
+      {
+        "name": "kaldi-native-fbank-v1.22.4-LICENSE",
+        "url": "https://raw.githubusercontent.com/csukuangfj/kaldi-native-fbank/v1.22.4/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "bytes": 11358,
+        "destination": "META-INF/siren/licenses/kaldi-native-fbank/LICENSE"
+      },
+      {
+        "name": "kaldi-decoder-v0.3.0-LICENSE",
+        "url": "https://raw.githubusercontent.com/k2-fsa/kaldi-decoder/v0.3.0/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "bytes": 11358,
+        "destination": "META-INF/siren/licenses/kaldi-decoder/LICENSE"
+      },
+      {
+        "name": "kaldifst-v1.8.0-LICENSE",
+        "url": "https://raw.githubusercontent.com/k2-fsa/kaldifst/v1.8.0/LICENSE",
+        "sha256": "a682d6efd1ee5dee08a8e405c233c2c198ea70ae0718129daa83ab58cfe31c5d",
+        "bytes": 11728,
+        "destination": "META-INF/siren/licenses/kaldifst/LICENSE"
+      },
+      {
+        "name": "utf8proc-v2.12.0-LICENSE.md",
+        "url": "https://raw.githubusercontent.com/JuliaStrings/utf8proc/v2.12.0/LICENSE.md",
+        "sha256": "3b510150d34f248a221bb88e1d811238d6c6c18b51231822c42974c39bb07256",
+        "bytes": 5125,
+        "destination": "META-INF/siren/licenses/utf8proc/LICENSE.md"
+      },
+      {
+        "name": "simple-sentencepiece-v0.7-LICENSE",
+        "url": "https://raw.githubusercontent.com/pkufool/simple-sentencepiece/v0.7/LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "bytes": 11357,
+        "destination": "META-INF/siren/licenses/simple-sentencepiece/LICENSE"
+      },
+      {
+        "name": "json-v3.12.0-LICENSE.MIT",
+        "url": "https://raw.githubusercontent.com/nlohmann/json/v3.12.0/LICENSE.MIT",
+        "sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+        "bytes": 1076,
+        "destination": "META-INF/siren/licenses/json/LICENSE.MIT"
+      },
+      {
+        "name": "kissfft-febd4caeed32e33ad8b2e0bb5ea77542c40f18ec-COPYING",
+        "url": "https://raw.githubusercontent.com/mborgerding/kissfft/febd4caeed32e33ad8b2e0bb5ea77542c40f18ec/COPYING",
+        "sha256": "a2840585f8411be8e6826a31ef15ae65c950bd74a2437a73b013398a934ad0c6",
+        "bytes": 246,
+        "destination": "META-INF/siren/licenses/kissfft/COPYING"
+      },
+      {
+        "name": "kissfft-febd4caeed32e33ad8b2e0bb5ea77542c40f18ec-LICENSES-BSD-3-Clause",
+        "url": "https://raw.githubusercontent.com/mborgerding/kissfft/febd4caeed32e33ad8b2e0bb5ea77542c40f18ec/LICENSES/BSD-3-Clause",
+        "sha256": "4d6bcab46f27d6d0c878e8305d4bdcfe040d52bf6656b9771f04c9fb9902c0ed",
+        "bytes": 1830,
+        "destination": "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause"
+      },
+      {
+        "name": "openfst-v1.8.5-2026-07-09-COPYING",
+        "url": "https://raw.githubusercontent.com/csukuangfj/openfst/v1.8.5-2026-07-09/COPYING",
+        "sha256": "4300529197035fd3452350718a0b8cee984e9412c9932d7f35fcde849fc97a4b",
+        "bytes": 559,
+        "destination": "META-INF/siren/licenses/openfst/COPYING"
+      },
+      {
+        "name": "hclust-cpp-2026-02-25-LICENSE",
+        "url": "https://raw.githubusercontent.com/csukuangfj/hclust-cpp/2026-02-25/LICENSE",
+        "sha256": "e361d842da1d290351860ad6dcce2673a1e42e4f873a3ae1ff4eb92c6adaa882",
+        "bytes": 1483,
+        "destination": "META-INF/siren/licenses/hclust-cpp/LICENSE"
+      },
+      {
+        "name": "eigen-5.0.1-LICENSE",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/LICENSE",
+        "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5",
+        "bytes": 16725,
+        "destination": "META-INF/siren/licenses/eigen/LICENSE"
+      },
+      {
+        "name": "eigen-5.0.1-COPYING.README",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/COPYING.README",
+        "sha256": "db640ff2bd90c6abd6a4d3fbb351e0ee4d555417cf840492054d1cbb2ea85644",
+        "bytes": 264,
+        "destination": "META-INF/siren/licenses/eigen/COPYING.README"
+      },
+      {
+        "name": "eigen-5.0.1-COPYING.MPL2",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/COPYING.MPL2",
+        "sha256": "66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172",
+        "bytes": 16727,
+        "destination": "META-INF/siren/licenses/eigen/COPYING.MPL2"
+      },
+      {
+        "name": "eigen-5.0.1-COPYING.BSD",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/COPYING.BSD",
+        "sha256": "51928dce36213c5333ba3172e847d735d4c6e9b7ff2722a326c49067155b82eb",
+        "bytes": 1517,
+        "destination": "META-INF/siren/licenses/eigen/COPYING.BSD"
+      },
+      {
+        "name": "eigen-5.0.1-COPYING.MINPACK",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/COPYING.MINPACK",
+        "sha256": "c87b7f8ee88f6195e91743820c00354833583aef091b72e2d4a49c8e28e798a0",
+        "bytes": 2193,
+        "destination": "META-INF/siren/licenses/eigen/COPYING.MINPACK"
+      },
+      {
+        "name": "eigen-5.0.1-COPYING.APACHE",
+        "url": "https://gitlab.com/libeigen/eigen/-/raw/5.0.1/COPYING.APACHE",
+        "sha256": "03379001a7b12a2ec997a25554247d985270b353c10d5bafee9ac8d6519820b7",
+        "bytes": 11362,
+        "destination": "META-INF/siren/licenses/eigen/COPYING.APACHE"
+      },
+      {
+        "name": "onnxruntime-1.28.2-LICENSE",
+        "url": "https://raw.githubusercontent.com/csukuangfj/onnxruntime/33ca9628233dc8f002435e868d4c2e9f82766ca1/LICENSE",
+        "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+        "bytes": 1073,
+        "destination": "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE"
+      },
+      {
+        "name": "onnxruntime-1.28.2-ThirdPartyNotices.txt",
+        "url": "https://raw.githubusercontent.com/csukuangfj/onnxruntime/33ca9628233dc8f002435e868d4c2e9f82766ca1/ThirdPartyNotices.txt",
+        "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+        "bytes": 325054,
+        "destination": "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+      },
+      {
+        "name": "onnxruntime-1.28.1-LICENSE",
+        "url": "https://raw.githubusercontent.com/csukuangfj/onnxruntime/5181af9bef60f46194ec30506855d74b6e6a96ff/LICENSE",
+        "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+        "bytes": 1073,
+        "destination": "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE"
+      },
+      {
+        "name": "onnxruntime-1.28.1-ThirdPartyNotices.txt",
+        "url": "https://raw.githubusercontent.com/csukuangfj/onnxruntime/5181af9bef60f46194ec30506855d74b6e6a96ff/ThirdPartyNotices.txt",
+        "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+        "bytes": 325054,
+        "destination": "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+      }
+    ],
+    "payloads": [
+      {
+        "name": "sherpa-onnx-2.0.1.aar",
+        "sha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-jvm-2.0.1.jar",
+        "sha256": "8320e2457b6e38dd624fb619d3552e11ef78ffeb394622056126b16f2fd99d12",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-linux-aarch64-2.0.1.jar",
+        "sha256": "c09d51e7190f5b8bcc20cf0d25bcb2e66324737ace5ce9d678ae37b8c79d6c2f",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-linux-x64-2.0.1.jar",
+        "sha256": "744330a68a7024d9412f029c23b06f847b8444787c94e5118e0fdaf1b4b2cb3f",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-osx-aarch64-2.0.1.jar",
+        "sha256": "718a4ea4799341146ef9a0cc15daa70e6622ae4a16911952604035f396703499",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-osx-x64-2.0.1.jar",
+        "sha256": "617a6263b4793495ea6a5f882cfc5dbf9e57cf4ad1e126104bddf8cf90846f72",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-win-arm64-2.0.1.jar",
+        "sha256": "95a2a4fe4a368fb4d9f458f68fd8ed179f9f2c07bc448185633bc199066a38bb",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-native-lib-win-x64-2.0.1.jar",
+        "sha256": "536f1c09025996a780b22f972b2e56e0e8b2064e1ceb534456ea7eba0a6ae4cd",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ]
+      },
+      {
+        "name": "sherpa-onnx-v2.0.1-ios-static.xcframework.zip",
+        "sha256": "88aa569f71b7903e0bbdfbe6e2e114b3b95862b1ef0759eea3024f82926d7374",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+        ]
+      },
+      {
+        "name": "onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
+        "sha256": "992d8a0cc6014cccc3a7815c36bbff5e5a06833ea2c4d47dd43ef071f639cf9d",
+        "status": "incomplete",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ]
+      }
+    ],
+    "components": [
+      {
+        "id": "sherpa-onnx",
+        "status": "complete",
+        "source": "https://github.com/k2-fsa/sherpa-onnx/tree/v2.0.1",
+        "reason": "Pinned source archive identity recorded; Apache-2.0 LICENSE retained. The inspected pinned source contains no top-level NOTICE. Transitive dependency review is tracked separately.",
+        "notice_destinations": [
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE"
+        ],
+        "source_archive_sha256": "24ecc0fccf6344c2556e7c229c849e9f61bf9456b915615197d85f35e3f177e7"
+      },
+      {
+        "id": "onnxruntime-1.28.2",
+        "status": "complete",
+        "source": "https://github.com/csukuangfj/onnxruntime/commit/33ca9628233dc8f002435e868d4c2e9f82766ca1",
+        "observed_source_commit": "33ca962",
+        "reason": "All Android/macOS/Windows binary fingerprints match exact source commit; both Linux runtime libraries byte-match the source-pinned vendor archives whose GIT_COMMIT_ID identifies the same fullcommit. Exact-commit LICENSE and ThirdPartyNotices are pinned.",
+        "notice_destinations": [
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
+        ],
+        "source_revision": "33ca9628233dc8f002435e868d4c2e9f82766ca1"
+      },
+      {
+        "id": "onnxruntime-1.28.1",
+        "status": "complete",
+        "source": "https://github.com/csukuangfj/onnxruntime/commit/5181af9bef60f46194ec30506855d74b6e6a96ff",
+        "observed_source_commit": "5181af9",
+        "reason": "Both iOS static archive build fingerprints match exact sourcecommit; exact-commit LICENSE and ThirdPartyNotices are pinned.",
+        "notice_destinations": [
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "source_revision": "5181af9bef60f46194ec30506855d74b6e6a96ff"
+      },
+      {
+        "id": "native-transitives",
+        "status": "incomplete",
+        "source": "https://github.com/k2-fsa/sherpa-onnx/tree/v2.0.1/cmake",
+        "reason": "Known dependency root notices checked and retained; Eigen source availability statement supplied. Exact Android NDK r30/r27d compiler-runtime notices have been identified but are not yet pinned and packaged. Exact Windows static CRT/STL version and associated redistribution-notice provenance remain unconfirmed.",
+        "notice_destinations": [
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE"
+        ],
+        "source_archive_sha256": "24ecc0fccf6344c2556e7c229c849e9f61bf9456b915615197d85f35e3f177e7"
+      }
+    ],
+    "binary_build_info": [
+      {
+        "variant": "android/arm64-v8a",
+        "archive": "sherpa-onnx-2.0.1.aar",
+        "archiveSha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
+        "entry": "jni/arm64-v8a/libonnxruntime.so",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "android/x86_64",
+        "archive": "sherpa-onnx-2.0.1.aar",
+        "archiveSha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
+        "entry": "jni/x86_64/libonnxruntime.so",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/linux-aarch64",
+        "archive": "sherpa-onnx-native-lib-linux-aarch64-2.0.1.jar",
+        "archiveSha256": "c09d51e7190f5b8bcc20cf0d25bcb2e66324737ace5ce9d678ae37b8c79d6c2f",
+        "entry": "sherpa-onnx/native/linux-aarch64/libonnxruntime.so",
+        "buildInfo": [
+          "ORT Build Info: git-branch=, git-commit-id=, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/linux-x64",
+        "archive": "sherpa-onnx-native-lib-linux-x64-2.0.1.jar",
+        "archiveSha256": "744330a68a7024d9412f029c23b06f847b8444787c94e5118e0fdaf1b4b2cb3f",
+        "entry": "sherpa-onnx/native/linux-x64/libonnxruntime.so",
+        "buildInfo": [
+          "ORT Build Info: git-branch=, git-commit-id=, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/osx-aarch64",
+        "archive": "sherpa-onnx-native-lib-osx-aarch64-2.0.1.jar",
+        "archiveSha256": "718a4ea4799341146ef9a0cc15daa70e6622ae4a16911952604035f396703499",
+        "entry": "sherpa-onnx/native/osx-aarch64/libonnxruntime.dylib",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/osx-x64",
+        "archive": "sherpa-onnx-native-lib-osx-x64-2.0.1.jar",
+        "archiveSha256": "617a6263b4793495ea6a5f882cfc5dbf9e57cf4ad1e126104bddf8cf90846f72",
+        "entry": "sherpa-onnx/native/osx-x64/libonnxruntime.dylib",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/win-arm64",
+        "archive": "sherpa-onnx-native-lib-win-arm64-2.0.1.jar",
+        "archiveSha256": "95a2a4fe4a368fb4d9f458f68fd8ed179f9f2c07bc448185633bc199066a38bb",
+        "entry": "sherpa-onnx/native/win-arm64/onnxruntime.dll",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "jvm/win-x64",
+        "archive": "sherpa-onnx-native-lib-win-x64-2.0.1.jar",
+        "archiveSha256": "536f1c09025996a780b22f972b2e56e0e8b2064e1ceb534456ea7eba0a6ae4cd",
+        "entry": "sherpa-onnx/native/win-x64/onnxruntime.dll",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=33ca962, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "ios/ios-arm64",
+        "archive": "onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
+        "archiveSha256": "992d8a0cc6014cccc3a7815c36bbff5e5a06833ea2c4d47dd43ef071f639cf9d",
+        "entry": "onnxruntime.xcframework/ios-arm64/onnxruntime.framework/onnxruntime",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=5181af9, fp8-kv-cache=1, build type=Release"
+        ]
+      },
+      {
+        "variant": "ios/ios-arm64_x86_64-simulator",
+        "archive": "onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
+        "archiveSha256": "992d8a0cc6014cccc3a7815c36bbff5e5a06833ea2c4d47dd43ef071f639cf9d",
+        "entry": "onnxruntime.xcframework/ios-arm64_x86_64-simulator/onnxruntime.framework/onnxruntime",
+        "buildInfo": [
+          "ORT Build Info: git-branch=HEAD, git-commit-id=5181af9, fp8-kv-cache=1, build type=Release"
+        ]
+      }
+    ],
+    "research_sources": [
+      "https://github.com/k2-fsa/sherpa-onnx/issues/4262",
+      "https://github.com/microsoft/onnxruntime/releases",
+      "https://github.com/csukuangfj/onnxruntime-libs/blob/v1.28.2/Package.swift",
+      "https://github.com/csukuangfj/onnxruntime/commit/33ca9628233dc8f002435e868d4c2e9f82766ca1",
+      "https://github.com/csukuangfj/onnxruntime/commit/5181af9bef60f46194ec30506855d74b6e6a96ff"
+    ],
+    "linux_source_evidence": [
+      {
+        "variant": "jvm/linux-x64",
+        "archive": "onnxruntime-linux-x64-glibc2_17-Release-1.28.2.zip",
+        "archiveSha256": "c4f8994d56191d9d2c92a961b39fe790459f2c5d155f912b239506ea31359534",
+        "sourceCommit": "33ca9628233dc8f002435e868d4c2e9f82766ca1",
+        "version": "1.28.2",
+        "librarySha256": "4b3607aebd1784b26b6f9b20e4bd974c7ab8287043e4d095cb7d2cb40b5e566e",
+        "sameAsBundled": true,
+        "licenseSha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+        "noticesSha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+        "url": "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.2/onnxruntime-linux-x64-glibc2_17-Release-1.28.2.zip"
+      },
+      {
+        "variant": "jvm/linux-aarch64",
+        "archive": "onnxruntime-linux-aarch64-glibc2_17-Release-1.28.2.zip",
+        "archiveSha256": "28083273643f40fa6477ef9d53986fe216304710c4b1c743b217a4effd016339",
+        "sourceCommit": "33ca9628233dc8f002435e868d4c2e9f82766ca1",
+        "version": "1.28.2",
+        "librarySha256": "cfc800d4438f15e8d9017521326776ca7117d8783cb847ccccc2fc61ac4d540f",
+        "sameAsBundled": true,
+        "licenseSha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+        "noticesSha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+        "url": "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.2/onnxruntime-linux-aarch64-glibc2_17-Release-1.28.2.zip"
+      }
+    ],
+    "source_availability": {
+      "text": "Eigen source availability\n\nThe pinned sherpa-onnx 2.0.1 source configuration references Eigen 5.0.1. Eigen is primarily licensed under the Mozilla Public License 2.0; retain its accompanying license and copyright notices.\n\nThe unmodified Eigen 5.0.1 Source Code Form is publicly available at:\nhttps://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz\nSHA-256: e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec\n\nDownload the archive above and verify that SHA-256 before extracting it. The archive includes the source files and their MPL 2.0 and other applicable license notices. The included COPYING.README describes the licensing; COPYING.MPL2 contains the MPL 2.0 text. Siren also retains Eigen's LICENSE and COPYING.* files under META-INF/siren/licenses/eigen/.\n\nThe inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; it does not change the incomplete status of the separate native-binary redistribution audit.\n",
+      "sha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "source_url": "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz",
+      "source_sha256": "e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec",
+      "source_verified": true
+    }
   }
 }

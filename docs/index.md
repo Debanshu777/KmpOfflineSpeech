@@ -1,15 +1,22 @@
 # Siren guides
 
-Start with the [model integration tutorial](medium-draft.md), which assumes an existing KMP project, or run the completed sample using the [quick setup](../README.md). The [demo](demo.md) shows the focused recorder design and a real Android recording → transcript → playback GIF.
+Use [getting started](getting-started.md) to configure models and call Siren's explicit Android/iOS/JVM factories. Candidate `0.1.0` is prepared locally, not published to Maven Central; public release is deferred. See [release status](library-design.md).
 
-- [Architecture and deliberate limits](architecture.md)
-- [Configuring and replacing speech models](model-configuration.md)
-- [SDK and sample architecture](library-design.md)
-- [Development and verification](development.md)
-- [iOS native integration and smoke command](ios-notes.md)
-- [Actual app capture and demo notes](demo.md)
-- [Third-party components and licenses](../THIRD_PARTY_NOTICES.md)
+To understand the native integration itself, follow the [model integration tutorial](medium-draft.md). To run the completed application, use the [sample hosts](../sample/README.md). The [demo](demo.md) contains actual Android, iOS and desktop captures and their verification limits.
 
-The UI-free `siren` SDK owns configurable speech inference. The separate Android and iOS sample shares Kotlin interaction logic and Compose UI. Whisper and Kitten execute locally through sherpa-onnx; generated weights and runtimes stay outside Git.
+- [Install and make the first inference call](getting-started.md)
+- [Configure or replace model providers](model-configuration.md)
+- [SDK and sample architecture](architecture.md)
+- [Native distribution and release status](library-design.md)
+- [Development, API checks and verification](development.md)
+- [Local release preparation and future publishing](releasing.md)
+- [iOS native integration and diagnostic](ios-notes.md)
+- [Actual captures and hardware checks](demo.md)
+- [Changelog](../CHANGELOG.md)
+- [Third-party licenses and notices](../THIRD_PARTY_NOTICES.md)
 
-Source packages use `io.github.debanshu.siren`; see the [package map and installation identities](architecture.md#packages-and-installation-identities).
+The SDK has no UI, Compose dependency, microphone/playback implementation or model weights. Applications own those concerns; the sample shows one implementation. Generated runtime binaries/weights remain ignored in the source repository, while platform SDK artifacts package required native runtime code and notices.
+
+## Recent Changes
+
+Added the first-release installation entry point, explicit candidate publication status and links to API/release validation, sample captures and the changelog.

@@ -1,114 +1,139 @@
-# Siren
+# Siren — speech for Kotlin Multiplatform
 
-A **UI-free Kotlin Multiplatform speech SDK** for on-device recognition and synthesis, with separate Android, iOS and desktop sample hosts. The built-in providers run compatible Whisper and Kitten exports through [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
+Run **speech-to-text and text-to-speech on device** in Android, iOS and JVM applications. Siren provides a shared PCM API and replaceable model providers, with built-in [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) adapters for compatible Whisper and Kitten exports.
 
-`:siren` exposes PCM values, replaceable recognition/synthesis providers and explicit model configuration. It has no Compose dependency, UI components, microphone permission dialogs, hardware audio implementation or bundled model weights. [`sample/`](sample/README.md) supplies those application concerns and the demonstration models.
+The SDK contains **no UI, Compose dependency or model weights**. Your application owns model installation, microphone access and playback. Recognition and synthesis can be used independently.
 
-Recognition and synthesis can be configured independently. Use bundled or local files, omit either capability, or implement another concrete model adapter. Start with [model configuration](docs/model-configuration.md) and the [SDK README](siren/README.md). The [tutorial](docs/medium-draft.md) explains the underlying model integration.
+[![CI](https://github.com/Debanshu777/Siren/actions/workflows/check.yml/badge.svg)](https://github.com/Debanshu777/Siren/actions/workflows/check.yml)
+[![MIT license](https://img.shields.io/badge/source%20license-MIT-blue.svg)](LICENSE)
 
-The local staging coordinate is **`io.github.debanshu777:siren:0.1.0-SNAPSHOT`**, written to `build/staging-repository`. This is a development artifact, **not a public Maven release**. See [distribution status](docs/library-design.md) for remaining consumer and compatibility gates.
+[Get started](#get-started) · [Model configuration](docs/model-configuration.md) · [Sample apps](#sample-apps) · [Verification](docs/development.md)
 
-<img src="docs/images/siren-demo.gif" width="320" alt="Actual Android sample recording speech, transcribing it and playing it back">
+<img src="docs/images/siren-demo.gif" width="320" alt="Actual Siren Android sample recording, transcribing and reading aloud">
 
-*The sample records, transcribes, edits and reads aloud. Capture provenance and verification limits are in [demo notes](docs/demo.md).*
+*Actual Android sample. [Capture provenance and limits](docs/demo.md).*
 
-## Run the Android sample
+## Get started
 
-Install JDK 21+, Android SDK platform 37.0 and build tools 37.0.0. Set `ANDROID_HOME` or an ignored `local.properties` with your SDK directory.
+**Release status: `0.1.0` is prepared locally and has not been published to Maven Central.** The dependency below is the intended future release coordinate and will not resolve from Central until publication. Use the source/local staging meanwhile. See [release preparation and remaining gates](docs/releasing.md).
+
+Add `mavenCentral()` to your repositories and Siren to your existing KMP shared module:
+
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.debanshu777:siren:0.1.0")
+        }
+    }
+}
+```
+
+Native runtime binaries are supplied by the selected SDK artifact. Model weights are separate: obtain a compatible model bundle and retain all supporting files. This synthesis-only example expects an absolute directory containing the Kitten model, voices, tokens and English lexicon:
+
+```kotlin
+import io.github.debanshu.siren.speech.KittenModel
+import io.github.debanshu.siren.speech.ModelFile
+import io.github.debanshu.siren.speech.SherpaModels
+
+fun voiceModels(directory: String): SherpaModels = SherpaModels(
+    synthesis = KittenModel(
+        model = ModelFile.Local("$directory/model.int8.onnx"),
+        voices = ModelFile.Local("$directory/voices.bin"),
+        tokens = ModelFile.Local("$directory/tokens.txt"),
+        lexicon = ModelFile.Local("$directory/lexicon-en-us.txt"),
+    ),
+)
+```
+
+Create the engine in the appropriate platform source set:
+
+```kotlin
+// androidMain
+import android.content.Context
+import io.github.debanshu.siren.speech.createAndroidSpeechEngine
+
+fun androidEngine(context: Context, directory: String) =
+    createAndroidSpeechEngine(context.applicationContext, voiceModels(directory))
+```
+
+```kotlin
+// iosMain
+import io.github.debanshu.siren.speech.createIosSpeechEngine
+
+fun iosEngine(directory: String) = createIosSpeechEngine(voiceModels(directory))
+```
+
+```kotlin
+// jvmMain
+import io.github.debanshu.siren.speech.createJvmSpeechEngine
+
+fun desktopEngine(directory: String) = createJvmSpeechEngine(voiceModels(directory))
+```
+
+Shared code can generate caller-owned audio and release the engine:
+
+```kotlin
+import io.github.debanshu.siren.audio.PcmAudio
+import io.github.debanshu.siren.speech.SpeechEngine
+
+suspend fun renderGreeting(engine: SpeechEngine): PcmAudio = try {
+    engine.synthesize("Hello from Kotlin Multiplatform.")
+} finally {
+    engine.close()
+}
+```
+
+Play the returned mono float samples at `sampleRate` using your application's audio output. Siren does not play audio itself. Add a `WhisperModel` to enable `engine.transcribe(PcmAudio(...))`, or supply your own `SpeechRecognizer`/`SpeechSynthesizer`. The [complete getting-started guide](docs/getting-started.md) covers both models, bundled resources, file acquisition and lifecycle ownership.
+
+## Platform support
+
+| Target | Runtime packaging | Observed verification |
+| --- | --- | --- |
+| Android API 26+ | arm64-v8a, x86_64 JNI | Pixel 9 native/configuration and physical audio/UI checks; x86_64 packaged, not device-tested |
+| iOS | arm64 device and simulator static archives in KLIBs | Both dynamic consumer links; simulator app/native check. Physical iPhone audio unverified |
+| JVM macOS arm64 | Native resources in JVM JAR | SDK/relocated consumer inference; packaged sample built, launched and visually checked |
+| JVM Linux x64 | Native resources in JVM JAR | Native model roundtrip passed in CI |
+| JVM macOS x64, Linux arm64, Windows arm64/x64 | Native resources in JVM JAR | Packaged/hash-verified; execution untested |
+
+The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributor builds use JDK 21. The pinned Compose sample uses iOS 18.5+. This is not a universal minimum for native speech runtimes. Other toolchains and Wasm are not verified/supported. [Evidence and precise limits](docs/development.md).
+
+## Sample apps
+
+The separate [`sample/`](sample/README.md) supplies a shared Compose screen, controller, microphone/playback adapters and an explicit Whisper tiny/Kitten nano preset:
 
 ```bash
 ./gradlew :sample:androidApp:assembleDebug
-```
-
-Run `sample/androidApp` from Android Studio, or use the [Android CLI](https://developer.android.com/tools/android-cli):
-
-```bash
-android run --apks=sample/androidApp/build/outputs/apk/debug/androidApp-debug.apk \
-  --activity=io.github.debanshu.siren.sample.android.MainActivity
-```
-
-Assembly prepares the SDK runtime and sample-only model assets. Grant microphone access when recording; stop and transcribe, then Speak. The explicit `SampleModels.bundledDemo()` preset selects Whisper tiny and Kitten nano. The sample has no Internet permission: downloads occur during build preparation.
-
-## Run the iOS sample
-
-On an Apple Silicon Mac with full Xcode selected:
-
-```bash
 open sample/iosApp/iosApp.xcodeproj
-```
-
-Select the **Siren** scheme and an iOS 18.5+ arm64 simulator, then Run. The host's Gradle phase prepares dependencies, builds `SirenApp.framework` and links it. Physical devices need your signing team. Intel simulators are not targeted.
-
-SDK cinterop KLIBs contain the sherpa/ONNX Runtime static archives. The sample separately embeds its AVFoundation audio archive. The host links the resulting Kotlin framework and Apple system libraries; it has no raw sherpa/ONNX checkout search paths. See [iOS notes](docs/ios-notes.md).
-
-## Run the desktop sample
-
-```bash
 ./gradlew :sample:desktopApp:run
-./gradlew :sample:desktopApp:createDistributable
 ```
 
-The JVM host uses the shared screen with a sample-only JavaSound audio adapter. `stageDesktopModels` prepares demonstration weights as classpath resources. The SDK's `createJvmSpeechEngine(models)` loads packaged runtime resources; neither runtime preparation nor the SDK JAR contains weights.
+Android needs the SDK listed in the [sample instructions](sample/androidApp/README.md). iOS needs full Xcode on Apple Silicon; physical devices need signing. Desktop packaging needs a full JDK accepted by Compose/jpackage. The [desktop guide](sample/desktopApp/README.md) covers application images and OS permissions.
 
-`createDistributable` creates an app image for the current host OS and requires a full, jpackage-capable JDK distribution accepted by Compose's packaging checks; see the [desktop host guide](sample/desktopApp/README.md) for `JAVA_HOME`. Installer creation is OS-specific. JavaSound asks the OS for microphone access when opening input; development JDK and packaged-app permission identities can differ. The macOS app includes its purpose string. No permission or volume setting changes automatically.
+Sample builds prepare their weights through Gradle. SDK runtime preparation and published artifacts contain no weights or demo preset. Setting a runtime capability to null does not remove native binaries or sample assets already packaged by a build.
 
-macOS arm64 application-image creation passed using a full JBR 21 toolchain. Its packaging version is `1.0.0` to satisfy macOS jpackage rules; the SDK remains `0.1.0-SNAPSHOT`. This packaging check does not establish physical audio behavior.
+## Design and limits
 
-```bash
-./gradlew :sample:desktopApp:nativeSpeechSmoke
-```
+- UI-free `:siren` SDK; application concerns stay under `sample/`.
+- Explicit `SherpaModels` selects compatible files/settings. Arbitrary ONNX graphs need their own adapters.
+- Built-in Whisper adapters accept 0.2–20-second clips. The sample also caps TTS input at 500 characters.
+- The engine serializes operations and close. Cancellation discards obsolete results but waits for synchronous native work before destruction.
+- Sessions are created per inference call. Streaming, VAD, production model installation, background audio and automatic route recovery are outside the sample.
+- Desktop microphone/speaker hardware remains unverified; a model-only roundtrip is not an audio-hardware or accuracy benchmark.
 
-This checks classpath models/runtime without opening audio hardware. The [macOS arm64 SDK native check](siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; [Linux x64 inference also passed in CI](siren/verification/jvm-native-linux-x64-2026-11-22.json). The other four desktop payloads are packaged and hash-verified, with execution untested. Desktop microphone/speaker behavior remains a separate manual check.
+## Documentation and development
 
-## SDK builds and local staging
+- [Getting started](docs/getting-started.md) · [Model configuration](docs/model-configuration.md)
+- [SDK module](siren/README.md) · [Architecture](docs/architecture.md)
+- [Integration tutorial](docs/medium-draft.md) · [Actual captures](docs/demo.md)
+- [Development and CI](docs/development.md) · [Release preparation](docs/releasing.md) · [Distribution design](docs/library-design.md)
 
-```bash
-./gradlew :siren:jvmTest :sample:composeApp:jvmTest checkSpeechSetup
-./gradlew :siren:publishAllPublicationsToStagingRepository
-```
-
-The second command writes only to the repository-local staging Maven directory. Android SDK preparation embeds the pinned wrapper JAR, JNI libraries for arm64-v8a/x86_64 and notices. JVM preparation embeds the Java wrapper plus six OS/architecture native resource sets in the portable JVM JAR. Neither task prepares model weights. Native SDK preparation embeds target-specific static archives in cinterop KLIBs. Initial preparation needs network access; use `--offline` after the selected Gradle dependencies and speech artifacts have been cached.
-
-The [recorded relocated consumer](validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference with classpath models, plain Android APK packaging and both iOS dynamic links. The fixture, Maven repository and test models were copied outside the SDK checkout; no project/native checkout paths supplied the implementation. See [distribution status](docs/library-design.md) and [verification](docs/development.md). No public publication is needed for local staging.
-
-## Project layout
-
-```text
-siren/                 UI-free SDK, public contracts and platform inference
-sample/composeApp/     controller, Compose screen, permissions and hardware audio
-sample/androidApp/     Android launcher and instrumentation tests
-sample/iosApp/         SwiftUI host and Xcode project
-sample/desktopApp/     Compose Desktop launcher and sample model resources
-buildSrc/              verified artifact preparation and cinterop bundling tasks
-scripts/               pinned artifact manifest and optional native smoke source
-models/                generated sample-only weights; ignored by Git
-```
-
-First-party Kotlin packages use `io.github.debanshu.siren`. The Android application ID remains `dev.debanshu.speech.sample` and the iOS host bundle ID remains `dev.debanshu.offlinespeech`; see [architecture](docs/architecture.md).
-
-## Scope and limits
-
-- Android API 26+, arm64-v8a and x86_64; arm64 iOS device/simulator targets. The pinned sample uses iOS 18.5+.
-- JVM packages native resources for macOS arm64/x64, Linux arm64/x64 and Windows arm64/x64. Native inference is verified on macOS arm64 and Linux x64 (CI); the other four payloads remain untested. Wasm is not supported.
-- Built-in Whisper adapters accept 0.2–20-second clips; the sample records at most 20 seconds and limits TTS input to 500 characters.
-- The sample's default models use English recognition and an English voice, speaker zero. Explicit configurations can select compatible files and supported settings.
-- Cancellation suppresses obsolete results and waits for synchronous native inference before teardown; it does not forcibly interrupt decoding.
-- The sample is foreground-only. Background services, streaming, VAD, audio-focus/route recovery and production model installation are outside its scope.
-- Runtime omission does not remove native binaries or already packaged sample weights. The SDK carries no model weights; the default sample packages both bundles.
-
-## Documentation
-
-- [SDK](siren/README.md) and [sample](sample/README.md)
-- [Model configuration](docs/model-configuration.md)
-- [Architecture](docs/architecture.md) and [distribution gates](docs/library-design.md)
-- [Tutorial / Medium source](docs/medium-draft.md)
-- [Development and measured evidence](docs/development.md)
-- [Capture notes](docs/demo.md) and [third-party notices](THIRD_PARTY_NOTICES.md)
+The [relocated consumer](validation/published-consumer-verification.json) resolves copied Maven artifacts outside the SDK checkout and verifies JVM native inference, Android packaging and both iOS dynamic links. [Build preparation](buildSrc/README.md) is entirely Gradle/Kotlin.
 
 ## Recent Changes
 
-Added JVM native inference and a separate desktop/JavaSound sample alongside Android/iOS. SDK publications embed runtime payloads without weights or UI; default sample models remain explicitly configured and sample-only.
+Prepared `0.1.0` locally with explicit platform APIs, native runtimes, sample apps and release validation. Publication is deferred; native redistribution readiness and credential setup remain required before a future release.
 
 ## License
 
-First-party source: [MIT](LICENSE). Runtime binaries, models and dictionaries retain their own licenses and notices.
+First-party source is [MIT](LICENSE). Bundled sherpa-onnx components use Apache-2.0; other native dependencies and model assets retain their respective terms. Preserve [third-party licenses and notices](THIRD_PARTY_NOTICES.md) when redistributing runtime binaries or weights.

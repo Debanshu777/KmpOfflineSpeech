@@ -1,10 +1,26 @@
 name: Check Siren
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 permissions:
   contents: read
+
+concurrency:
+  group: siren-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  android-and-shared:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -12,8 +28,42 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v5
-      - name: Install Android SDK packages
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - name: Install configured Android SDK packages
+        shell: bash
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
-      - run: ./gradlew checkSpeechSetup :siren:jvmTest :sample:composeApp:jvmTest :sample:androidApp:assembleDebug :sample:androidApp:assembleDebugAndroidTest --console=plain
-      - name: Verify Linux desktop model roundtrip
-        run: ./gradlew :siren:jvmTest -Pnative=true -PmodelsDir="$GITHUB_WORKSPACE/models" --console=plain
+      - name: Test build tools, ABI, SDK and shared sample; compile Android and Desktop hosts
+        run: >-
+          ./gradlew checkSpeechSetup :siren:checkKotlinAbi :siren:jvmTest
+          :sample:composeApp:jvmTest :sample:androidApp:assembleDebug
+          :sample:androidApp:assembleDebugAndroidTest :sample:desktopApp:jvmJar
+          --no-daemon --max-workers=1 --console=plain
+      - name: Run the host-native JVM model roundtrip without audio devices
+        run: >-
+          ./gradlew prepareSpeechModels :siren:jvmTest -Pnative=true
+          -PmodelsDir="$GITHUB_WORKSPACE/models"
+          --no-daemon --max-workers=1 --console=plain
+      - name: Stage and test an independent published-artifact consumer
+        run: ./gradlew validatePublishedSirenConsumer --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Build the macOS sample app image
+        if: runner.os == 'macOS'
+        run: ./gradlew :sample:desktopApp:createDistributable --no-daemon --max-workers=1 --console=plain
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: siren-check-${{ matrix.os }}
+          path: |
+            buildSrc/build/reports/tests/
+            buildSrc/build/test-results/
+            build/reports/validation/
+            siren/build/reports/
+            siren/build/test-results/
+            siren/build/abi/
+            sample/composeApp/build/reports/tests/
+            sample/composeApp/build/test-results/
+            sample/desktopApp/build/compose/logs/
+            ${{ runner.temp }}/siren-consumer-*/consumer/build/reports/tests/
+            ${{ runner.temp }}/siren-consumer-*/consumer/build/test-results/
+          if-no-files-found: ignore

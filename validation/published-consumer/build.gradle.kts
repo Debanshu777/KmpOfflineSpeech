@@ -8,7 +8,7 @@ plugins {
     id("com.android.application") version "9.5.1" apply false
 }
 
-val sirenVersion = providers.gradleProperty("sirenVersion").getOrElse("0.1.0-SNAPSHOT")
+val sirenVersion = providers.gradleProperty("sirenVersion").getOrElse("0.1.0")
 
 kotlin {
     android {

@@ -1,0 +1,130 @@
+{
+  "date": "2026-11-22",
+  "version": "0.1.0",
+  "status": "local preparation only; not published",
+  "remoteWrites": false,
+  "buildToolTests": {
+    "total": 20,
+    "suites": [
+      {
+        "suite": "TEST-NativeRedistributionNoticesTest.xml",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "TEST-SirenReleaseChecksTest.xml",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "TEST-SpeechArtifactsTest.xml",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "apiBaselines": [
+    "android",
+    "jvm",
+    "iosArm64",
+    "iosSimulatorArm64"
+  ],
+  "localPublicationSucceeded": true,
+  "stagedConsumer": {
+    "passed": true,
+    "jvmTests": 4,
+    "appleTargets": true,
+    "androidApk": true,
+    "nativeResult": "PUBLISHED_JVM_NATIVE rate=24000 samples=59816 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+    "outsideCheckout": true
+  },
+  "signingDryRun": {
+    "passed": true,
+    "centralSigningRequired": true,
+    "nativeAuditDependencyPresent": true,
+    "publicationExecuted": false
+  },
+  "nativeRedistribution": {
+    "ready": false,
+    "expectedGateRejection": true,
+    "remaining": "Android compiler-runtime notices are identified but not yet packaged; exact Windows static CRT/STL notice provenance remains unconfirmed."
+  },
+  "artifacts": [
+    {
+      "platform": "android",
+      "path": "siren/build/outputs/aar/siren.aar",
+      "sha256": "f4e9d9911718a2a6e15feb34be570c44a0c98ba06c870c6573f67722bef84eb9",
+      "bytes": 25368018,
+      "licenseFiles": 21,
+      "sourceAvailabilitySha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "modelWeightFiles": [],
+      "nativeFiles": [
+        "jni/arm64-v8a/libonnxruntime.so",
+        "jni/arm64-v8a/libsherpa-onnx-c-api.so",
+        "jni/arm64-v8a/libsherpa-onnx-cxx-api.so",
+        "jni/arm64-v8a/libsherpa-onnx-jni.so",
+        "jni/x86_64/libonnxruntime.so",
+        "jni/x86_64/libsherpa-onnx-c-api.so",
+        "jni/x86_64/libsherpa-onnx-cxx-api.so",
+        "jni/x86_64/libsherpa-onnx-jni.so"
+      ]
+    },
+    {
+      "platform": "jvm",
+      "path": "siren/build/libs/siren-jvm-0.1.0.jar",
+      "sha256": "0e895d7894515ca88741c55f7413a5df6354caf395aff19bbdd03910d7ad4d5d",
+      "bytes": 60096520,
+      "licenseFiles": 21,
+      "sourceAvailabilitySha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "modelWeightFiles": [],
+      "nativeFiles": [
+        "sherpa-onnx/native/linux-aarch64/libonnxruntime.so",
+        "sherpa-onnx/native/linux-aarch64/libsherpa-onnx-jni.so",
+        "sherpa-onnx/native/linux-x64/libonnxruntime.so",
+        "sherpa-onnx/native/linux-x64/libsherpa-onnx-jni.so",
+        "sherpa-onnx/native/osx-aarch64/libonnxruntime.dylib",
+        "sherpa-onnx/native/osx-aarch64/libsherpa-onnx-jni.dylib",
+        "sherpa-onnx/native/osx-x64/libonnxruntime.dylib",
+        "sherpa-onnx/native/osx-x64/libsherpa-onnx-jni.dylib",
+        "sherpa-onnx/native/win-arm64/onnxruntime.dll",
+        "sherpa-onnx/native/win-arm64/sherpa-onnx-jni.dll",
+        "sherpa-onnx/native/win-x64/onnxruntime.dll",
+        "sherpa-onnx/native/win-x64/sherpa-onnx-jni.dll"
+      ]
+    },
+    {
+      "platform": "iosArm64",
+      "path": "build/staging-repository/io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-cinterop-sherpaNative.klib",
+      "sha256": "d7f9ee1c74163f5f51a2c468e0636049bf7352fc0dffab12d589ef5f6f820b4e",
+      "bytes": 16498226,
+      "licenseFiles": 21,
+      "sourceAvailabilitySha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "modelWeightFiles": [],
+      "nativeFiles": [
+        "default/targets/ios_arm64/included/libSherpaOnnxC.a",
+        "default/targets/ios_arm64/included/libonnxruntime.a"
+      ]
+    },
+    {
+      "platform": "iosSimulatorArm64",
+      "path": "build/staging-repository/io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-cinterop-sherpaNative.klib",
+      "sha256": "ac51dcfe101ab0b8e7a399c26939ba29a47c03f2d4559e495c6b4260952fe369",
+      "bytes": 33557311,
+      "licenseFiles": 21,
+      "sourceAvailabilitySha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "modelWeightFiles": [],
+      "nativeFiles": [
+        "default/targets/ios_simulator_arm64/included/libSherpaOnnxC.a",
+        "default/targets/ios_simulator_arm64/included/libonnxruntime.a"
+      ]
+    }
+  ],
+  "centralResolutionNotRun": true,
+  "githubWorkflowExecutionNotRun": true
+}

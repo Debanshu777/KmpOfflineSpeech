@@ -1,0 +1,192 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.debanshu777:siren>
+abstract interface io.github.debanshu.siren.speech/SpeechEngine { // io.github.debanshu.siren.speech/SpeechEngine|null[0]
+    abstract val capabilities // io.github.debanshu.siren.speech/SpeechEngine.capabilities|{}capabilities[0]
+        abstract fun <get-capabilities>(): io.github.debanshu.siren.speech/SpeechCapabilities // io.github.debanshu.siren.speech/SpeechEngine.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
+
+    abstract suspend fun close() // io.github.debanshu.siren.speech/SpeechEngine.close|close(){}[0]
+    abstract suspend fun synthesize(kotlin/String): io.github.debanshu.siren.audio/PcmAudio // io.github.debanshu.siren.speech/SpeechEngine.synthesize|synthesize(kotlin.String){}[0]
+    abstract suspend fun transcribe(io.github.debanshu.siren.audio/PcmAudio): kotlin/String // io.github.debanshu.siren.speech/SpeechEngine.transcribe|transcribe(io.github.debanshu.siren.audio.PcmAudio){}[0]
+}
+
+abstract interface io.github.debanshu.siren.speech/SpeechRecognizer { // io.github.debanshu.siren.speech/SpeechRecognizer|null[0]
+    open val displayName // io.github.debanshu.siren.speech/SpeechRecognizer.displayName|{}displayName[0]
+        open fun <get-displayName>(): kotlin/String // io.github.debanshu.siren.speech/SpeechRecognizer.displayName.<get-displayName>|<get-displayName>(){}[0]
+
+    abstract suspend fun transcribe(io.github.debanshu.siren.audio/PcmAudio): kotlin/String // io.github.debanshu.siren.speech/SpeechRecognizer.transcribe|transcribe(io.github.debanshu.siren.audio.PcmAudio){}[0]
+    open suspend fun close() // io.github.debanshu.siren.speech/SpeechRecognizer.close|close(){}[0]
+}
+
+abstract interface io.github.debanshu.siren.speech/SpeechSynthesizer { // io.github.debanshu.siren.speech/SpeechSynthesizer|null[0]
+    open val displayName // io.github.debanshu.siren.speech/SpeechSynthesizer.displayName|{}displayName[0]
+        open fun <get-displayName>(): kotlin/String // io.github.debanshu.siren.speech/SpeechSynthesizer.displayName.<get-displayName>|<get-displayName>(){}[0]
+
+    abstract suspend fun synthesize(kotlin/String): io.github.debanshu.siren.audio/PcmAudio // io.github.debanshu.siren.speech/SpeechSynthesizer.synthesize|synthesize(kotlin.String){}[0]
+    open suspend fun close() // io.github.debanshu.siren.speech/SpeechSynthesizer.close|close(){}[0]
+}
+
+sealed interface io.github.debanshu.siren.speech/ModelFile { // io.github.debanshu.siren.speech/ModelFile|null[0]
+    abstract val path // io.github.debanshu.siren.speech/ModelFile.path|{}path[0]
+        abstract fun <get-path>(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.path.<get-path>|<get-path>(){}[0]
+
+    final class Bundled : io.github.debanshu.siren.speech/ModelFile { // io.github.debanshu.siren.speech/ModelFile.Bundled|null[0]
+        constructor <init>(kotlin/String) // io.github.debanshu.siren.speech/ModelFile.Bundled.<init>|<init>(kotlin.String){}[0]
+
+        final val path // io.github.debanshu.siren.speech/ModelFile.Bundled.path|{}path[0]
+            final fun <get-path>(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Bundled.path.<get-path>|<get-path>(){}[0]
+
+        final fun component1(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Bundled.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): io.github.debanshu.siren.speech/ModelFile.Bundled // io.github.debanshu.siren.speech/ModelFile.Bundled.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/ModelFile.Bundled.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/ModelFile.Bundled.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Bundled.toString|toString(){}[0]
+    }
+
+    final class Local : io.github.debanshu.siren.speech/ModelFile { // io.github.debanshu.siren.speech/ModelFile.Local|null[0]
+        constructor <init>(kotlin/String) // io.github.debanshu.siren.speech/ModelFile.Local.<init>|<init>(kotlin.String){}[0]
+
+        final val path // io.github.debanshu.siren.speech/ModelFile.Local.path|{}path[0]
+            final fun <get-path>(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Local.path.<get-path>|<get-path>(){}[0]
+
+        final fun component1(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Local.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): io.github.debanshu.siren.speech/ModelFile.Local // io.github.debanshu.siren.speech/ModelFile.Local.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/ModelFile.Local.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/ModelFile.Local.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // io.github.debanshu.siren.speech/ModelFile.Local.toString|toString(){}[0]
+    }
+}
+
+final class io.github.debanshu.siren.audio/PcmAudio { // io.github.debanshu.siren.audio/PcmAudio|null[0]
+    constructor <init>(kotlin/FloatArray, kotlin/Int) // io.github.debanshu.siren.audio/PcmAudio.<init>|<init>(kotlin.FloatArray;kotlin.Int){}[0]
+
+    final val sampleRate // io.github.debanshu.siren.audio/PcmAudio.sampleRate|{}sampleRate[0]
+        final fun <get-sampleRate>(): kotlin/Int // io.github.debanshu.siren.audio/PcmAudio.sampleRate.<get-sampleRate>|<get-sampleRate>(){}[0]
+    final val samples // io.github.debanshu.siren.audio/PcmAudio.samples|{}samples[0]
+        final fun <get-samples>(): kotlin/FloatArray // io.github.debanshu.siren.audio/PcmAudio.samples.<get-samples>|<get-samples>(){}[0]
+
+    final fun component1(): kotlin/FloatArray // io.github.debanshu.siren.audio/PcmAudio.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.github.debanshu.siren.audio/PcmAudio.component2|component2(){}[0]
+    final fun copy(kotlin/FloatArray = ..., kotlin/Int = ...): io.github.debanshu.siren.audio/PcmAudio // io.github.debanshu.siren.audio/PcmAudio.copy|copy(kotlin.FloatArray;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.audio/PcmAudio.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.debanshu.siren.audio/PcmAudio.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.debanshu.siren.audio/PcmAudio.toString|toString(){}[0]
+}
+
+final class io.github.debanshu.siren.speech/KittenModel { // io.github.debanshu.siren.speech/KittenModel|null[0]
+    constructor <init>(io.github.debanshu.siren.speech/ModelFile, io.github.debanshu.siren.speech/ModelFile, io.github.debanshu.siren.speech/ModelFile, io.github.debanshu.siren.speech/ModelFile, kotlin/Int = ..., kotlin/Float = ..., kotlin/String = ...) // io.github.debanshu.siren.speech/KittenModel.<init>|<init>(io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;kotlin.Int;kotlin.Float;kotlin.String){}[0]
+
+    final val displayName // io.github.debanshu.siren.speech/KittenModel.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // io.github.debanshu.siren.speech/KittenModel.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val lexicon // io.github.debanshu.siren.speech/KittenModel.lexicon|{}lexicon[0]
+        final fun <get-lexicon>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.lexicon.<get-lexicon>|<get-lexicon>(){}[0]
+    final val model // io.github.debanshu.siren.speech/KittenModel.model|{}model[0]
+        final fun <get-model>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.model.<get-model>|<get-model>(){}[0]
+    final val speakerId // io.github.debanshu.siren.speech/KittenModel.speakerId|{}speakerId[0]
+        final fun <get-speakerId>(): kotlin/Int // io.github.debanshu.siren.speech/KittenModel.speakerId.<get-speakerId>|<get-speakerId>(){}[0]
+    final val speed // io.github.debanshu.siren.speech/KittenModel.speed|{}speed[0]
+        final fun <get-speed>(): kotlin/Float // io.github.debanshu.siren.speech/KittenModel.speed.<get-speed>|<get-speed>(){}[0]
+    final val tokens // io.github.debanshu.siren.speech/KittenModel.tokens|{}tokens[0]
+        final fun <get-tokens>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.tokens.<get-tokens>|<get-tokens>(){}[0]
+    final val voices // io.github.debanshu.siren.speech/KittenModel.voices|{}voices[0]
+        final fun <get-voices>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.voices.<get-voices>|<get-voices>(){}[0]
+
+    final fun component1(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.component1|component1(){}[0]
+    final fun component2(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.component2|component2(){}[0]
+    final fun component3(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.component3|component3(){}[0]
+    final fun component4(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/KittenModel.component4|component4(){}[0]
+    final fun component5(): kotlin/Int // io.github.debanshu.siren.speech/KittenModel.component5|component5(){}[0]
+    final fun component6(): kotlin/Float // io.github.debanshu.siren.speech/KittenModel.component6|component6(){}[0]
+    final fun component7(): kotlin/String // io.github.debanshu.siren.speech/KittenModel.component7|component7(){}[0]
+    final fun copy(io.github.debanshu.siren.speech/ModelFile = ..., io.github.debanshu.siren.speech/ModelFile = ..., io.github.debanshu.siren.speech/ModelFile = ..., io.github.debanshu.siren.speech/ModelFile = ..., kotlin/Int = ..., kotlin/Float = ..., kotlin/String = ...): io.github.debanshu.siren.speech/KittenModel // io.github.debanshu.siren.speech/KittenModel.copy|copy(io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;kotlin.Int;kotlin.Float;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/KittenModel.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/KittenModel.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.debanshu.siren.speech/KittenModel.toString|toString(){}[0]
+}
+
+final class io.github.debanshu.siren.speech/ModelSpeechEngine : io.github.debanshu.siren.speech/SpeechEngine { // io.github.debanshu.siren.speech/ModelSpeechEngine|null[0]
+    constructor <init>(io.github.debanshu.siren.speech/SpeechRecognizer? = ..., io.github.debanshu.siren.speech/SpeechSynthesizer? = ...) // io.github.debanshu.siren.speech/ModelSpeechEngine.<init>|<init>(io.github.debanshu.siren.speech.SpeechRecognizer?;io.github.debanshu.siren.speech.SpeechSynthesizer?){}[0]
+
+    final val capabilities // io.github.debanshu.siren.speech/ModelSpeechEngine.capabilities|{}capabilities[0]
+        final fun <get-capabilities>(): io.github.debanshu.siren.speech/SpeechCapabilities // io.github.debanshu.siren.speech/ModelSpeechEngine.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
+
+    final suspend fun close() // io.github.debanshu.siren.speech/ModelSpeechEngine.close|close(){}[0]
+    final suspend fun synthesize(kotlin/String): io.github.debanshu.siren.audio/PcmAudio // io.github.debanshu.siren.speech/ModelSpeechEngine.synthesize|synthesize(kotlin.String){}[0]
+    final suspend fun transcribe(io.github.debanshu.siren.audio/PcmAudio): kotlin/String // io.github.debanshu.siren.speech/ModelSpeechEngine.transcribe|transcribe(io.github.debanshu.siren.audio.PcmAudio){}[0]
+}
+
+final class io.github.debanshu.siren.speech/SherpaModels { // io.github.debanshu.siren.speech/SherpaModels|null[0]
+    constructor <init>(io.github.debanshu.siren.speech/WhisperModel? = ..., io.github.debanshu.siren.speech/KittenModel? = ..., kotlin/Int = ...) // io.github.debanshu.siren.speech/SherpaModels.<init>|<init>(io.github.debanshu.siren.speech.WhisperModel?;io.github.debanshu.siren.speech.KittenModel?;kotlin.Int){}[0]
+
+    final val recognition // io.github.debanshu.siren.speech/SherpaModels.recognition|{}recognition[0]
+        final fun <get-recognition>(): io.github.debanshu.siren.speech/WhisperModel? // io.github.debanshu.siren.speech/SherpaModels.recognition.<get-recognition>|<get-recognition>(){}[0]
+    final val synthesis // io.github.debanshu.siren.speech/SherpaModels.synthesis|{}synthesis[0]
+        final fun <get-synthesis>(): io.github.debanshu.siren.speech/KittenModel? // io.github.debanshu.siren.speech/SherpaModels.synthesis.<get-synthesis>|<get-synthesis>(){}[0]
+    final val threads // io.github.debanshu.siren.speech/SherpaModels.threads|{}threads[0]
+        final fun <get-threads>(): kotlin/Int // io.github.debanshu.siren.speech/SherpaModels.threads.<get-threads>|<get-threads>(){}[0]
+
+    final fun component1(): io.github.debanshu.siren.speech/WhisperModel? // io.github.debanshu.siren.speech/SherpaModels.component1|component1(){}[0]
+    final fun component2(): io.github.debanshu.siren.speech/KittenModel? // io.github.debanshu.siren.speech/SherpaModels.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // io.github.debanshu.siren.speech/SherpaModels.component3|component3(){}[0]
+    final fun copy(io.github.debanshu.siren.speech/WhisperModel? = ..., io.github.debanshu.siren.speech/KittenModel? = ..., kotlin/Int = ...): io.github.debanshu.siren.speech/SherpaModels // io.github.debanshu.siren.speech/SherpaModels.copy|copy(io.github.debanshu.siren.speech.WhisperModel?;io.github.debanshu.siren.speech.KittenModel?;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/SherpaModels.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/SherpaModels.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.debanshu.siren.speech/SherpaModels.toString|toString(){}[0]
+}
+
+final class io.github.debanshu.siren.speech/SpeechCapabilities { // io.github.debanshu.siren.speech/SpeechCapabilities|null[0]
+    constructor <init>(kotlin/Boolean, kotlin/Boolean, kotlin/String? = ..., kotlin/String? = ...) // io.github.debanshu.siren.speech/SpeechCapabilities.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+
+    final val recognition // io.github.debanshu.siren.speech/SpeechCapabilities.recognition|{}recognition[0]
+        final fun <get-recognition>(): kotlin/Boolean // io.github.debanshu.siren.speech/SpeechCapabilities.recognition.<get-recognition>|<get-recognition>(){}[0]
+    final val recognitionLabel // io.github.debanshu.siren.speech/SpeechCapabilities.recognitionLabel|{}recognitionLabel[0]
+        final fun <get-recognitionLabel>(): kotlin/String? // io.github.debanshu.siren.speech/SpeechCapabilities.recognitionLabel.<get-recognitionLabel>|<get-recognitionLabel>(){}[0]
+    final val synthesis // io.github.debanshu.siren.speech/SpeechCapabilities.synthesis|{}synthesis[0]
+        final fun <get-synthesis>(): kotlin/Boolean // io.github.debanshu.siren.speech/SpeechCapabilities.synthesis.<get-synthesis>|<get-synthesis>(){}[0]
+    final val synthesisLabel // io.github.debanshu.siren.speech/SpeechCapabilities.synthesisLabel|{}synthesisLabel[0]
+        final fun <get-synthesisLabel>(): kotlin/String? // io.github.debanshu.siren.speech/SpeechCapabilities.synthesisLabel.<get-synthesisLabel>|<get-synthesisLabel>(){}[0]
+
+    final fun component1(): kotlin/Boolean // io.github.debanshu.siren.speech/SpeechCapabilities.component1|component1(){}[0]
+    final fun component2(): kotlin/Boolean // io.github.debanshu.siren.speech/SpeechCapabilities.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // io.github.debanshu.siren.speech/SpeechCapabilities.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // io.github.debanshu.siren.speech/SpeechCapabilities.component4|component4(){}[0]
+    final fun copy(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin/String? = ...): io.github.debanshu.siren.speech/SpeechCapabilities // io.github.debanshu.siren.speech/SpeechCapabilities.copy|copy(kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/SpeechCapabilities.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/SpeechCapabilities.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.debanshu.siren.speech/SpeechCapabilities.toString|toString(){}[0]
+}
+
+final class io.github.debanshu.siren.speech/WhisperModel { // io.github.debanshu.siren.speech/WhisperModel|null[0]
+    constructor <init>(io.github.debanshu.siren.speech/ModelFile, io.github.debanshu.siren.speech/ModelFile, io.github.debanshu.siren.speech/ModelFile, kotlin/String = ..., kotlin/String = ..., kotlin/String = ...) // io.github.debanshu.siren.speech/WhisperModel.<init>|<init>(io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val decoder // io.github.debanshu.siren.speech/WhisperModel.decoder|{}decoder[0]
+        final fun <get-decoder>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.decoder.<get-decoder>|<get-decoder>(){}[0]
+    final val displayName // io.github.debanshu.siren.speech/WhisperModel.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val encoder // io.github.debanshu.siren.speech/WhisperModel.encoder|{}encoder[0]
+        final fun <get-encoder>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.encoder.<get-encoder>|<get-encoder>(){}[0]
+    final val language // io.github.debanshu.siren.speech/WhisperModel.language|{}language[0]
+        final fun <get-language>(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.language.<get-language>|<get-language>(){}[0]
+    final val task // io.github.debanshu.siren.speech/WhisperModel.task|{}task[0]
+        final fun <get-task>(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.task.<get-task>|<get-task>(){}[0]
+    final val tokens // io.github.debanshu.siren.speech/WhisperModel.tokens|{}tokens[0]
+        final fun <get-tokens>(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.tokens.<get-tokens>|<get-tokens>(){}[0]
+
+    final fun component1(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.component1|component1(){}[0]
+    final fun component2(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.component2|component2(){}[0]
+    final fun component3(): io.github.debanshu.siren.speech/ModelFile // io.github.debanshu.siren.speech/WhisperModel.component3|component3(){}[0]
+    final fun component4(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.component4|component4(){}[0]
+    final fun component5(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.component5|component5(){}[0]
+    final fun component6(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.component6|component6(){}[0]
+    final fun copy(io.github.debanshu.siren.speech/ModelFile = ..., io.github.debanshu.siren.speech/ModelFile = ..., io.github.debanshu.siren.speech/ModelFile = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): io.github.debanshu.siren.speech/WhisperModel // io.github.debanshu.siren.speech/WhisperModel.copy|copy(io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;io.github.debanshu.siren.speech.ModelFile;kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.github.debanshu.siren.speech/WhisperModel.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.github.debanshu.siren.speech/WhisperModel.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.github.debanshu.siren.speech/WhisperModel.toString|toString(){}[0]
+}
+
+final fun io.github.debanshu.siren.speech/createIosSpeechEngine(io.github.debanshu.siren.speech/SherpaModels): io.github.debanshu.siren.speech/SpeechEngine // io.github.debanshu.siren.speech/createIosSpeechEngine|createIosSpeechEngine(io.github.debanshu.siren.speech.SherpaModels){}[0]

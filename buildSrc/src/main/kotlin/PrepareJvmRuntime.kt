@@ -14,7 +14,8 @@ abstract class PrepareJvmRuntime : SpeechDownloadTask() {
     @get:OutputDirectory abstract val resourcesDirectory: DirectoryProperty
 
     @TaskAction fun prepare() {
-        val runtime = SpeechArtifacts.manifest(manifestFile.get().asFile)["runtimes"].asJsonObject["jvm"].asJsonObject
+        val manifest = SpeechArtifacts.manifest(manifestFile.get().asFile)
+        val runtime = manifest["runtimes"].asJsonObject["jvm"].asJsonObject
         val wrapper = SpeechArtifact(runtime["wrapper"].asJsonObject)
         val wrapperArchive = fetch(wrapper)
         val wrapperFiles = extractJar(wrapperArchive, "wrapper")
@@ -26,6 +27,7 @@ abstract class PrepareJvmRuntime : SpeechDownloadTask() {
             SpeechArtifacts.copyFile(file, classes.resolve("com/k2fsa/sherpa/onnx/${file.relativeTo(packageDirectory).invariantSeparatorsPath}"))
         }
         val resources = temporaryDir.resolve("resources").apply { deleteRecursively(); mkdirs() }
+        NativeRedistributionNotices.stage(manifest, resources, ::fetch)
         retainNotices(wrapperFiles, resources, "wrapper")
         val expectedPlatforms = setOf("linux-aarch64", "linux-x64", "osx-aarch64", "osx-x64", "win-arm64", "win-x64")
         val platforms = mutableSetOf<String>()

@@ -4,7 +4,7 @@ Siren is a UI-free Kotlin Multiplatform speech SDK with a separate teaching samp
 
 ## Modules and packages
 
-- `:siren` / `siren/src`: explicit public API, PCM, model configuration, providers and Android/iOS inference. Root package `io.github.debanshu.siren`; `audio` holds PCM and `speech` holds contracts/engines. SDK C bindings use `.internal.native`.
+- `:siren` / `siren/src`: explicit public API, PCM, model configuration, providers and Android/iOS/JVM inference. Root package `io.github.debanshu.siren`; `audio` holds PCM and `speech` holds contracts/engines. SDK C bindings use `.internal.native`.
 - `:sample:composeApp` / `sample/composeApp`: controller, Compose screen, permissions and hardware audio; packages `.sample` and `.sample.platform`. Sample C bindings use `.sample.internal.audio`.
 - `:sample:androidApp`: launcher and tests in `.sample.android`.
 - `sample/iosApp`: SwiftUI Siren host consuming `SirenApp.framework`.
@@ -27,7 +27,7 @@ SDK iOS cinterop KLIBs embed sherpa/ONNX static archives. Sample audio cinterop 
 Relevant commands from the repository root:
 
 ```bash
-./gradlew checkSpeechSetup :siren:jvmTest :sample:composeApp:jvmTest
+./gradlew checkSpeechSetup :siren:checkKotlinAbi :siren:jvmTest :sample:composeApp:jvmTest
 ./gradlew :sample:androidApp:assembleDebug
 ./gradlew :siren:compileKotlinIosSimulatorArm64
 ./gradlew :sample:desktopApp:nativeSpeechSmoke
@@ -35,11 +35,17 @@ Relevant commands from the repository root:
 ./gradlew :siren:publishAllPublicationsToStagingRepository
 ```
 
-Local staging is `io.github.debanshu777:siren:0.1.0-SNAPSHOT` in `build/staging-repository`, with version controlled by `gradle.properties`. No public release is available. Keep public publication separate from local staging. Preserve and rerun relocated Maven consumer checks after artifact changes, including native JVM payloads; target-specific API/ABI evidence remains a release gate. See `docs/library-design.md`.
+Version comes from `sirenVersion` in root `gradle.properties`; candidate `0.1.0` targets `io.github.debanshu777:siren:0.1.0`. It is prepared locally and not published. Current work is preparation-only: remote pushes/tags, Central publication and Medium writes are deferred until the user resumes that work. Local staging writes `build/staging-repository` and can run unsigned without publishing credentials. Central configuration uses Vanniktech, signing, POM metadata and Dokka. Preserve source/API, redistribution-readiness and relocated consumer gates. See `docs/development.md` and `docs/library-design.md`.
+
+API baselines live under `siren/api`. Run `:siren:checkKotlinAbi`; use `:siren:updateKotlinAbi` only for reviewed intentional public API changes, not to hide unexpected compatibility failures. Release notes come from the exact matching `CHANGELOG.md` version section. Keep install snippets and release status aligned with the candidate/result.
+
+When publication resumes, use typed Gradle tasks `validateSirenRelease`, `validatePublishedSirenConsumer`, `verifyNativeRedistribution`, `verifySirenCentralPublication` and `validateCentralSirenConsumer` through the main-only manual workflow. Preserve collision checks, staging and isolated validation before tag reservation/signing/upload, then public delivery/Central-only consumer checks before GitHub release creation. Never bypass provenance/notice holds or signing. Keep secrets scoped to credential check/publish. Do not add duplicate approval after explicit user resumption. Upload or local staging alone never establishes public availability.
+
+`docs/releasing.md` records the five repository secret names, deferred future release steps and current native-readiness hold. Keep secret values out of source/logs/chat; the local prepared workflow is not evidence of an executed remote release.
 
 Use `--offline` after required Gradle/speech artifacts are cached. SDK runtime tasks do not depend on model preparation; sample builds do. Root tasks include `prepareSpeechModels`, `prepareAndroidRuntime`, `prepareJvmRuntime`, `prepareAndroidSpeech`, `prepareIosSpeech` and the two target-specific `prepareIosAudio...` tasks. `checkSpeechSetup` runs the special `buildSrc` build's tests. The SDK JVM native check is opt-in: `:siren:jvmTest -Pnative=true -PmodelsDir=/absolute/model/root`; default JVM tests do not load models. Desktop smoke tests do not verify physical JavaSound input/output.
 
-Desktop packaging requires a full JDK accepted by Compose/jpackage. Its app version `1.0.0` satisfies macOS packaging constraints and is separate from SDK snapshot coordinates. Preserve packaging guards; do not claim execution on a platform from resource inclusion or an unexecuted CI job.
+Desktop packaging requires a full JDK accepted by Compose/jpackage. Its app version `1.0.0` satisfies macOS packaging constraints and is separate from SDK Maven coordinates. Preserve packaging guards; do not claim execution on a platform from resource inclusion or an unexecuted CI job.
 
 Build the checked-in Siren Xcode scheme for iOS validation. Android model-only tests use `:sample:androidApp:connectedDebugAndroidTest`. That connected suite can uninstall the app afterward, so run the opt-in UI journey through installed APKs and direct instrumentation:
 
@@ -56,3 +62,5 @@ Require an unlocked phone, built-in audio devices and an existing audible media 
 Every native allocation needs clear ownership and paired destruction. Cancellation must wait for synchronous native work before teardown. Do not claim microphone/speaker verification, accuracy or performance from compilation or an in-memory model roundtrip.
 
 Update the root README, affected module READMEs and relevant docs with every code/build/tooling change, including concise Recent Changes entries. Report checks actually run and distinguish pre-extraction evidence from checks of current artifacts.
+
+Preserve the canonical formatting of Kotlin-generated ABI references. `.gitattributes` allows their generated final blank line for Android/JVM dumps; do not trim it to satisfy a general whitespace check.

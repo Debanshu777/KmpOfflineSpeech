@@ -1,9 +1,13 @@
+import java.util.concurrent.Callable
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 plugins {
     kotlin("multiplatform")
     id("com.android.kotlin.multiplatform.library")
-    `maven-publish`
+    id("com.vanniktech.maven.publish")
+    id("org.jetbrains.dokka")
+    signing
 }
 
 group = "io.github.debanshu777"
@@ -20,6 +24,8 @@ extensions.configure<com.android.build.api.variant.KotlinMultiplatformAndroidCom
 
 kotlin {
     explicitApi()
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation()
     android {
         namespace = "io.github.debanshu.siren"
         compileSdk = 37
@@ -60,22 +66,33 @@ tasks.withType<Test>().configureEach {
     providers.gradleProperty("modelsDir").orNull?.let { systemProperty("siren.modelsDir", it) }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "staging"
-            url = uri(rootProject.layout.buildDirectory.dir("staging-repository"))
-        }
-    }
-    publications.withType<MavenPublication>().configureEach {
-        pom {
-            name.set("Siren")
-            description.set("UI-free on-device speech recognition and synthesis for Kotlin Multiplatform")
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates(group.toString(), "siren", version.toString())
+    pom {
+        name.set("Siren")
+        description.set("UI-free on-device speech recognition and synthesis for Kotlin Multiplatform on Android, iOS and desktop")
+        url.set("https://github.com/Debanshu777/Siren")
+        inceptionYear.set("2026")
+        licenses { license { name.set("MIT"); url.set("https://opensource.org/license/mit") } }
+        developers { developer { id.set("debanshu777"); name.set("Debanshu Datta"); url.set("https://github.com/Debanshu777") } }
+        scm {
             url.set("https://github.com/Debanshu777/Siren")
-            licenses { license { name.set("MIT"); url.set("https://opensource.org/license/mit") } }
-            scm { url.set("https://github.com/Debanshu777/Siren") }
+            connection.set("scm:git:https://github.com/Debanshu777/Siren.git")
+            developerConnection.set("scm:git:ssh://git@github.com/Debanshu777/Siren.git")
         }
     }
+}
+
+// Unsigned staging stays usable without publishing credentials. Central always requires signing.
+signing {
+    setRequired(Callable {
+        gradle.taskGraph.allTasks.any { it.name.contains("MavenCentral", ignoreCase = true) }
+    })
+}
+publishing {
+    repositories { maven { name = "staging"; url = uri(rootProject.layout.buildDirectory.dir("staging-repository")) } }
 }
 
 // Static native payloads travel with the SDK cinterop KLIBs.
@@ -100,10 +117,18 @@ listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
         definitionFile.set(layout.buildDirectory.file("generated/cinterop/sherpa/${target.name}/interop.def"))
         includeDirs.allHeaders(sherpaHeaders)
     }
-    tasks.named(interop.interopProcessingTaskName) {
+    tasks.named<CInteropProcess>(interop.interopProcessingTaskName) {
         dependsOn(bundledDefinition)
         inputs.dir(bundledDefinition.flatMap { it.outputDirectory })
         inputs.dir(sherpaHeaders)
+        val notices = prepareRuntime.flatMap { it.noticesDirectory }
+        inputs.dir(notices)
+        doLast { NativeRedistributionNotices.embedInKlib(klibOutput.get(), notices.get().asFile) }
     }
 }
+}
+
+// Guard aggregate and direct Central commands; unsigned local staging remains independent.
+tasks.matching { it.name.contains("MavenCentral") }.configureEach {
+    dependsOn(rootProject.tasks.named("verifyNativeRedistribution"))
 }

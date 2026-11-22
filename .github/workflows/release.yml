@@ -1,0 +1,137 @@
+name: Release Siren
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmVersion:
+        description: Exact stable sirenVersion in gradle.properties (main only)
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+# Stable Central versions and release tags cannot be overwritten safely.
+concurrency:
+  group: siren-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Require main before loading publication credentials
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Release dispatch must use main"
+          exit 1
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Install configured Android SDK packages
+        shell: bash
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
+      - name: Validate configured version, main commit, tags, Central absence and release notes
+        id: version
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
+          GH_TOKEN: ${{ github.token }}
+        run: ./gradlew validateSirenRelease --no-daemon --no-configuration-cache --console=plain
+      - name: Check publishing credential names without printing values
+        shell: bash
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS SIGNING_KEY_ID SIGNING_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository secret: $name"
+              exit 1
+            fi
+          done
+      - name: Check native redistribution provenance and exact notices
+        run: ./gradlew verifyNativeRedistribution --no-daemon --no-configuration-cache --console=plain
+      - name: Test source, build tooling and public ABI; compile all sample hosts
+        run: >-
+          ./gradlew checkSpeechSetup :siren:checkKotlinAbi :siren:jvmTest
+          :sample:composeApp:jvmTest :sample:androidApp:assembleDebug
+          :sample:androidApp:assembleDebugAndroidTest :sample:desktopApp:jvmJar
+          :sample:composeApp:linkDebugFrameworkIosSimulatorArm64
+          --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Verify native JVM inference using consumer-owned demo models
+        run: >-
+          ./gradlew prepareSpeechModels :siren:jvmTest -Pnative=true
+          -PmodelsDir="$GITHUB_WORKSPACE/models"
+          --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Stage all KMP publications and validate an independent relocated consumer
+        run: ./gradlew validatePublishedSirenConsumer --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Verify packaged Desktop application construction
+        run: ./gradlew :sample:desktopApp:createDistributable --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Recheck coordinate and tag before immutable reservation
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
+          GH_TOKEN: ${{ github.token }}
+        run: ./gradlew validateSirenRelease --no-daemon --no-configuration-cache --console=plain
+      - name: Reserve the release tag atomically
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA"
+      - name: Publish signed artifacts through Central Portal
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: ./gradlew :siren:publishAndReleaseToMavenCentral --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Verify public Central artifacts, metadata and signatures
+        run: ./gradlew verifySirenCentralPublication --no-daemon --no-configuration-cache --console=plain
+      - name: Resolve Central coordinates in an independent consumer and verify JVM native, Android and iOS
+        run: ./gradlew validateCentralSirenConsumer --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Create the GitHub release only after Central consumer validation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
+        shell: bash
+        run: |
+          args=(--verify-tag --title "Siren $RELEASE_VERSION" --notes-file build/reports/release/siren-release-notes.md --generate-notes --latest)
+          if [ -n "$PREVIOUS_TAG" ]; then args+=(--notes-start-tag "$PREVIOUS_TAG"); fi
+          gh release create "$RELEASE_TAG" "${args[@]}"
+          cat build/reports/release/siren-release-notes.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload release verification reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: siren-release-verification
+          path: |
+            build/reports/release/
+            build/reports/validation/
+            build/reports/native-redistribution.json
+            buildSrc/build/reports/tests/
+            buildSrc/build/test-results/
+            siren/build/reports/
+            siren/build/test-results/
+            siren/build/publications/
+            sample/desktopApp/build/compose/logs/
+            ${{ runner.temp }}/siren-consumer-*/consumer/build/reports/tests/
+            ${{ runner.temp }}/siren-consumer-*/consumer/build/test-results/
+            ${{ runner.temp }}/siren-central-consumer-*/consumer/build/reports/tests/
+            ${{ runner.temp }}/siren-central-consumer-*/consumer/build/test-results/
+          if-no-files-found: ignore

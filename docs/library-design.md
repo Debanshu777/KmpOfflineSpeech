@@ -1,63 +1,62 @@
-# Siren SDK boundary and distribution status
+# Siren SDK boundary and release status
 
-Siren is the UI-free SDK module `:siren`, with Kotlin root package `io.github.debanshu.siren` and explicit API mode. **Local staging is configured** for `io.github.debanshu777:siren:0.1.0-SNAPSHOT` under `build/staging-repository`. No public Maven release has been made.
+Siren is the UI-free SDK module `:siren`, using Kotlin package `io.github.debanshu.siren` and Maven coordinates `io.github.debanshu777:siren`. Candidate **`0.1.0` is prepared locally and not published**. Publication is deferred; local staging must not be described as Central availability.
 
-## Implemented separation
+## SDK and application boundary
 
-| Area | Implemented structure | Remaining release gate |
+| Area | Implemented design | Verification/release responsibility |
 | --- | --- | --- |
-| Contracts | SDK `audio.PcmAudio`, recognizer, synthesizer and engine contracts | Target-specific compatibility policy and API/ABI checks |
-| Providers | SDK Android, iOS and JVM inference with explicit typed `SherpaModels` | Rerun native artifact verification after provider changes |
-| Android runtime | Pinned wrapper JAR, two ABI JNI payloads, notices and consumer rules embedded in SDK | Inspect staged contents and test duplicate-runtime ownership |
-| JVM runtime | Java wrapper and six native resource sets embedded in JVM JAR | Five packaged targets remain execution-untested |
-| iOS runtime | sherpa/ONNX static archives embedded in generated cinterop KLIBs | Physical-device inference/audio checks |
-| Sample | Controller, Compose screen, hardware audio, permissions and `SampleModels.bundledDemo()` | Repeat app/hardware checks for current artifacts |
-| Distribution | Local Maven root/target publications and native cinterop artifacts | Maintain relocated consumer evidence for every changed artifact |
+| Contracts | Explicit public PCM, recognition, synthesis and engine APIs | Versioned API baselines and consumer tests |
+| Providers | Android, iOS and JVM inference with explicit `SherpaModels` | Compatible model exports, native lifetime and target checks |
+| Android runtime | Embedded wrapper/JNI, two ABIs, consumer rules and notices | Final AAR/APK inspection and native ownership |
+| JVM runtime | Java wrapper plus six native resource sets in JVM JAR | macOS arm64/Linux x64 executed; four targets untested |
+| iOS runtime | Static sherpa/ONNX archives inside cinterop KLIBs | Both arm64 dynamic links and complete native dependency closure |
+| Sample | UI, hardware audio, permissions and demo preset/weights | App-specific lifecycle, privacy and hardware behavior |
+| Publication | Vanniktech, signing, POM metadata, sources and Dokka artifacts | Release checks, native redistribution readiness and Central verification |
 
 ```text
 siren/                 UI-free inference SDK
 sample/composeApp/     controller, Compose, permissions and audio hosts
 sample/androidApp/     Android launcher and tests
 sample/iosApp/         SwiftUI host
-sample/desktopApp/     Compose Desktop launcher and classpath sample models
+sample/desktopApp/     desktop launcher and classpath sample models
 ```
 
-The SDK contains **zero UI or components** and has no Compose dependency. It accepts caller-owned mono PCM and returns text or independently owned generated PCM at the correct rate. Hardware audio, application lifecycle, storage and weight acquisition remain host concerns. No camera, vision, generic AI framework or placeholder extension structure is included.
+The SDK has no UI/components, Compose dependency, microphone handling, playback or model weights. It accepts caller-owned mono PCM and returns text or independent PCM with its actual sample rate. No camera/vision structure or generic AI framework is included.
 
-## Optional providers and models
+## Model selection and ownership
 
-`SpeechRecognizer` and `SpeechSynthesizer` are independently replaceable. `ModelSpeechEngine` serializes provider operations and close, exposes capabilities and labels, and rejects calls after closure:
+`SpeechRecognizer` and `SpeechSynthesizer` are independently replaceable. `ModelSpeechEngine` serializes provider calls and close, rejects calls after closure, and exposes optional capabilities/labels:
 
 ```kotlin
 fun synthesisOnly(provider: SpeechSynthesizer): SpeechEngine =
     ModelSpeechEngine(synthesizer = provider)
 ```
 
-`SherpaModels` configures compatible Whisper/Kitten exports with bundled or local file descriptors. Native factories require that explicit descriptor; the SDK has no demonstration preset. Other model families implement the SPI and their own concrete configuration. Close an engine before replacing its providers.
+Built-in factories require `SherpaModels`. Its Whisper/Kitten descriptors identify compatible bundled or local files; they do not download models. Other model families supply concrete adapters. The `SampleModels.bundledDemo()` preset remains sample-only.
 
-SDK artifacts contain no model weights. The default sample preparation obtains and packages both demonstration bundles. Setting a model to null disables a runtime capability; it does **not** remove JNI libraries or already packaged sample assets. Artifact size/build-time selection is a separate concern.
+Default sample builds prepare both demonstration bundles. Setting a provider to null disables a runtime capability but does not remove already packaged assets or native binaries. Close the engine before replacing providers. JVM bundled resources are copied into engine-owned temporary storage; Local files remain caller-owned.
 
-## Native distribution implementation
+## Native distribution
 
-Android `prepareAndroidRuntime` is independent of weight preparation. It verifies the upstream AAR, extracts the wrapper JAR, checks the expected native library set for arm64-v8a/x86_64, and preserves notices/provenance. The SDK packages these generated inputs instead of exposing an app-local AAR dependency. Inspect both the SDK AAR and the final consumer APK to confirm payload and duplicate-runtime behavior.
+`prepareAndroidRuntime` verifies the upstream AAR, checks arm64-v8a/x86_64 native contents and preserves wrapper classes/notices in the SDK artifact. `prepareJvmRuntime` embeds official Java classes, six native resource sets and notices; upstream loading selects OS/architecture without checkout-native paths.
 
-`prepareJvmRuntime` embeds official wrapper classes, notices and six native resource sets in the JVM JAR. Upstream loading selects OS/architecture without checkout paths. JVM Bundled weights resolve through the class loader into engine-owned temporary copies; Local files remain caller-owned. The sample supplies JavaSound audio separately.
+For iOS, generated `staticLibraries`/`libraryPaths` definitions include native archive bytes inside target-specific KLIBs. SDK model runtimes and sample AVFoundation audio have separate bindings. The sample host links its Kotlin framework and Apple system libraries, without raw sherpa/ONNX checkout paths. Kotlin documents this experimental [static-library inclusion mechanism](https://kotlinlang.org/docs/native-definition-file.html).
 
-For iOS, generated definitions copy static archives and set `staticLibraries`/`libraryPaths`, embedding their bytes in target-specific cinterop KLIBs. SDK runtime archives and the sample's separate AVFoundation archive have distinct bindings. The sample host links `SirenApp.framework` and Apple system libraries, without raw native checkout paths. Kotlin documents the experimental [static-library inclusion mechanism](https://kotlinlang.org/docs/native-definition-file.html). In-repository linkage alone does not prove portable consumption.
+Bundled native binaries retain upstream licensing obligations independently of the SDK's MIT source license. Exact artifact provenance and redistribution notices are release inputs, not properties established by successful compilation. Current audit status belongs with the release record and [third-party notices](../THIRD_PARTY_NOTICES.md).
 
-## ShaderX reference and validation stages
+## Release engineering and evidence
 
-The reviewed [ShaderX library build](https://github.com/Debanshu777/ShaderX/blob/main/shaderx/build.gradle.kts) demonstrates a dedicated module, explicit API, compatibility checks, documentation and publication metadata. Its [KMP consumer](https://github.com/Debanshu777/ShaderX/blob/main/validation/kmp-consumer/build.gradle.kts) switches between project and versioned artifacts, while [frozen fixtures](https://github.com/Debanshu777/ShaderX/blob/main/validation/binary-compatibility/README.md) preserve old callers. Siren borrows this separation, not ShaderX's Compose API or target support.
+[ShaderX's library build](https://github.com/Debanshu777/ShaderX/blob/main/shaderx/build.gradle.kts) informed the dedicated module, explicit API, documentation, publication metadata and independent consumer approach. Siren does not inherit ShaderX's Compose API or platform claims.
 
-Siren currently uses Gradle `maven-publish` for local staging. Vanniktech's [KMP publication support](https://vanniktech.github.io/gradle-maven-publish-plugin/what/) is a possible release-tooling reference, not an installed requirement or evidence of publication.
+The build now uses [Vanniktech's KMP publication support](https://vanniktech.github.io/gradle-maven-publish-plugin/what/), Central signing and Dokka. `sirenVersion` in root `gradle.properties` is the version source. Unsigned local staging remains available without publication credentials. `checkKotlinAbi` compares baselines under `siren/api`; updates require intentional public-API review.
 
-1. **Build and stage locally.** SDK/sample extraction and staging publications build. Version comes from root `gradle.properties`; `:siren:publishAllPublicationsToStagingRepository` writes only to the local repository.
-2. **Validate independent consumers.** The [relocated artifact checks](../validation/published-consumer-verification.json) passed four JVM tests including macOS arm64 native classpath-model inference, a plain Android APK with eight JNI entries and no weights, and both arm64 dynamic iOS links. Fixture, repository and separate test models were copied outside the checkout, with no substitution/native checkout paths. These checks do not establish hardware audio or public repository delivery.
-3. **Establish compatibility.** Add target-specific API/ABI checks and preserved public consumer contracts; document model-format and toolchain support. Earlier sample/hardware evidence must not substitute for checks of extracted artifacts.
-4. **Decide a public release.** Complete release documentation, native redistribution review and signing/publication configuration. Local staging does not authorize a public release.
+The [recorded relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, a plain Android APK with eight JNI entries/no weights, and both arm64 dynamic iOS links. Fixture, Maven repository and separate test models were copied outside the checkout. Release candidates must rerun artifact checks against their own version, not substitute historical snapshot evidence.
 
-The baseline is Android API 26 and arm64 iOS targets, with iOS 18.5 for the pinned sample. JVM packages macOS/Linux/Windows arm64/x64 natives; [macOS arm64 inference](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 inference in CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json) are verified. The other four payloads and desktop audio hardware remain untested. Wasm is not supported.
+The [future release path](releasing.md) uses a main-only manual dispatch with configured credentials, then validates source/API, redistribution readiness and relocated artifacts before publication and public Central verification. Remote steps are deferred. Exact ONNX Runtime source/notice records were recovered; remaining Sherpa/transitive/compiler inventory and source coverage still require review. The [current audit](../THIRD_PARTY_NOTICES.md) is authoritative; `verifyNativeRedistribution` remains fail-closed.
+
+Android starts at API 26; the pinned sample uses iOS 18.5 arm64 targets. JVM inference is verified on [macOS arm64](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json). Other desktop targets and desktop hardware audio remain unverified. Wasm is unsupported.
 
 ## Recent Changes
 
-Added native JVM inference and a separate JavaSound desktop sample; weights/UI remain sample-only and public release remains separate from staging.
+Prepared local `0.1.0` release configuration and API baselines; publication remains deferred with explicit native-notice/provenance readiness requirements.

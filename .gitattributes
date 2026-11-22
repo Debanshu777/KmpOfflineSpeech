@@ -1,0 +1,3 @@
+# Kotlin ABI dumps preserve a blank line after the final JVM class.
+siren/api/android/*.api whitespace=-blank-at-eof
+siren/api/jvm/*.api whitespace=-blank-at-eof

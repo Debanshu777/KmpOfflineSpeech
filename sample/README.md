@@ -19,13 +19,13 @@ open sample/iosApp/iosApp.xcodeproj
 ./gradlew :sample:desktopApp:run
 ```
 
-Run Android through Android Studio or the [root instructions](../README.md#run-the-android-sample). In Xcode choose the Siren scheme and an iOS 18.5+ arm64 simulator. Physical iPhones require a signing team.
+Run Android through Android Studio or the [root sample instructions](../README.md#sample-apps). In Xcode choose the Siren scheme and an iOS 18.5+ arm64 simulator. Physical iPhones require a signing team.
 
 Normal builds prepare their own dependencies. Android assets are generated under `sample/composeApp/build/generated/speechAssets`; iOS bundles root `models`. Desktop `stageDesktopModels` copies the sample weights into its classpath `models/` resources. `prepareAndroidRuntime`, `prepareIosSpeech` and `prepareJvmRuntime` are runtime-only SDK tasks; only sample preparation adds weights.
 
 Desktop uses JavaSound's default input/output. The OS checks microphone access on opening input; the packaged macOS app declares a purpose string. Development JDK permissions can differ. Packaging requires a full JDK accepted by Compose/jpackage and is host-OS-specific; see the [desktop README](desktopApp/README.md). Desktop audio hardware remains manually unverified, even when model-only smoke tests pass.
 
-The macOS arm64 application image built with full JBR 21. The application packaging version is `1.0.0`, independently of SDK `0.1.0-SNAPSHOT`; other OS installers and physical desktop audio are not verified by that build.
+The macOS arm64 application image built with full JBR 21. Its packaging version is `1.0.0`, independently of the SDK release version in root `gradle.properties`; other OS installers and physical desktop audio are not verified by that build.
 
 ## Limits and verification
 
@@ -41,4 +41,4 @@ Connected acoustic/UI journeys require explicit opt-in and a suitable unlocked d
 
 ## Recent Changes
 
-Added a separate desktop host, classpath model staging and JavaSound audio alongside the Android/iOS samples; all application concerns remain outside the SDK.
+Kept sample presets, weights, UI and hardware audio separate from the `0.1.0` SDK candidate and distinguished application packaging from Maven release versioning.
