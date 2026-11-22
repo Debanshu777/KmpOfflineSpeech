@@ -2,13 +2,13 @@
 
 `:siren` supplies UI-free speech inference for Android, iOS and JVM. Its package is `io.github.debanshu.siren`, with explicit API mode and no Compose dependency, model weights, microphone handling or playback implementation.
 
-**Candidate `0.1.0` is local and unpublished.** The intended future dependency is:
+Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). Add this to your KMP module's `commonMain.dependencies` with `mavenCentral()` configured:
 
 ```kotlin
 implementation("io.github.debanshu777:siren:0.1.0")
 ```
 
-See [getting started](../docs/getting-started.md) for source/local staging status and model-bundle placement.
+See [getting started](../docs/getting-started.md) for model-bundle placement and a recording-to-speech example.
 
 ## Basic use
 
@@ -66,8 +66,10 @@ JVM payloads cover macOS/Linux/Windows arm64 and x64. Inference is verified on [
 
 Local staging writes `build/staging-repository`, not Central. For opt-in native JVM testing, prepare weights separately with `prepareSpeechModels`, then use `:siren:jvmTest -Pnative=true -PmodelsDir="$(pwd)/models"`. Default SDK tests do not load models.
 
-First-party source is [MIT](../LICENSE); preserve [native/model notices and audit status](../THIRD_PARTY_NOTICES.md). Public release remains deferred; [release preparation](../docs/releasing.md) records its separate gates.
+First-party source is [MIT](../LICENSE); preserve [native/model notices and audit status](../THIRD_PARTY_NOTICES.md). [Release verification](../docs/releasing.md) records public delivery and Central-only consumer checks.
 
 ## Recent Changes
+
+Published 0.1.0 to Maven Central; independent Central-only consumers verify JVM native inference, Android packaging and both iOS dynamic links.
 
 Added simple factories, model-layout defaults, scoped close and direct PCM calls. SDK artifacts retain 33 pinned native/compiler notice texts and source availability; Android minimum 27 matches the pinned runtime build.

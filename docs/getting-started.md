@@ -2,7 +2,7 @@
 
 The basic integration is: add Siren, place the known model bundle in your app, then create an engine and call it. Individual model-path mapping and manual `finally` cleanup are unnecessary for this layout.
 
-**Release status:** `io.github.debanshu777:siren:0.1.0` remains prepared locally and unpublished. The Central dependency below is intended for a future release. Use the source/local staging meanwhile; [release preparation](releasing.md) records current status.
+Siren **0.1.0** is available from [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). The [release record](releasing.md) links public delivery and independent consumer verification.
 
 ## Add the dependency
 
@@ -121,6 +121,8 @@ Built-in Whisper accepts 0.2–20-second recordings. The sample's 500-character 
 Android's floor is API 27. The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributors use JDK 21. The pinned sample uses iOS 18.5 arm64 targets. Native JVM inference is verified on macOS arm64 and Linux x64; four other desktop payloads are packaged but execution-untested. See [evidence](development.md).
 
 ## Recent Changes
+
+Published the 0.1.0 dependency on Maven Central; the README and tutorial show a short recording-to-speech integration.
 
 Reduced the basic path to a model bundle, one-line engine creation and scoped calls. Bundled/local helpers, PCM transcription and automatic cleanup preserve custom APIs for advanced cases.
 

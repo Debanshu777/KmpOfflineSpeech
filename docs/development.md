@@ -61,7 +61,7 @@ It uses actual callbacks/inference/audio, without injecting text/phases, accessi
 
 ## Artifact and release validation
 
-Version comes from `sirenVersion` in root `gradle.properties`. Candidate `0.1.0` is **prepared locally, not published**. Remote publication is deferred. Repository-local staging remains usable:
+Version comes from `sirenVersion` in root `gradle.properties`. Version 0.1.0 is [published to Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0); see the [release verification](releasing.md). Repository-local staging remains usable:
 
 ```bash
 ./gradlew :siren:publishAllPublicationsToStagingRepository
@@ -83,13 +83,13 @@ Release management uses typed Gradle tasks:
 | `verifySirenCentralPublication` | Public root/target artifacts, metadata, sources, documentation and signatures; `build/reports/release/central-delivery.json` |
 | `validateCentralSirenConsumer` | Separate relocated Central-only consumer with refreshed dependencies; `build/reports/validation/central-consumer.json` |
 
-For local candidate testing, `./gradlew validatePublishedSirenConsumer` stages and copies its own inputs. On macOS it checks both iOS targets as well as JVM/Android; other hosts validate supported non-Apple publications. The future release workflow reserves `v0.1.0` only after validation, signs/publishes to Central, verifies public delivery, and runs `validateCentralSirenConsumer` before creating the GitHub release. That consumer resolves Siren from Central without a local/custom SDK repository or offline mode, refreshing dependencies. A failed post-reservation release requires inspecting the existing tag/deployment rather than blindly rerunning reservation.
+For local candidate testing, `./gradlew validatePublishedSirenConsumer` stages and copies its own inputs. On macOS it checks both iOS targets as well as JVM/Android; other hosts validate supported non-Apple publications. The release workflow reserves each version tag only after validation, signs/publishes to Central, verifies public delivery, and runs `validateCentralSirenConsumer` before creating the GitHub release. That consumer resolves Siren from Central without a local/custom SDK repository or offline mode, refreshing dependencies. A failed post-reservation release requires inspecting the existing tag/deployment rather than blindly rerunning reservation.
 
 A successful upload or Central validation is not proof that public downloads are available. Follow the deployment to its final published state, then resolve the public root and platform artifacts before marking the release available. Vanniktech documents these [separate Central stages](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
 The current technical native inventory passes with 33 pinned notice texts, source availability and compiler reviews for both NDKs and both MSVC toolsets. `verifyNativeRedistribution` also validates the compiler-evidence checksum; missing component/payload/compiler reviews or changed vendored bytes fail closed. [Third-party status](../THIRD_PARTY_NOTICES.md) records the scope and downstream obligations. The release workflow now defaults to a nonpublishing preflight; publication, tag and release steps require `publishRelease=true`.
 
-When the user resumes publication, configure the [five repository publishing/signing secrets](releasing.md#future-github-release), commit/push the prepared main branch and dispatch the manual release with `confirmVersion=0.1.0`. Do not execute those remote steps during this preparation-only pass. The [release guide](releasing.md) explains readiness and retry behavior. The release record must identify candidate checks, deployment and public-resolution results before availability claims change.
+For a future explicitly authorized version, configure the [repository publishing/signing secrets](releasing.md#github-release-procedure), commit/push the reviewed main branch and dispatch the manual release with the matching `confirmVersion`, key protection and `publishRelease=true`. Never upload an existing Central version again. The [release guide](releasing.md) explains readiness and retry behavior. The release record must identify candidate checks, deployment and public-resolution results before availability claims change.
 
 ## Signing-secret CI check
 
@@ -111,7 +111,7 @@ This check has read-only repository permissions, disables Gradle build/configura
 caches, scopes secrets to the signing step and runs no publication, tag or release
 commands. It does not build the SDK/native runtimes or establish release readiness.
 See the workflow run's job summary for the observed result. The full SDK release
-pipeline remains separately prepared locally until publication work resumes.
+pipeline has separate source, native, signing, delivery and Central-consumer gates; see [release verification](releasing.md).
 
 
 Observed result: [signing-only CI run 45055771902](https://github.com/Debanshu777/Siren/actions/runs/45055771902) passed in explicit unprotected mode. Gradle signed the probe and GnuPG verified it against the expected published public key. `SIGNING_PASSWORD` was unused; Central credentials were checked for presence only. No publication, release or tag ran. See the [nonsecret verification record](../validation/signing-check-verification.json).
@@ -151,7 +151,7 @@ protection modes, a public-key fingerprint check and no SDK publication.
 
 The revised API passed 16 SDK common tests and five sample controller tests. The opt-in SDK native test was skipped in the ordinary unit run; native inference ran separately in the relocated Maven consumer. That consumer passed four API tests and one actual macOS arm64 model roundtrip using `createSpeechEngine().use { ... }` and `transcribe(samples, sampleRate)`. It synthesized 59,930 samples at 24 kHz and recognized all six checked words. This verifies model execution, not microphone/playback hardware or general recognition accuracy.
 
-Android/JVM/native API baselines passed. The independent consumer built a plain Android APK and linked dynamic frameworks for both iOS arm64 targets. Android sample app/test APKs and the desktop sample JAR also built successfully. See [the local verification record](../validation/simple-integration-0.1.0.json). Existing device captures describe earlier runs; this API change did not repeat physical audio testing. Candidate `0.1.0` remains unpublished, with the native redistribution gate unchanged.
+Android/JVM/native API baselines passed. The independent consumer built a plain Android APK and linked dynamic frameworks for both iOS arm64 targets. Android sample app/test APKs and the desktop sample JAR also built successfully. See [the local verification record](../validation/simple-integration-0.1.0.json). Existing device captures describe earlier runs; this API change did not repeat physical audio testing. At the time of that integration check, candidate `0.1.0` was unpublished; later release results are recorded below.
 
 ## Local release preparation — 2026-11-22
 
@@ -161,10 +161,16 @@ A Central-command dry-run confirmed mandatory signing and the native redistribut
 
 ## Publication readiness — 2026-11-23
 
-The completed native/compiler inventory passed its mandatory gate. Local checks passed 23 build-tool regressions, 16 SDK common tests, five sample tests and five relocated-consumer tests, including native JVM inference and both iOS dynamic links. The ordinary SDK native opt-in test remained skipped; native execution was verified by the separate consumer. All 30 target publication signatures were independently verified. Android AAR, JVM JAR and both iOS cinterop KLIBs each contain 33 hash-verified notice texts and the current source-availability statement, with no model weights. Android sample app/test APKs, desktop JAR and iOS simulator framework also rebuilt. See [candidate hashes and results](../validation/publication-readiness-0.1.0.json). Full GitHub preflight subsequently passed; no publication has run.
+These readiness notes predate the publication recorded below.
+
+The completed native/compiler inventory passed its mandatory gate. Local checks passed 23 build-tool regressions, 16 SDK common tests, five sample tests and five relocated-consumer tests, including native JVM inference and both iOS dynamic links. The ordinary SDK native opt-in test remained skipped; native execution was verified by the separate consumer. All 30 target publication signatures were independently verified. Android AAR, JVM JAR and both iOS cinterop KLIBs each contain 33 hash-verified notice texts and the current source-availability statement, with no model weights. Android sample app/test APKs, desktop JAR and iOS simulator framework also rebuilt. See [candidate hashes and results](../validation/publication-readiness-0.1.0.json). Full GitHub preflight subsequently passed; at that point no publication had run.
 
 Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
 
 Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.
 
-Final CI passed on `75602ac`: [Linux/macOS platform checks](https://github.com/Debanshu777/Siren/actions/runs/45059952805) and [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741). The preflight built the iOS sample framework, linked both relocated iOS consumers, packaged the desktop app and executed all five candidate signing tasks. Tag reservation, Central upload and release creation were skipped. Final checks found no `v0.1.0` tag and returned HTTP 404 for the Central POM. [CI result record](../validation/ci-publication-readiness-0.1.0.json). Central upload-time validation and Central-only consumption remain future publication steps.
+Final CI passed on `75602ac`: [Linux/macOS platform checks](https://github.com/Debanshu777/Siren/actions/runs/45059952805) and [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741). The preflight built the iOS sample framework, linked both relocated iOS consumers, packaged the desktop app and executed all five candidate signing tasks. Tag reservation, Central upload and release creation were skipped. Final checks found no `v0.1.0` tag and returned HTTP 404 for the Central POM. [CI result record](../validation/ci-publication-readiness-0.1.0.json). At that preflight, Central upload-time validation and Central-only consumption were still pending; the publication section below records their final results.
+
+## Maven Central publication — 2026-11-23
+
+Siren 0.1.0 was published from `75602ac` through the [release workflow](https://github.com/Debanshu777/Siren/actions/runs/45062849601). Public root/target artifacts, metadata, source/documentation archives and signature files returned HTTP 200. A separate Central-only consumer refreshed dependencies and passed JVM native inference, Android APK packaging and both iOS dynamic framework links. See [publication evidence](../validation/central-publication-0.1.0.json) and the [GitHub release](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0). Earlier candidate records above remain historical. README and Medium integration examples use the published coordinate and scoped `createSpeechEngine` API.

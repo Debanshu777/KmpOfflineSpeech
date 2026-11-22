@@ -93,7 +93,7 @@ The sample audio hosts accept any `SpeechEngine`; they own microphone permission
 
 ## Release status
 
-Candidate `io.github.debanshu777:siren:0.1.0` remains local and unpublished. Convenience defaults add no weights, hidden downloads or UI. See [release preparation](releasing.md) for the deferred public release and native audit status.
+`io.github.debanshu777:siren:0.1.0` is available from Maven Central. Convenience defaults add no weights, hidden downloads or UI. See [release verification](releasing.md) for public delivery, consumer checks and native audit status.
 
 ## Recent Changes
 

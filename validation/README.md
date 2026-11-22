@@ -18,9 +18,11 @@ checkout: four JVM tests (including the macOS arm64 native roundtrip), Android c
 framework links for both arm64 targets. Native runtime symbols resolved without
 checkout framework paths; the Android APK included its JNI payload and no models.
 
-The unpublished `0.1.0` candidate has separate [local release-preparation evidence](release-preparation-0.1.0.json), including API baselines, 20 build-tool tests, notice/source-availability packaging, four consumer JVM tests and both iOS links. Earlier snapshot evidence remains unchanged.
+The earlier unpublished `0.1.0` candidate has separate [local release-preparation evidence](release-preparation-0.1.0.json), including API baselines, 20 build-tool tests, notice/source-availability packaging, four consumer JVM tests and both iOS links. Earlier snapshot evidence remains unchanged.
 
 ## Recent Changes
+
+Siren 0.1.0 is published. [Publication evidence](central-publication-0.1.0.json) records public artifact delivery and the independent Central-only consumer; earlier local and preflight records remain historical.
 
 Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
 

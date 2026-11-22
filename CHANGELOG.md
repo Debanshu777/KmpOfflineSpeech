@@ -1,6 +1,6 @@
 # Changelog
 
-Release status: `0.1.0` is an unpublished release candidate.
+Release status: [0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) is published to Maven Central.
 
 ## [0.1.0]
 

@@ -1,6 +1,6 @@
 # Siren SDK boundary and release status
 
-Siren is the UI-free SDK module `:siren`, using Kotlin package `io.github.debanshu.siren` and Maven coordinates `io.github.debanshu777:siren`. Candidate **`0.1.0` is prepared locally and not published**. Publication is deferred; local staging must not be described as Central availability.
+Siren is the UI-free SDK module `:siren`, using Kotlin package `io.github.debanshu.siren` and Maven coordinates `io.github.debanshu777:siren`. Version **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). The [release record](releasing.md) links public artifact delivery and Central-only consumer verification.
 
 ## SDK and application boundary
 
@@ -53,10 +53,10 @@ The build now uses [Vanniktech's KMP publication support](https://vanniktech.git
 
 The [recorded relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, a plain Android APK with eight JNI entries/no weights, and both arm64 dynamic iOS links. Fixture, Maven repository and separate test models were copied outside the checkout. Release candidates must rerun artifact checks against their own version, not substitute historical snapshot evidence.
 
-The [future release path](releasing.md) uses a main-only manual dispatch with configured credentials, then validates source/API, redistribution readiness and relocated artifacts before publication and public Central verification. Read-only credential checks and source CI are authorized; upload/publication remains deferred. The technical inventory now includes 33 notice texts, verified source correspondence and exact compiler build evidence. The [current audit](../THIRD_PARTY_NOTICES.md) is authoritative; `verifyNativeRedistribution` remains fail-closed. The release workflow defaults to `publishRelease=false` and signs the candidate locally.
+The [release path](releasing.md) uses a main-only manual dispatch with configured credentials, then validates source/API, redistribution readiness and relocated artifacts before publication and public Central verification. The 0.1.0 release completed that path, including an independent Central-only consumer. The technical inventory now includes 33 notice texts, verified source correspondence and exact compiler build evidence. The [current audit](../THIRD_PARTY_NOTICES.md) is authoritative; `verifyNativeRedistribution` remains fail-closed. The release workflow defaults to `publishRelease=false` and signs the candidate locally.
 
 Android starts at API 27; the pinned sample uses iOS 18.5 arm64 targets. JVM inference is verified on [macOS arm64](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json). Other desktop targets and desktop hardware audio remain unverified. Wasm is unsupported.
 
 ## Recent Changes
 
-Added standard model-layout defaults, short platform factories and scoped cleanup while keeping providers replaceable and model files app-owned. Publication remains deferred.
+Added standard model-layout defaults, short platform factories and scoped cleanup while keeping providers replaceable and model files app-owned. Version 0.1.0 is published with public delivery and Central-only consumer verification.

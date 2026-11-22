@@ -1,6 +1,6 @@
 # Siren guides
 
-Use [getting started](getting-started.md) to configure models and call Siren's explicit Android/iOS/JVM factories. Candidate `0.1.0` is prepared locally, not published to Maven Central; public release is deferred. See [release status](library-design.md).
+Use [getting started](getting-started.md) to configure models and call Siren's explicit Android/iOS/JVM factories. Siren 0.1.0 is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). See [release status](library-design.md).
 
 To understand the native integration itself, follow the [model integration tutorial](medium-draft.md). To run the completed application, use the [sample hosts](../sample/README.md). The [demo](demo.md) contains actual Android, iOS and desktop captures and their verification limits.
 
@@ -9,7 +9,7 @@ To understand the native integration itself, follow the [model integration tutor
 - [SDK and sample architecture](architecture.md)
 - [Native distribution and release status](library-design.md)
 - [Development, API checks and verification](development.md)
-- [Local release preparation and future publishing](releasing.md)
+- [Release verification and publishing](releasing.md)
 - [iOS native integration and diagnostic](ios-notes.md)
 - [Actual captures and hardware checks](demo.md)
 - [Changelog](../CHANGELOG.md)
@@ -19,4 +19,4 @@ The SDK has no UI, Compose dependency, microphone/playback implementation or mod
 
 ## Recent Changes
 
-Added the first-release installation entry point, explicit candidate publication status and links to API/release validation, sample captures and the changelog.
+Published the 0.1.0 installation guide with a short scoped transcription/synthesis example and links to public release verification.

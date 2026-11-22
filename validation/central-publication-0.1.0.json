@@ -1,0 +1,325 @@
+{
+  "date": "2026-11-23",
+  "version": "0.1.0",
+  "coordinates": "io.github.debanshu777:siren:0.1.0",
+  "sourceCommit": "75602acf7cd22fe139b249703d0aed5df6e2cc56",
+  "published": true,
+  "workflow": {
+    "runId": 45062849601,
+    "url": "https://github.com/Debanshu777/Siren/actions/runs/45062849601",
+    "conclusion": "success",
+    "publishRelease": true,
+    "keyProtection": "unprotected",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Require main before loading publication credentials",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Run actions/checkout@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-java@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run gradle/actions/setup-gradle@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install configured Android SDK packages",
+        "conclusion": "success"
+      },
+      {
+        "name": "Validate configured version, main commit, tags, Central absence and release notes",
+        "conclusion": "success"
+      },
+      {
+        "name": "Check publishing credential names without printing values",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify Central authentication and namespace without uploading",
+        "conclusion": "success"
+      },
+      {
+        "name": "Check native redistribution provenance and exact notices",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test source, build tooling and public ABI; compile all sample hosts",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native JVM inference using consumer-owned demo models",
+        "conclusion": "success"
+      },
+      {
+        "name": "Stage all KMP publications and validate an independent relocated consumer",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify packaged Desktop application construction",
+        "conclusion": "success"
+      },
+      {
+        "name": "Sign all candidate publications locally without uploading",
+        "conclusion": "success"
+      },
+      {
+        "name": "Recheck coordinate and tag before immutable reservation",
+        "conclusion": "success"
+      },
+      {
+        "name": "Reserve the release tag atomically",
+        "conclusion": "success"
+      },
+      {
+        "name": "Publish signed artifacts through Central Portal",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify public Central artifacts, metadata and signatures",
+        "conclusion": "success"
+      },
+      {
+        "name": "Resolve Central coordinates in an independent consumer and verify JVM native, Android and iOS",
+        "conclusion": "success"
+      },
+      {
+        "name": "Create the GitHub release only after Central consumer validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "Record successful nonpublishing preflight",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Upload release verification reports",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run gradle/actions/setup-gradle@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-java@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v5",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "centralPortal": {
+    "deploymentId": "f77feb92-1567-43e0-a6e0-6bb42c0a5ae8",
+    "state": "PUBLISHED",
+    "validatedComponents": 8,
+    "totalComponents": 8,
+    "observedThrough": "Authenticated Central Portal"
+  },
+  "centralDelivery": {
+    "version": "0.1.0",
+    "attempt": 1,
+    "verified": true,
+    "files": {
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.pom": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.module": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.jar": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0.jar.asc": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren/0.1.0/siren-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.pom": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.module": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.jar": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0.jar.asc": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren-jvm/0.1.0/siren-jvm-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.pom": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.module": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.aar": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0.aar.asc": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren-android/0.1.0/siren-android-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.pom": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.module": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.klib": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0.klib.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-cinterop-sherpaNative.klib": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-cinterop-sherpaNative.klib.asc": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-metadata.jar": 200,
+      "io/github/debanshu777/siren-iosarm64/0.1.0/siren-iosarm64-0.1.0-metadata.jar.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.pom": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.pom.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.module": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.module.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.klib": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0.klib.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-sources.jar": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-sources.jar.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-javadoc.jar": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-javadoc.jar.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-cinterop-sherpaNative.klib": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-cinterop-sherpaNative.klib.asc": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-metadata.jar": 200,
+      "io/github/debanshu777/siren-iossimulatorarm64/0.1.0/siren-iossimulatorarm64-0.1.0-metadata.jar.asc": 200
+    }
+  },
+  "centralConsumer": {
+    "version": "0.1.0",
+    "passed": true,
+    "exitCode": 0,
+    "outsideCheckout": true,
+    "consumerDirectory": "/Users/runner/work/_temp/siren-central-consumer-45062849601-1/consumer",
+    "repository": "Maven Central",
+    "useStagingRepository": false,
+    "dependencyResolutionOffline": false,
+    "tasks": [
+      "jvmTest",
+      "compileAndroidMain",
+      ":androidApp:assembleDebug",
+      "linkDebugFrameworkIosSimulatorArm64",
+      "linkDebugFrameworkIosArm64"
+    ],
+    "nativeJvmModelCheck": true,
+    "appleTargets": true
+  },
+  "publicPomSignature": {
+    "version": "0.1.0",
+    "url": "https://repo.maven.apache.org/maven2/io/github/debanshu777/siren/0.1.0/siren-0.1.0.pom",
+    "coordinatesVerified": true,
+    "signatureVerified": true,
+    "expectedFingerprint": "B0A877633B48643CD48BF7CEE5F9B7F951C22F86",
+    "pomSha256": "d909f8e39e3f253cb2b3f53a0c356dc2aa84d6aa4e871b283e4a86d9d02885f8",
+    "checkedAt": "2026-11-22T20:24:07.859Z"
+  },
+  "githubRelease": {
+    "isDraft": false,
+    "isPrerelease": false,
+    "name": "Siren 0.1.0",
+    "publishedAt": "2026-11-22T20:25:06Z",
+    "tagName": "v0.1.0",
+    "targetCommitish": "main",
+    "url": "https://github.com/Debanshu777/Siren/releases/tag/v0.1.0"
+  },
+  "releaseTag": {
+    "name": "v0.1.0",
+    "commit": "75602acf7cd22fe139b249703d0aed5df6e2cc56"
+  },
+  "nativeInventory": {
+    "ready": true,
+    "noticeTexts": 33,
+    "compilerReviews": 4
+  },
+  "tests": {
+    "buildTools": [
+      {
+        "suite": "NativeRedistributionNoticesTest",
+        "tests": 6,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "SirenReleaseChecksTest",
+        "tests": 7,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "SpeechArtifactsTest",
+        "tests": 10,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "sdk": [
+      {
+        "suite": "JvmSpeechEngineNativeTest[jvm]",
+        "tests": 1,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "SherpaModelsTest[jvm]",
+        "tests": 6,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "SpeechEngineExtensionsTest[jvm]",
+        "tests": 4,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "SpeechEngineTest[jvm]",
+        "tests": 6,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "centralConsumer": [
+      {
+        "suite": "PublishedApiTest[jvm]",
+        "tests": 4,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "suite": "PublishedJvmNativeTest[jvm]",
+        "tests": 1,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ]
+  },
+  "centralNativeOutput": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59911 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+  "medium": {
+    "draftSaved": true,
+    "blogPublished": false,
+    "guidePreserved": true,
+    "gifPreserved": true,
+    "codeBlockLanguages": [
+      "Kotlin",
+      "Kotlin"
+    ]
+  },
+  "credentialsRecorded": false
+}

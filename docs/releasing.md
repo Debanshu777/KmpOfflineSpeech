@@ -1,14 +1,14 @@
 # Releasing Siren
 
-Version `0.1.0` is an unpublished release candidate. The release pipeline and installation examples are prepared for that coordinate; they do not establish that it resolves from Maven Central. The manual signing-only check is pushed to GitHub and can be dispatched independently. Source and nonpublishing CI preparation are authorized; no release, tag, Central upload/publication or Medium update is authorized.
+Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0) with a [GitHub release](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0). It was built from `75602ac` through the [release workflow](https://github.com/Debanshu777/Siren/actions/runs/45062849601). Public delivery and a separate Central-only consumer passed; see [publication evidence](../validation/central-publication-0.1.0.json). Central versions are immutable; do not rerun this upload.
 
 ## Signing-only verification
 
 The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow uses an isolated [Gradle probe](../validation/signing-check/README.md), the saved signing secrets and your full public fingerprint. It verifies a signature against the published public key without publishing Siren. Maven credential presence is checked; authentication is not tested. Select `passphrase` for a protected key or explicitly `unprotected` for a key without one. Unprotected mode ignores `SIGNING_PASSWORD` and supplies an empty password to Gradle. Run this check after adding or rotating signing secrets. A green result does not waive the native redistribution or SDK artifact gates.
 
-## Verified candidate
+## Pre-publication evidence
 
-Candidate `0.1.0` passed [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741) and [Linux/macOS checks](https://github.com/Debanshu777/Siren/actions/runs/45059952805) at `75602ac`. Central authentication and namespace access, native inventory, API/source tests, relocated consumers, sample hosts and candidate signing passed. Publishing/tag/release steps were skipped; the Central coordinate and release tag remain absent. See [CI evidence](../validation/ci-publication-readiness-0.1.0.json). This is readiness for the publication step, not proof of server-side bundle validation or public delivery.
+Before publication, candidate `0.1.0` passed [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741) and [Linux/macOS checks](https://github.com/Debanshu777/Siren/actions/runs/45059952805) at `75602ac`. Central authentication and namespace access, native inventory, API/source tests, relocated consumers, sample hosts and candidate signing passed. That earlier run skipped publishing/tag/release steps and confirmed the coordinate and tag were absent at that time. See [CI evidence](../validation/ci-publication-readiness-0.1.0.json). This is readiness for the publication step, not proof of server-side bundle validation or public delivery.
 
 ## Release configuration
 
@@ -32,9 +32,9 @@ The redistribution gate checks the exact runtime pins and notice inventory in `s
 
 Use `:siren:updateKotlinAbi` only after reviewing an intentional API change, then commit the reference diff. Do not regenerate baselines automatically to make CI pass.
 
-## Future GitHub release
+## GitHub release procedure
 
-When the local changes are reviewed, push them to `main`. Configure these Actions secrets in the Siren repository using the existing Central namespace and signing identity:
+For a future explicitly authorized version, update the version and changelog, validate the changes and push them to `main`. The Siren repository uses these Actions secrets with its Central namespace and signing identity:
 
 - `MAVEN_CENTRAL_USERNAME`
 - `MAVEN_CENTRAL_PASSWORD`
@@ -67,11 +67,11 @@ gpg --armor --export-secret-keys YOUR_KEY_ID | pbcopy
 
 Paste the full private-key block only into `GPG_KEY_CONTENTS` in GitHub's secret form. Do not commit it or paste it into chat. An expired/lost Central token needs a replacement; a lost private key or passphrase requires a new signing setup and distribution of its public key. See [Sonatype's token instructions](https://central.sonatype.org/publish/generate-portal-token/), [GPG guidance](https://central.sonatype.org/publish/requirements/gpg/) and [publisher signing configuration](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
-For verification, run **Release Siren** manually from `main` with `confirmVersion=0.1.0`, the matching key protection mode and `publishRelease=false` (the default). This runs the gates and signs candidates locally. Only a later explicitly authorized dispatch with `publishRelease=true` uploads to Central and creates a tag/release. Pushes and pull requests run checks; they do not publish.
+For verification, run **Release Siren** manually from `main` with the new `confirmVersion`, the matching key protection mode and `publishRelease=false` (the default). This runs the gates and signs candidates locally. Only a later explicitly authorized dispatch with `publishRelease=true` uploads to Central and creates a tag/release. Pushes and pull requests run checks; they do not publish.
 
 The workflow defaults to verification-only (`publishRelease=false`). It validates the version, clean checkout, dispatched commit, curated changelog, absent release tag and absent Central coordinate. It checks credentials and native redistribution, tests source/API/sample builds, exercises native models and validates relocated artifact consumers. It signs all five candidate publications locally. Only when `publishRelease=true` does it reserve the tag atomically, publish signed artifacts, verify public delivery and resolve them from a separate Central-only consumer before creating the GitHub release. Central propagation is polled with a bounded timeout. Reports are uploaded even when a step fails.
 
-Both the workflow and direct Central Gradle commands depend on the redistribution gate. There is no release bypass property. The first release remains pending until the real public artifacts and consumer have passed; update the README and Medium dependency status at that point.
+Both the workflow and direct Central Gradle commands depend on the redistribution gate. There is no release bypass property. Version 0.1.0 passed public delivery and the Central-only consumer before its GitHub release was created. Update installation examples only after those gates succeed for a new version.
 
 ## Failed publication or propagation
 
@@ -79,7 +79,7 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
-Added read-only Central authentication, completed compiler notice/evidence coverage and default nonpublishing preflight with local candidate signing. Publication remains deferred.
+Published 0.1.0 through the guarded manual workflow, then verified public artifact delivery and independent Central-only consumers. The default remains nonpublishing preflight.
 
 Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
 

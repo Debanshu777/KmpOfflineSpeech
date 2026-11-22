@@ -5,6 +5,7 @@ Run **speech-to-text and text-to-speech on device** in Android, iOS and JVM apps
 The SDK has **no UI, Compose dependency, bundled weights or hidden downloads**.
 
 [![CI](https://github.com/Debanshu777/Siren/actions/workflows/check.yml/badge.svg)](https://github.com/Debanshu777/Siren/actions/workflows/check.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.debanshu777/siren)](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0)
 [![MIT license](https://img.shields.io/badge/source%20license-MIT-blue.svg)](LICENSE)
 
 [Get started](#get-started) · [Configuration](docs/model-configuration.md) · [Samples](#sample-apps) · [Verification](docs/development.md)
@@ -15,7 +16,7 @@ The SDK has **no UI, Compose dependency, bundled weights or hidden downloads**.
 
 ## Get started
 
-**`0.1.0` is an unpublished candidate, not published to Maven Central.** The dependency below is the intended future coordinate. Use the source/local staging until publication; see [release preparation](docs/releasing.md).
+Siren **0.1.0** is available on [Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0). [Release notes](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0).
 
 ### 1. Add the dependency
 
@@ -35,40 +36,24 @@ The SDK does not include or download these weights. For an existing local bundle
 
 ### 3. Create an engine and call it
 
-From a coroutine in `androidMain`:
+From a coroutine in `androidMain`, pass your app's mono recording and its actual sample rate:
 
 ```kotlin
 import io.github.debanshu.siren.speech.createSpeechEngine
-import io.github.debanshu.siren.speech.use
-
-val audio = createSpeechEngine(context).use { engine ->
-    engine.synthesize("Hello from Siren.")
-}
-```
-
-From `iosMain` or `jvmMain`, the same operation needs no Android context:
-
-```kotlin
-import io.github.debanshu.siren.speech.createSpeechEngine
-import io.github.debanshu.siren.speech.use
-
-val audio = createSpeechEngine().use { engine ->
-    engine.synthesize("Hello from Siren.")
-}
-```
-
-`use` closes the engine automatically, including after failure or cancellation. The returned `PcmAudio` contains caller-owned mono float samples and their playback rate.
-
-For speech-to-text, pass your application's recorded PCM at its actual rate. For example, inside the same engine scope:
-
-```kotlin
 import io.github.debanshu.siren.speech.transcribe
+import io.github.debanshu.siren.speech.use
 
-val text = engine.transcribe(recordedSamples, recordedSampleRate)
-val spoken = engine.synthesize(text)
+val replyAudio = createSpeechEngine(context).use { engine ->
+    val text = engine.transcribe(recording.samples, recording.sampleRate)
+    engine.synthesize(text)
+}
 ```
 
-Your app still records and plays audio. See [the complete quickstart](docs/getting-started.md) for resource placement, both operations and longer-lived engines. Custom filenames, optional capabilities and other model providers are covered in [advanced configuration](docs/model-configuration.md).
+On iOS or desktop, use `createSpeechEngine()` instead; the block stays the same. For text-to-speech alone, call `engine.synthesize("Hello from Siren.")` inside the scope.
+
+`use` closes the engine automatically, including after failure or cancellation. The returned `PcmAudio` holds independent mono float samples and their playback rate. Your app records the input and plays `replyAudio.samples` at `replyAudio.sampleRate`.
+
+See [the complete quickstart](docs/getting-started.md) for resource placement and longer-lived engines. Custom filenames, optional capabilities and other model providers are covered in [advanced configuration](docs/model-configuration.md).
 
 ## Platform support
 
@@ -104,17 +89,11 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Documentation
 
-[Getting started](docs/getting-started.md) · [Model configuration](docs/model-configuration.md) · [SDK](siren/README.md) · [Architecture](docs/architecture.md) · [Integration tutorial](docs/medium-draft.md) · [Development](docs/development.md) · [Release preparation](docs/releasing.md)
+[Getting started](docs/getting-started.md) · [Model configuration](docs/model-configuration.md) · [SDK](siren/README.md) · [Architecture](docs/architecture.md) · [Integration tutorial](docs/medium-draft.md) · [Development](docs/development.md) · [Release verification](docs/releasing.md)
 
 ## Recent Changes
 
-The `0.1.0` candidate passed [Linux/macOS CI](https://github.com/Debanshu777/Siren/actions/runs/45059952805) and [nonpublishing preflight](https://github.com/Debanshu777/Siren/actions/runs/45059983741), including candidate signing. It remains unpublished.
-
-
-Fixed fresh-runner consumer validation to honor the outer offline flag while keeping SDK resolution isolated.
-
-
-Simplified model setup and scoped engine cleanup; completed the 33-text native/compiler inventory and aligned Android to API 27. Read-only credential checks and default nonpublishing preflight verify preparation while `0.1.0` remains unpublished.
+Published [Siren 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) to Maven Central with signed Android, iOS and JVM artifacts. The [release pipeline](https://github.com/Debanshu777/Siren/actions/runs/45062849601) verified public delivery and a separate Central-only consumer. The quickstart uses one scoped engine for transcription and synthesis.
 
 ## License
 
