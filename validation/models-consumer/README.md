@@ -27,4 +27,6 @@ The plugin's [functional tests](../../siren-models-gradle-plugin/src/test/kotlin
 
 ## Recent Changes
 
+Added `-PmodelPluginFromCentral=true` for exclusive public Central resolution of the plugin implementation and marker, with no included source build or staged plugin repository.
+
 Added a Central SDK consumer with automatic model packaging and hash-based inspection of Android, JVM and iOS resource outputs. The optional plugin is local/unpublished.

@@ -2,9 +2,17 @@ import java.io.File
 
 pluginManagement {
     val modelPluginRepository = providers.gradleProperty("modelPluginRepository").orNull
-    if (modelPluginRepository == null) includeBuild("../../siren-models-gradle-plugin")
+    val fromCentral = providers.gradleProperty("modelPluginFromCentral").map(String::toBoolean).getOrElse(false)
+    require(!fromCentral || modelPluginRepository == null) { "Central mode cannot use a staged plugin repository" }
+    if (!fromCentral && modelPluginRepository == null) includeBuild("../../siren-models-gradle-plugin")
     repositories {
-        if (modelPluginRepository != null) maven { url = uri(modelPluginRepository) }
+        if (fromCentral || modelPluginRepository != null) exclusiveContent {
+            forRepository {
+                if (fromCentral) mavenCentral()
+                else maven { url = uri(checkNotNull(modelPluginRepository)) }
+            }
+            filter { includeGroup("io.github.debanshu777"); includeGroup("io.github.debanshu777.siren.models") }
+        }
         google(); mavenCentral(); gradlePluginPortal()
     }
     plugins { id("io.github.debanshu777.siren.models") version "0.1.0" }

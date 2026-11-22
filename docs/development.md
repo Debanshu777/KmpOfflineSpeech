@@ -145,6 +145,8 @@ Update artifact URL, hash, size and provenance together in `scripts/dependencies
 
 ## Recent Changes
 
+Model add-on release tooling now tests three independent version/tag/notes guards and verifies staged sources, Dokka API docs, marker metadata and a weight-free implementation. Run `./gradlew -p siren-models-gradle-plugin/buildSrc test` and `./gradlew -p siren-models-gradle-plugin check verifyModelAddonArtifacts`. Its manual release workflow is separate from the core SDK release and defaults to verification-only.
+
 Completed native compiler notice/evidence coverage, added vendored-input integrity regressions and a default nonpublishing preflight. Central authentication/namespace access passed in the [read-only CI check](https://github.com/Debanshu777/Siren/actions/runs/45056250019); [nonsecret result](../validation/central-credential-verification.json).
 
 

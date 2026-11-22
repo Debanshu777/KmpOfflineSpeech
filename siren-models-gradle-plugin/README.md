@@ -71,8 +71,8 @@ The two bundles occupy approximately 138 MB before app/archive compression. Quan
 From the Siren root:
 
 ```bash
-./gradlew -p siren-models-gradle-plugin check
-./gradlew -p siren-models-gradle-plugin publishAllPublicationsToStagingRepository
+./gradlew -p siren-models-gradle-plugin/buildSrc test
+./gradlew -p siren-models-gradle-plugin check verifyModelAddonArtifacts
 ```
 
 This tests the build plugin and stages its implementation and plugin-marker artifacts locally. It does not publish to Central or the Gradle Plugin Portal. The [independent consumer](../validation/models-consumer/README.md) verifies real models, Android/JVM packaging and iOS resource output. The [check workflow](../.github/workflows/models-check.yml) repeats artifact-based validation outside the checkout.
@@ -80,5 +80,7 @@ This tests the build plugin and stages its implementation and plugin-marker arti
 [Current local verification](../validation/default-models-verification.json) passed 19 plugin tests, automatic SDK/model setup in a relocated Central SDK consumer, native synthesis/transcription, both iOS links and the actual Xcode resource hook. The whole-bundle opt-out built offline with a fresh empty model cache and no generated model files. App-owned resources and configuration-cache reuse are covered by functional tests. The plugin JAR is 51,480 bytes and contains no weights. The workflow is prepared but has not executed remotely. [Earlier selection/compression evidence](../validation/optional-models-verification.json) remains historical.
 
 ## Recent Changes
+
+Added independent Central publication with sources/Dokka docs, three release-guard regressions, artifact-size/no-weights checks and a guarded manual release workflow. The core SDK is not republished.
 
 Made the quick-start supply the SDK and both models by default. Added a whole-bundle opt-out that preserves app-owned resources and a single SDK version setting. The add-on is unpublished.

@@ -79,8 +79,18 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
+Added a separate guarded release procedure for the model add-on. Its version and tag cannot collide with the core SDK release.
+
 Published 0.1.0 through the guarded manual workflow, then verified public artifact delivery and independent Central-only consumers. The default remains nonpublishing preflight.
 
 Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.
 
 Relocated staging consumers resolve build-tool and non-Siren dependencies online by default; an explicit outer `--offline` flag is propagated. Siren coordinates remain exclusively bound to the copied repository, so allowing plugin downloads cannot substitute a public SDK artifact.
+
+## Model add-on release
+
+The standalone plugin version is `sirenModelsVersion` in `siren-models-gradle-plugin/gradle.properties`. It publishes `io.github.debanshu777:siren-models-gradle-plugin` plus the `io.github.debanshu777.siren.models` Gradle marker to Maven Central; it does not use the Gradle Plugin Portal. Consumers need `mavenCentral()` in `pluginManagement.repositories`.
+
+Run [Release Siren model add-on](../.github/workflows/models-release.yml) from `main` with the exact version and key protection mode. The default `publishRelease=false` runs source, release-guard, staged consumer, native inference, Android/iOS packaging, Xcode hook, opt-out and local signing checks. With explicit publication authorization, `publishRelease=true` reserves `models-vVERSION`, publishes both signed publications, checks all 12 public files and exact candidate JAR bytes, and runs a fresh Central-only consumer by plugin ID before creating a separate GitHub release. The existing core release stays latest.
+
+The pipeline uses the same five secret names as the SDK workflow and scopes values to credential/signing/publication steps. Select `unprotected` only for a key created without a passphrase. Public delivery is polled with a bounded timeout. A reserved tag or completed upload is not proof of consumer availability; if delivery is incomplete, resume verification instead of uploading the immutable version again.

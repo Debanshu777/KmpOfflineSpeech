@@ -95,6 +95,8 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
+Prepared an independent model add-on release pipeline with signed Central implementation/marker publications and public plugin-ID consumer validation. Source setup below remains valid while publication is being verified.
+
 Made the prepared quick-start add-on supply the SDK and both models by default, with `bundleModels.set(false)` for custom model ownership. The add-on remains unpublished; the public core runtime is unchanged.
 
 Published [Siren 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) to Maven Central with signed Android, iOS and JVM artifacts. The [release pipeline](https://github.com/Debanshu777/Siren/actions/runs/45062849601) verified public delivery and a separate Central-only consumer. The quickstart uses one scoped engine for transcription and synthesis.

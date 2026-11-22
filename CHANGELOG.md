@@ -4,8 +4,11 @@ Release status: [0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0
 
 ## [Unreleased]
 
-- Adds a separate, unpublished default-ready Gradle add-on that supplies the SDK dependency and both default models unless `bundleModels` is disabled. Opted-in app builds verify/cache selected Whisper and Kitten files and package Android/JVM resources or copy iOS resources through standard Xcode direct integration.
-- Keeps the published core SDK and its no-weights/runtime-download behavior unchanged. Source-only integration and independent model-resource checks are documented separately.
+## [Models 0.1.0]
+
+- Adds a separate default-ready Gradle add-on that supplies the SDK dependency and both default models unless `bundleModels` is disabled. Opted-in app builds verify/cache selected Whisper and Kitten files and package Android/JVM resources or copy iOS resources through standard Xcode direct integration.
+- Keeps the published core SDK and its no-weights/runtime-download behavior unchanged. The add-on has its own Central implementation and plugin-marker artifacts, version and `models-v0.1.0` tag.
+- Verifies staged/public plugin resolution, native JVM inference, Android/JVM model hashes, both iOS links, the Xcode copy hook and an offline whole-bundle opt-out before completing the release.
 
 ## [0.1.0]
 

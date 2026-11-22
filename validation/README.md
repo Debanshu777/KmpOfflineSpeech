@@ -24,6 +24,8 @@ The [quick-start model consumer](models-consumer/README.md) validates automatic 
 
 ## Recent Changes
 
+Added release delivery and Central-only plugin-ID consumer validation for the independent model add-on. Default/native test evidence is retained outside consumer build products before opt-out clean builds.
+
 Added independent Android/JVM/iOS model-resource packaging checks and a real native roundtrip using automatically generated classpath resources.
 
 Siren 0.1.0 is published. [Publication evidence](central-publication-0.1.0.json) records public artifact delivery and the independent Central-only consumer; earlier local and preflight records remain historical.

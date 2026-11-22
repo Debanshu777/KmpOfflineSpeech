@@ -32,10 +32,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - name: Install configured Android SDK
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
+      - name: Test model release guards
+        run: ./gradlew -p siren-models-gradle-plugin/buildSrc test --no-daemon --console=plain
       - name: Test plugin and stage its implementation and marker publications
-        run: ./gradlew -p siren-models-gradle-plugin check publishAllPublicationsToStagingRepository --no-daemon --console=plain
+        run: ./gradlew -p siren-models-gradle-plugin check verifyModelAddonArtifacts --no-daemon --console=plain
       - name: Copy independent fixture and plugin repository outside checkout
         run: |
+          mkdir -p "$RUNNER_TEMP/siren-model-evidence"
           cp -R validation/models-consumer "$RUNNER_TEMP/siren-model-consumer"
           cp -R siren-models-gradle-plugin/build/staging-repository "$RUNNER_TEMP/siren-model-plugin-repository"
       - name: Verify generated model resources and native inference from staged plugin
@@ -45,7 +48,9 @@ jobs:
           -Pnative=true -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository"
           --no-daemon --max-workers=1 --configuration-cache --console=plain
       - name: Retain both-model packaging evidence
-        run: cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging-both.json"
+        run: |
+          cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/both.json"
+          cp -R "$RUNNER_TEMP/siren-model-consumer/build/test-results" "$RUNNER_TEMP/siren-model-evidence/default-test-results"
       - name: Verify synthesis-only packaging from the offline cache
         run: >-
           ./gradlew -p "$RUNNER_TEMP/siren-model-consumer"
@@ -65,7 +70,7 @@ jobs:
           export SDK_NAME="iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)"
           ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" embedAndSignAppleFrameworkForXcode verifyModelPackaging -Precognition=false -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
       - name: Retain selected-model packaging evidence
-        run: cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging-selected.json"
+        run: cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/selected.json"
       - name: Verify whole-bundle opt-out with an empty model cache
         run: >-
           ./gradlew -p "$RUNNER_TEMP/siren-model-consumer"
@@ -81,6 +86,8 @@ jobs:
           path: |
             siren-models-gradle-plugin/build/reports/
             siren-models-gradle-plugin/build/test-results/
+            siren-models-gradle-plugin/buildSrc/build/test-results/
+            ${{ runner.temp }}/siren-model-evidence/
             ${{ runner.temp }}/siren-model-consumer/build/reports/
             ${{ runner.temp }}/siren-model-consumer/build/test-results/
           if-no-files-found: ignore

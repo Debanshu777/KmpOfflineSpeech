@@ -1,0 +1,167 @@
+name: Release Siren model add-on
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmVersion:
+        description: Exact sirenModelsVersion (main only)
+        type: string
+        required: true
+      keyProtection:
+        description: Whether the exported private key has a passphrase
+        type: choice
+        options: [passphrase, unprotected]
+        default: passphrase
+        required: true
+      publishRelease:
+        description: Publish the add-on to Central and create its tag/release
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+concurrency:
+  group: siren-models-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Require main before loading credentials
+        if: github.ref != 'refs/heads/main'
+        run: exit 1
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-disabled: true
+      - name: Install configured Android SDK
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
+      - name: Validate main commit, independent version, notes and absent coordinates/tag
+        id: version
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
+          GH_TOKEN: ${{ github.token }}
+        run: ./gradlew -p siren-models-gradle-plugin validateModelAddonRelease --no-daemon --no-configuration-cache --console=plain
+      - name: Check required signing secret names
+        env:
+          GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_PASSWORD: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
+          KEY_PROTECTION: ${{ inputs.keyProtection }}
+        run: |
+          for name in GPG_KEY_CONTENTS SIGNING_KEY_ID; do
+            if [ -z "${!name}" ]; then echo "::error::Missing secret: $name"; exit 1; fi
+          done
+          if [ "$KEY_PROTECTION" = passphrase ] && [ -z "$SIGNING_PASSWORD" ]; then
+            echo '::error::Protected signing key requires SIGNING_PASSWORD'; exit 1
+          fi
+      - name: Verify Central authentication and namespace without uploading
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew -p validation/central-check verifyCentralCredentials --no-daemon --no-configuration-cache --console=plain
+      - name: Test release guards
+        run: ./gradlew -p siren-models-gradle-plugin/buildSrc test --no-daemon --console=plain
+      - name: Test plugin and verify staged implementation, marker, sources and API docs
+        run: ./gradlew -p siren-models-gradle-plugin check verifyModelAddonArtifacts --no-daemon --console=plain
+      - name: Copy independent consumer and plugin repository outside checkout
+        run: |
+          cp -R validation/models-consumer "$RUNNER_TEMP/siren-model-consumer"
+          cp -R siren-models-gradle-plugin/build/staging-repository "$RUNNER_TEMP/siren-model-plugin-repository"
+          mkdir -p "$RUNNER_TEMP/siren-model-evidence"
+      - name: Verify default native inference, Android packaging and both iOS links
+        run: |
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" jvmTest verifyModelPackaging linkDebugFrameworkIosArm64 linkDebugFrameworkIosSimulatorArm64 -Pnative=true -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --no-daemon --max-workers=1 --configuration-cache --console=plain
+          cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/default.json"
+          cp -R "$RUNNER_TEMP/siren-model-consumer/build/test-results" "$RUNNER_TEMP/siren-model-evidence/default-test-results"
+      - name: Verify actual Xcode integration resource hook
+        env:
+          CONFIGURATION: Debug
+          ARCHS: arm64
+          BUILT_PRODUCTS_DIR: ${{ runner.temp }}/siren-model-xcode
+          TARGET_BUILD_DIR: ${{ runner.temp }}/siren-model-xcode
+          FRAMEWORKS_FOLDER_PATH: SirenModelConsumer.app/Frameworks
+          UNLOCALIZED_RESOURCES_FOLDER_PATH: SirenModelConsumer.app
+          CODE_SIGNING_ALLOWED: 'NO'
+        run: |
+          export SDK_NAME="iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)"
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" embedAndSignAppleFrameworkForXcode verifyModelPackaging -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
+          cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/xcode.json"
+      - name: Verify whole-bundle opt-out without a model cache
+        run: |
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" :clean :androidApp:clean verifyModelPackaging -PbundleModels=false -PmodelCache="$RUNNER_TEMP/unused-model-cache" -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
+          test ! -e "$RUNNER_TEMP/unused-model-cache"
+          cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/opt-out.json"
+      - name: Sign both candidate publications locally
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: ./gradlew -p siren-models-gradle-plugin signPluginMavenPublication signSirenModelsPluginMarkerMavenPublication --no-daemon --no-configuration-cache --no-build-cache --console=plain
+      - name: Recheck immutable coordinates and tag before reservation
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirmVersion }}
+          GH_TOKEN: ${{ github.token }}
+        run: ./gradlew -p siren-models-gradle-plugin validateModelAddonRelease --no-daemon --no-configuration-cache --console=plain
+      - name: Reserve the independent add-on release tag
+        if: inputs.publishRelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: gh api "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA"
+      - name: Publish signed add-on and plugin marker to Central
+        if: inputs.publishRelease
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: ./gradlew -p siren-models-gradle-plugin publishAndReleaseToMavenCentral --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Verify all 12 public files and candidate JAR identity
+        if: inputs.publishRelease
+        run: ./gradlew -p siren-models-gradle-plugin verifyModelAddonPublication --no-daemon --no-configuration-cache --console=plain
+      - name: Resolve public plugin by ID in a fresh Central-only consumer
+        if: inputs.publishRelease
+        run: |
+          cp -R validation/models-consumer "$RUNNER_TEMP/siren-model-public-consumer"
+          ./gradlew -p "$RUNNER_TEMP/siren-model-public-consumer" jvmTest verifyModelPackaging linkDebugFrameworkIosArm64 linkDebugFrameworkIosSimulatorArm64 -Pnative=true -PmodelPluginFromCentral=true -PmodelCache="$RUNNER_TEMP/siren-model-consumer/.gradle/siren-models-cache" --refresh-dependencies --no-daemon --max-workers=1 --configuration-cache --console=plain
+          cp "$RUNNER_TEMP/siren-model-public-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-evidence/public-central.json"
+      - name: Create GitHub add-on release after public consumer validation
+        if: inputs.publishRelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$RELEASE_TAG" --verify-tag --title "Siren model add-on $RELEASE_VERSION" --notes-file siren-models-gradle-plugin/build/reports/release/model-release-notes.md --latest=false
+          cat siren-models-gradle-plugin/build/reports/release/model-release-notes.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Record nonpublishing preflight
+        if: ${{ !inputs.publishRelease }}
+        run: echo 'Preflight passed; no upload, tag or release created.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: siren-models-release-verification
+          path: |
+            siren-models-gradle-plugin/build/reports/
+            siren-models-gradle-plugin/build/test-results/
+            siren-models-gradle-plugin/buildSrc/build/reports/
+            siren-models-gradle-plugin/buildSrc/build/test-results/
+            validation/central-check/build/reports/
+            ${{ runner.temp }}/siren-model-evidence/
+            ${{ runner.temp }}/siren-model-public-consumer/build/test-results/
+          if-no-files-found: ignore

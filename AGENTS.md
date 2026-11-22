@@ -42,6 +42,8 @@ Relevant commands from the repository root:
 ./gradlew :siren:publishAllPublicationsToStagingRepository
 ```
 
+The model add-on uses independent `sirenModelsVersion` in `siren-models-gradle-plugin/gradle.properties`, `models-vVERSION` tags and the main-only manual `models-release.yml` workflow. Its default is nonpublishing preflight. Preserve marker/implementation signing, clean-commit and collision guards, local artifact checks, relocated default/opt-out consumers, public file delivery and Central-only plugin-ID resolution before GitHub release creation. Never republish core SDK 0.1.0 while releasing this add-on.
+
 Version comes from `sirenVersion` in root `gradle.properties`; `io.github.debanshu777:siren:0.1.0` is published. Central versions are immutable. Publish a new version only when explicitly authorized by the user; do not rerun the 0.1.0 upload. The release workflow defaults to `publishRelease=false`; keep all mutating release steps behind that explicit input. Local staging writes `build/staging-repository` and can run unsigned without publishing credentials. Central configuration uses Vanniktech, signing, POM metadata and Dokka. Preserve source/API, redistribution-readiness and relocated consumer gates. See `docs/development.md` and `docs/library-design.md`.
 
 Vendored compiler notices under `scripts/notices/` are declared Gradle inputs and verified by exact hashes; never weaken the native gate. `scripts/native-compiler-evidence.json` records original public build logs, source pins and byte correspondence and has its own manifest checksum.
