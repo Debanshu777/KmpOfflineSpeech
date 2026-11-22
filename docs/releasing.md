@@ -1,6 +1,10 @@
 # Releasing Siren
 
-Version `0.1.0` is prepared locally and is not published. The release pipeline and installation examples are prepared for that coordinate; they do not establish that it resolves from Maven Central. No release, tag, workflow dispatch, GitHub push or Medium update is part of the current local preparation.
+Version `0.1.0` is prepared locally and is not published. The release pipeline and installation examples are prepared for that coordinate; they do not establish that it resolves from Maven Central. The manual signing-only check is pushed to GitHub and can be dispatched independently. SDK release changes remain local; no release, tag, Central publication or Medium update is authorized.
+
+## Signing-only verification
+
+The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow uses an isolated [Gradle probe](../validation/signing-check/README.md), the saved signing secrets and your full public fingerprint. It verifies a signature against the published public key without publishing Siren. Maven credential presence is checked; authentication is not tested. Run this check after adding or rotating signing secrets. A green result does not waive the native redistribution or SDK artifact gates.
 
 ## Release configuration
 

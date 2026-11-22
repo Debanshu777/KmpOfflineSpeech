@@ -25,3 +25,7 @@ The unpublished `0.1.0` candidate has separate [local release-preparation eviden
 Added published-consumer probes for default factories, standard model layouts,
 automatic scoped close and the raw PCM transcription overload, retaining legacy
 factory coverage and separate local-staging/Central gates.
+
+Added an independent [signing-secret probe](signing-check/README.md) and manual
+workflow. It checks Gradle key/passphrase compatibility and public-key verification
+without publishing SDK artifacts or authenticating Maven Central credentials.

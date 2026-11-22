@@ -39,7 +39,7 @@ Relevant commands from the repository root:
 ./gradlew :siren:publishAllPublicationsToStagingRepository
 ```
 
-Version comes from `sirenVersion` in root `gradle.properties`; candidate `0.1.0` targets `io.github.debanshu777:siren:0.1.0`. It is prepared locally and not published. Current work is preparation-only: remote pushes/tags, Central publication and Medium writes are deferred until the user resumes that work. Local staging writes `build/staging-repository` and can run unsigned without publishing credentials. Central configuration uses Vanniktech, signing, POM metadata and Dokka. Preserve source/API, redistribution-readiness and relocated consumer gates. See `docs/development.md` and `docs/library-design.md`.
+Version comes from `sirenVersion` in root `gradle.properties`; candidate `0.1.0` targets `io.github.debanshu777:siren:0.1.0`. It is prepared locally and not published. The user authorized pushing and dispatching the standalone signing-check workflow. Other SDK/release pushes, tags, Central publication and Medium writes remain deferred until the user resumes that work. Local staging writes `build/staging-repository` and can run unsigned without publishing credentials. Central configuration uses Vanniktech, signing, POM metadata and Dokka. Preserve source/API, redistribution-readiness and relocated consumer gates. See `docs/development.md` and `docs/library-design.md`.
 
 API baselines live under `siren/api`. Run `:siren:checkKotlinAbi`; use `:siren:updateKotlinAbi` only for reviewed intentional public API changes, not to hide unexpected compatibility failures. Release notes come from the exact matching `CHANGELOG.md` version section. Keep install snippets and release status aligned with the candidate/result.
 
@@ -64,6 +64,13 @@ adb -s YOUR_SERIAL shell am instrument -w -r -e demo true \
 Require an unlocked phone, built-in audio devices and an existing audible media volume. The UI test does not change volume, grant permission itself or use accessibility automation; it never injects transcripts/phases. The separate acoustic fixture has its own opt-in prerequisites. See `docs/development.md` and `docs/demo.md` for exact evidence and limits.
 
 Every native allocation needs clear ownership and paired destruction. Cancellation must wait for synchronous native work before teardown. Do not claim microphone/speaker verification, accuracy or performance from compilation or an in-memory model roundtrip.
+
+`validation/signing-check` is an independent Gradle signing-only probe. Its manual
+`signing-check.yml` workflow runs from main with an expected public fingerprint,
+checks the five secret names, signs using in-memory PGP credentials, and verifies
+against the published public key. It has no publishing plugin or repositories.
+Keep credential values out of logs/artifacts/caches. Maven credential presence is
+not authentication verification, and a passed probe is not SDK release readiness.
 
 Update the root README, affected module READMEs and relevant docs with every code/build/tooling change, including concise Recent Changes entries. Report checks actually run and distinguish pre-extraction evidence from checks of current artifacts.
 

@@ -91,6 +91,22 @@ Current native redistribution readiness is incomplete. Exact ONNX Runtime source
 
 When the user resumes publication, configure the [five repository publishing/signing secrets](releasing.md#future-github-release), commit/push the prepared main branch and dispatch the manual release with `confirmVersion=0.1.0`. Do not execute those remote steps during this preparation-only pass. The [release guide](releasing.md) explains readiness and retry behavior. The release record must identify candidate checks, deployment and public-resolution results before availability claims change.
 
+## Signing-secret CI check
+
+The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow
+runs from `main` with your full public signing fingerprint as input. Its isolated
+[Gradle fixture](../validation/signing-check/README.md) signs a harmless text probe
+using the saved key ID, ASCII-armored private key and passphrase. GnuPG independently
+verifies it against the key downloaded from Ubuntu's keyserver and checks the exact
+fingerprint. All five required secret names must be nonempty. The Central token's
+authentication is not tested.
+
+This check has read-only repository permissions, disables Gradle build/configuration
+caches, scopes secrets to the signing step and runs no publication, tag or release
+commands. It does not build the SDK/native runtimes or establish release readiness.
+See the workflow run's job summary for the observed result. The full SDK release
+pipeline remains separately prepared locally until publication work resumes.
+
 ## Recorded verification
 
 These records describe their stated artifacts/runs, not every future release:
