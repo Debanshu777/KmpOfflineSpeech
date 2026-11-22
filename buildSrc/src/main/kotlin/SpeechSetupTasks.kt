@@ -10,7 +10,18 @@ abstract class SpeechDownloadTask : DefaultTask() {
     @get:InputFile @get:PathSensitive(PathSensitivity.NONE) abstract val manifestFile: RegularFileProperty
     @get:LocalState abstract val downloadCache: DirectoryProperty
     @get:Input abstract val offline: Property<Boolean>
-    protected fun fetch(artifact: SpeechArtifact) = SpeechArtifacts.fetch(artifact, downloadCache.get().asFile, offline.get())
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val vendoredNoticeFiles: org.gradle.api.file.ConfigurableFileCollection
+    init {
+        vendoredNoticeFiles.from(manifestFile.map { manifest ->
+            val root = manifest.asFile.parentFile.parentFile
+            NativeRedistributionNotices.artifacts(SpeechArtifacts.manifest(manifest.asFile))
+                .mapNotNull { SpeechArtifacts.vendoredNotice(it, root) }
+        })
+    }
+    protected fun fetch(artifact: SpeechArtifact) =
+        SpeechArtifacts.vendoredNotice(artifact, manifestFile.get().asFile.parentFile.parentFile)
+            ?: SpeechArtifacts.fetch(artifact, downloadCache.get().asFile, offline.get())
 }
 
 @CacheableTask

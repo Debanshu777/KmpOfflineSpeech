@@ -70,4 +70,7 @@ First-party source is [MIT](../LICENSE); preserve [native/model notices and audi
 
 ## Recent Changes
 
+SDK artifacts now retain 33 pinned native/compiler notice texts, source availability and reviewed compiler provenance. Native redistribution verification remains mandatory before Central upload.
+
+
 Added default platform factories, bundled/local layout helpers, scoped automatic close and direct PCM transcription while preserving named factories, custom descriptors and SPI.

@@ -87,7 +87,7 @@ For local candidate testing, `./gradlew validatePublishedSirenConsumer` stages a
 
 A successful upload or Central validation is not proof that public downloads are available. Follow the deployment to its final published state, then resolve the public root and platform artifacts before marking the release available. Vanniktech documents these [separate Central stages](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
-Current native redistribution readiness is incomplete. Exact ONNX Runtime source/notice records and Linux commit fingerprints were recovered; remaining Sherpa/transitive/compiler component inventory and source-coverage review still blocks release readiness. Retained notice texts do not establish complete payload coverage. `verifyNativeRedistribution` reports to `build/reports/native-redistribution.json` and must block Central tasks while that hold remains. Source builds and unsigned local staging can continue; [third-party audit status](../THIRD_PARTY_NOTICES.md) is authoritative for current findings.
+The current technical native inventory passes with 33 pinned notice texts, source availability and compiler reviews for both NDKs and both MSVC toolsets. `verifyNativeRedistribution` also validates the compiler-evidence checksum; missing component/payload/compiler reviews or changed vendored bytes fail closed. [Third-party status](../THIRD_PARTY_NOTICES.md) records the scope and downstream obligations. The release workflow now defaults to a nonpublishing preflight; publication, tag and release steps require `publishRelease=true`.
 
 When the user resumes publication, configure the [five repository publishing/signing secrets](releasing.md#future-github-release), commit/push the prepared main branch and dispatch the manual release with `confirmVersion=0.1.0`. Do not execute those remote steps during this preparation-only pass. The [release guide](releasing.md) explains readiness and retry behavior. The release record must identify candidate checks, deployment and public-resolution results before availability claims change.
 
@@ -139,6 +139,9 @@ Update artifact URL, hash, size and provenance together in `scripts/dependencies
 
 ## Recent Changes
 
+Completed native compiler notice/evidence coverage, added vendored-input integrity regressions and a default nonpublishing preflight. Central authentication/namespace access passed in the [read-only CI check](https://github.com/Debanshu777/Siren/actions/runs/45056250019); [nonsecret result](../validation/central-credential-verification.json).
+
+
 Verified the shorter factories, standard model-layout helpers, raw PCM call and cancellation-safe scoped cleanup through source tests and relocated artifacts. Updated the API baselines intentionally; no remote publication ran.
 
 Added a manually dispatched signing-secret verification path with explicit key
@@ -155,3 +158,7 @@ Android/JVM/native API baselines passed. The independent consumer built a plain 
 The unpublished `0.1.0` candidate passed 20 build-tool regression tests, Android/JVM/native API baseline checks, local Maven publication with sources/Dokka documentation, and a relocated artifact consumer. That consumer passed four JVM tests (including actual classpath-model inference), Android APK packaging and both dynamic iOS framework links. The Android AAR, JVM JAR and both native cinterop KLIBs each contain 21 pinned license texts and the verified source-availability statement, with no model weights. See [recorded checks and artifact hashes](../validation/release-preparation-0.1.0.json).
 
 A Central-command dry-run confirmed mandatory signing and the native redistribution dependency; it executed no publication. The readiness gate correctly rejected the remaining Android compiler-runtime notice packaging and Windows static CRT/STL provenance gaps. Actual signing with maintainer keys, Central delivery/consumer checks, remote workflows and Medium edits were deferred at the user’s request.
+
+## Publication readiness — 2026-11-23
+
+The completed native/compiler inventory passed its mandatory gate. Local checks passed 23 build-tool regressions, 16 SDK common tests, five sample tests and five relocated-consumer tests, including native JVM inference and both iOS dynamic links. The ordinary SDK native opt-in test remained skipped; native execution was verified by the separate consumer. All 30 target publication signatures were independently verified. Android AAR, JVM JAR and both iOS cinterop KLIBs each contain 33 hash-verified notice texts and the current source-availability statement, with no model weights. Android sample app/test APKs, desktop JAR and iOS simulator framework also rebuilt. See [candidate hashes and results](../validation/publication-readiness-0.1.0.json). Full GitHub preflight is the next check; no publication has run.

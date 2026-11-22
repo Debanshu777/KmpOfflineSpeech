@@ -1,6 +1,7 @@
 name: Check Siren
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -35,7 +36,7 @@ jobs:
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
       - name: Test build tools, ABI, SDK and shared sample; compile Android and Desktop hosts
         run: >-
-          ./gradlew checkSpeechSetup :siren:checkKotlinAbi :siren:jvmTest
+          ./gradlew checkSpeechSetup verifyNativeRedistribution :siren:checkKotlinAbi :siren:jvmTest
           :sample:composeApp:jvmTest :sample:androidApp:assembleDebug
           :sample:androidApp:assembleDebugAndroidTest :sample:desktopApp:jvmJar
           --no-daemon --max-workers=1 --console=plain

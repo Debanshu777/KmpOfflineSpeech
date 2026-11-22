@@ -75,6 +75,19 @@ object NativeRedistributionNotices {
             val references = component["notice_destinations"].asJsonArray.map { it.asString }
             if (references.isEmpty() || references.any { it !in destinations }) problems += "Missing pinned component notices: ${component["id"].asString}"
         }
+        val compilerReviews = audit["compiler_runtimes"]?.asJsonArray?.map { it.asJsonObject }.orEmpty()
+        val expectedCompilers = setOf("android-ndk-r27d", "android-ndk-r30", "msvc-14.44", "msvc-14.51")
+        if (compilerReviews.map { it["id"].asString }.toSet() != expectedCompilers || compilerReviews.size != expectedCompilers.size) {
+            problems += "Compiler-runtime reviews must cover both Android NDKs and both observed MSVC toolsets"
+        }
+        compilerReviews.forEach { review ->
+            val references = review["notice_destinations"].asJsonArray.map { it.asString }
+            if (review["status"].asString != "complete" || review["build_identity"]?.asString.isNullOrBlank() ||
+                review["evidence_url"]?.asString?.startsWith("https://") != true ||
+                references.isEmpty() || references.any { it !in destinations }) {
+                problems += "Incomplete compiler-runtime evidence/notices: ${review["id"].asString}"
+            }
+        }
         val fingerprints = audit["binary_build_info"].asJsonArray.map { it.asJsonObject }
         val expectedVariants = setOf("android/arm64-v8a", "android/x86_64", "jvm/linux-aarch64", "jvm/linux-x64", "jvm/osx-aarch64", "jvm/osx-x64", "jvm/win-arm64", "jvm/win-x64", "ios/ios-arm64", "ios/ios-arm64_x86_64-simulator")
         if (fingerprints.map { it["variant"].asString }.toSet() != expectedVariants || fingerprints.size != expectedVariants.size ||
@@ -133,10 +146,17 @@ object NativeRedistributionNotices {
 @DisableCachingByDefault(because = "Release gate must recheck pinned notice availability and audit coverage")
 abstract class VerifyNativeRedistribution : SpeechDownloadTask() {
     @get:OutputFile abstract val reportFile: RegularFileProperty
+    @get:org.gradle.api.tasks.InputFile
+    @get:org.gradle.api.tasks.PathSensitive(org.gradle.api.tasks.PathSensitivity.NONE)
+    abstract val compilerEvidenceFile: RegularFileProperty
     init { outputs.upToDateWhen { false } }
     @TaskAction fun verifyNotices() {
         val manifest = SpeechArtifacts.manifest(manifestFile.get().asFile)
         val problems = NativeRedistributionNotices.blockers(manifest).toMutableList()
+        val expectedEvidenceHash = manifest["redistribution"].asJsonObject["compiler_evidence_sha256"]?.asString
+        if (expectedEvidenceHash == null || SpeechArtifacts.sha256(compilerEvidenceFile.get().asFile) != expectedEvidenceHash) {
+            problems += "Native compiler evidence checksum mismatch or missing pin"
+        }
         NativeRedistributionNotices.artifacts(manifest).forEach { notice ->
             try { fetch(notice) } catch (error: Exception) { problems += "Cannot verify ${notice.name}: ${error.message}" }
         }

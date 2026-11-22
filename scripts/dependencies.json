@@ -155,9 +155,9 @@
     }
   },
   "redistribution": {
-    "status": "incomplete",
-    "audit_date": "2026-11-22",
-    "scope": "SDK native runtimes only; sample models excluded. Known pinned license texts are retained, but public binary release is blocked until every component and payload review is complete.",
+    "status": "complete",
+    "audit_date": "2026-11-23",
+    "scope": "Technical redistribution inventory for exact pinned SDK payloads, compiler runtimes and corresponding notices/source references. Sample models excluded; first-party MIT does not relicense third-party code. Consumers retain applicable terms and notices.",
     "notices": [
       {
         "name": "sherpa-onnx-2.0.1-LICENSE",
@@ -305,104 +305,422 @@
         "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
         "bytes": 325054,
         "destination": "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+      },
+      {
+        "name": "android-ndk-r27d-NOTICE",
+        "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r27d/NOTICE",
+        "sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323",
+        "bytes": 522923,
+        "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE",
+        "archive_entry": "android-ndk-r27d/NOTICE"
+      },
+      {
+        "name": "android-ndk-r27d-NOTICE.toolchain",
+        "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r27d/NOTICE.toolchain",
+        "sha256": "cbe3237be53c0a819f8df6aac5358fdee848eee3b6571b4e2ca20767ebd7465e",
+        "bytes": 806124,
+        "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.toolchain",
+        "archive_entry": "android-ndk-r27d/NOTICE.toolchain"
+      },
+      {
+        "name": "android-ndk-r27d-NOTICE.llvm",
+        "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r27d/NOTICE.llvm",
+        "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+        "bytes": 130424,
+        "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.llvm",
+        "archive_entry": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE"
+      },
+      {
+        "name": "android-ndk-r27d-NOTICE.sysroot",
+        "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r27d/NOTICE.sysroot",
+        "sha256": "d5f5557f82bc42ce657d0513ba9a7d0c55e64eb99d4998994d92f2b5c2b1fb3c",
+        "bytes": 501406,
+        "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.sysroot",
+        "archive_entry": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE"
+      },
+      {
+        "name": "android-ndk-r30-NOTICE.toolchain",
+        "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r30/NOTICE.toolchain",
+        "sha256": "6b8633011d874b75629180e60de13ebfd546a10e56dc7d0380a35f6609f30617",
+        "bytes": 777125,
+        "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.toolchain",
+        "archive_entry": "android-ndk-r30/NOTICE.toolchain"
+      },
+      {
+        "name": "android-ndk-r30-NOTICE",
+        "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r30/NOTICE",
+        "sha256": "a3c12eee897f63991da71464b690433a15d0d74a508ce0e275436279bdcaff58",
+        "bytes": 493924,
+        "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE",
+        "archive_entry": "android-ndk-r30/NOTICE"
+      },
+      {
+        "name": "android-ndk-r30-NOTICE.llvm",
+        "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r30/NOTICE.llvm",
+        "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+        "bytes": 130424,
+        "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.llvm",
+        "archive_entry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE"
+      },
+      {
+        "name": "android-ndk-r30-NOTICE.sysroot",
+        "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+        "source_path": "scripts/notices/android-ndk-r30/NOTICE.sysroot",
+        "sha256": "0ed879a95b81b7d73beb4bc8ca5d1899ce5e3d65cedecbb9b642fc34d00005e8",
+        "bytes": 472407,
+        "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.sysroot",
+        "archive_entry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE"
+      },
+      {
+        "name": "msvc-stl-14.44-LICENSE.txt",
+        "url": "https://raw.githubusercontent.com/microsoft/STL/1f6e5b16ec02216665624c1e762f3732605cf2b4/LICENSE.txt",
+        "source_path": "scripts/notices/msvc-stl-14.44/LICENSE.txt",
+        "sha256": "1fc6b6db121d4555d8f661937d7f6013693cd8fd67495d5e5d98c1d18fb83eda",
+        "bytes": 12550,
+        "destination": "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+        "source_revision": "1f6e5b16ec02216665624c1e762f3732605cf2b4"
+      },
+      {
+        "name": "msvc-stl-14.51-LICENSE.txt",
+        "url": "https://raw.githubusercontent.com/microsoft/STL/edd1486e5fe753616b6fd3695da96f352b4092d2/LICENSE.txt",
+        "source_path": "scripts/notices/msvc-stl-14.51/LICENSE.txt",
+        "sha256": "1fc6b6db121d4555d8f661937d7f6013693cd8fd67495d5e5d98c1d18fb83eda",
+        "bytes": 12550,
+        "destination": "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+        "source_revision": "edd1486e5fe753616b6fd3695da96f352b4092d2"
+      },
+      {
+        "name": "visual-studio-2022-LICENSE.txt",
+        "url": "https://visualstudio.microsoft.com/wp-content/uploads/2021/11/Visual-Studio-2022-Enterprise-Professional-License-EN.docx",
+        "source_path": "scripts/notices/visual-studio-2022/LICENSE.txt",
+        "sha256": "b1a7e73590f2192abd1a06d7fd20887784d55177064c2d85714a3f1b1a8c2613",
+        "bytes": 27403,
+        "destination": "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt",
+        "source_format": "Plain text extracted from the official DOCX using macOS textutil; source document retained by public URL"
+      },
+      {
+        "name": "visual-studio-2026-LICENSE.txt",
+        "url": "https://visualstudio.microsoft.com/wp-content/uploads/2025/10/Visual_Studio_2026-License-Enterprise_Professional_ENU.docx",
+        "source_path": "scripts/notices/visual-studio-2026/LICENSE.txt",
+        "sha256": "519514d9459cb485e5f248ec2aa3f5ffaa3ca99b8a64c904d38042106cbdb2f9",
+        "bytes": 32313,
+        "destination": "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt",
+        "source_format": "Plain text extracted from the official DOCX using macOS textutil; source document retained by public URL"
       }
     ],
     "payloads": [
       {
         "name": "sherpa-onnx-2.0.1.aar",
         "sha256": "a8d09d1d32f3eb8520482c6d3d43fae674681c5b050385967c70a3c2c9bf0ee7",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.sysroot",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.sysroot"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-jvm-2.0.1.jar",
         "sha256": "8320e2457b6e38dd624fb619d3552e11ef78ffeb394622056126b16f2fd99d12",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
-          "META-INF/siren/licenses/sherpa-onnx-LICENSE"
-        ]
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-linux-aarch64-2.0.1.jar",
         "sha256": "c09d51e7190f5b8bcc20cf0d25bcb2e66324737ace5ce9d678ae37b8c79d6c2f",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-linux-x64-2.0.1.jar",
         "sha256": "744330a68a7024d9412f029c23b06f847b8444787c94e5118e0fdaf1b4b2cb3f",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-osx-aarch64-2.0.1.jar",
         "sha256": "718a4ea4799341146ef9a0cc15daa70e6622ae4a16911952604035f396703499",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-osx-x64-2.0.1.jar",
         "sha256": "617a6263b4793495ea6a5f882cfc5dbf9e57cf4ad1e126104bddf8cf90846f72",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-win-arm64-2.0.1.jar",
         "sha256": "95a2a4fe4a368fb4d9f458f68fd8ed179f9f2c07bc448185633bc199066a38bb",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+          "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-native-lib-win-x64-2.0.1.jar",
         "sha256": "536f1c09025996a780b22f972b2e56e0e8b2064e1ceb534456ea7eba0a6ae4cd",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
           "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
-          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt"
-        ]
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+          "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "sherpa-onnx-v2.0.1-ios-static.xcframework.zip",
         "sha256": "88aa569f71b7903e0bbdfbe6e2e114b3b95862b1ef0759eea3024f82926d7374",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
-          "META-INF/siren/licenses/sherpa-onnx-LICENSE"
-        ]
+          "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       },
       {
         "name": "onnxruntime-ios-static-xcframework-1.28.1.xcframework.zip",
         "sha256": "992d8a0cc6014cccc3a7815c36bbff5e5a06833ea2c4d47dd43ef071f639cf9d",
-        "status": "incomplete",
+        "status": "complete",
         "notice_destinations": [
           "META-INF/siren/licenses/sherpa-onnx-LICENSE",
+          "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
+          "META-INF/siren/licenses/kaldi-decoder/LICENSE",
+          "META-INF/siren/licenses/kaldifst/LICENSE",
+          "META-INF/siren/licenses/utf8proc/LICENSE.md",
+          "META-INF/siren/licenses/simple-sentencepiece/LICENSE",
+          "META-INF/siren/licenses/json/LICENSE.MIT",
+          "META-INF/siren/licenses/kissfft/COPYING",
+          "META-INF/siren/licenses/kissfft/LICENSES/BSD-3-Clause",
+          "META-INF/siren/licenses/openfst/COPYING",
+          "META-INF/siren/licenses/hclust-cpp/LICENSE",
+          "META-INF/siren/licenses/eigen/LICENSE",
+          "META-INF/siren/licenses/eigen/COPYING.README",
+          "META-INF/siren/licenses/eigen/COPYING.MPL2",
+          "META-INF/siren/licenses/eigen/COPYING.BSD",
+          "META-INF/siren/licenses/eigen/COPYING.MINPACK",
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/LICENSE",
+          "META-INF/siren/licenses/onnxruntime-1.28.2/ThirdPartyNotices.txt",
           "META-INF/siren/licenses/onnxruntime-1.28.1/LICENSE",
           "META-INF/siren/licenses/onnxruntime-1.28.1/ThirdPartyNotices.txt"
-        ]
+        ],
+        "review": "Pinned source/notice inventory reconciled; unmodified runtime bytes and compiler evidence retained in scripts/native-compiler-evidence.json. Optional dependency notices conservatively included."
       }
     ],
     "components": [
@@ -442,9 +760,9 @@
       },
       {
         "id": "native-transitives",
-        "status": "incomplete",
+        "status": "complete",
         "source": "https://github.com/k2-fsa/sherpa-onnx/tree/v2.0.1/cmake",
-        "reason": "Known dependency root notices checked and retained; Eigen source availability statement supplied. Exact Android NDK r30/r27d compiler-runtime notices have been identified but are not yet pinned and packaged. Exact Windows static CRT/STL version and associated redistribution-notice provenance remain unconfirmed.",
+        "reason": "Pinned CMake dependency notices and Eigen source availability retained; exact NDK r27d/r30 notices extracted from official archives and SHA-256 pinned. Original Windows Release /MT build logs identify MSVC 14.44/14.51; matching STL license revisions and official compiler redistribution terms retained. Original Windows ONNX archives match packaged DLL hashes and source commit. Compiler evidence is independently checksum-pinned.",
         "notice_destinations": [
           "META-INF/siren/licenses/kaldi-native-fbank/LICENSE",
           "META-INF/siren/licenses/kaldi-decoder/LICENSE",
@@ -461,7 +779,19 @@
           "META-INF/siren/licenses/eigen/COPYING.MPL2",
           "META-INF/siren/licenses/eigen/COPYING.BSD",
           "META-INF/siren/licenses/eigen/COPYING.MINPACK",
-          "META-INF/siren/licenses/eigen/COPYING.APACHE"
+          "META-INF/siren/licenses/eigen/COPYING.APACHE",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.sysroot",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.sysroot",
+          "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+          "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt"
         ],
         "source_archive_sha256": "24ecc0fccf6344c2556e7c229c849e9f61bf9456b915615197d85f35e3f177e7"
       }
@@ -592,11 +922,58 @@
       }
     ],
     "source_availability": {
-      "text": "Eigen source availability\n\nThe pinned sherpa-onnx 2.0.1 source configuration references Eigen 5.0.1. Eigen is primarily licensed under the Mozilla Public License 2.0; retain its accompanying license and copyright notices.\n\nThe unmodified Eigen 5.0.1 Source Code Form is publicly available at:\nhttps://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz\nSHA-256: e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec\n\nDownload the archive above and verify that SHA-256 before extracting it. The archive includes the source files and their MPL 2.0 and other applicable license notices. The included COPYING.README describes the licensing; COPYING.MPL2 contains the MPL 2.0 text. Siren also retains Eigen's LICENSE and COPYING.* files under META-INF/siren/licenses/eigen/.\n\nThe inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; it does not change the incomplete status of the separate native-binary redistribution audit.\n",
-      "sha256": "f3022838d1931f596037a5bc2cdeca9bc343b670d7afc0d84a489eb67367bfcd",
+      "text": "Eigen source availability\n\nThe pinned sherpa-onnx 2.0.1 source configuration references Eigen 5.0.1. Eigen is primarily licensed under the Mozilla Public License 2.0; retain its accompanying license and copyright notices.\n\nThe unmodified Eigen 5.0.1 Source Code Form is publicly available at:\nhttps://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz\nSHA-256: e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec\n\nDownload the archive above and verify that SHA-256 before extracting it. The archive includes the source files and their MPL 2.0 and other applicable license notices. The included COPYING.README describes the licensing; COPYING.MPL2 contains the MPL 2.0 text. Siren also retains Eigen's LICENSE and COPYING.* files under META-INF/siren/licenses/eigen/.\n\nThe inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; the separate native-binary inventory and compiler evidence are recorded in the accompanying audit metadata.\n",
+      "sha256": "3c44e0fb78024b9ba1f8f816a8681628a9d327791025fac40cb4ca4bc8ea5e19",
       "source_url": "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz",
       "source_sha256": "e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec",
       "source_verified": true
-    }
+    },
+    "compiler_runtimes": [
+      {
+        "id": "android-ndk-r27d",
+        "status": "complete",
+        "build_identity": "27.3.13750724 (r27d), ONNX Runtime Android ELF build notes",
+        "evidence_url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+        "notice_destinations": [
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r27d/NOTICE.sysroot"
+        ]
+      },
+      {
+        "id": "android-ndk-r30",
+        "status": "complete",
+        "build_identity": "30.0.16248370 (r30), Sherpa Android ELF build notes",
+        "evidence_url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+        "notice_destinations": [
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.toolchain",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.llvm",
+          "META-INF/siren/licenses/android-ndk-r30/NOTICE.sysroot"
+        ]
+      },
+      {
+        "id": "msvc-14.44",
+        "status": "complete",
+        "build_identity": "MSVC 19.44.35229.0 (Sherpa x64); 19.44.35228.0 (ONNX Runtime x64/arm64); toolset 14.44.35207; Release /MT",
+        "evidence_url": "https://github.com/k2-fsa/sherpa-onnx/actions/runs/40348432082",
+        "notice_destinations": [
+          "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt"
+        ]
+      },
+      {
+        "id": "msvc-14.51",
+        "status": "complete",
+        "build_identity": "MSVC 19.51.36260.0; toolset 14.51.36231; VS 2026 Enterprise; Release /MT",
+        "evidence_url": "https://github.com/k2-fsa/sherpa-onnx/actions/runs/40348432501",
+        "notice_destinations": [
+          "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+          "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt"
+        ]
+      }
+    ],
+    "compiler_evidence_sha256": "f3a712dfaa1c019cd747f44eadbe91524ac7dfc5e76cf077577f259cca67d358"
   }
 }

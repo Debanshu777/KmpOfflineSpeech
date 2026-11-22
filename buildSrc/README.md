@@ -39,10 +39,13 @@ The desktop sample's `:sample:desktopApp:stageDesktopModels` task uses `prepareS
 
 ## Recent Changes
 
+Added declared vendored notice inputs with byte/hash/path/symlink checks, compiler evidence pins and required runtime review coverage. The current 33-text inventory passes the native gate.
+
+
 Added typed release/version guards, staged and Central-only relocated consumer validation, public artifact-delivery checks and the fail-closed native redistribution gate alongside runtime preparation.
 
 ## Release tooling
 
 Typed Gradle tasks also manage stable release guards, Central delivery checks and relocated published-artifact consumers; see [releasing](../docs/releasing.md). API baselines are checked by `:siren:checkKotlinAbi`. Local staging requires no publishing credentials. Central upload tasks require `verifyNativeRedistribution`, whose pinned component/payload audit and report remain separate from normal build preparation.
 
-Native preparation retains exact-commit notices for Android assets, JVM resources and the SDK's native cinterop KLIBs. Notice embedding preserves native archive bytes and is covered by build-tool regression tests. A complete redistribution review is still required before a public binary release; available license texts alone do not mark the inventory complete.
+Native preparation retains exact-commit notices for Android assets, JVM resources and the SDK's native cinterop KLIBs. Notice embedding preserves native archive bytes and is covered by build-tool regression tests. The current technical inventory is complete for the exact pins, including compiler-runtime evidence; the gate still rejects missing reviews or changed text/evidence hashes. Vendored notices live under `scripts/notices/`, retain source provenance and are declared Gradle inputs.

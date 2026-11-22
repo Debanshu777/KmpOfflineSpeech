@@ -54,3 +54,5 @@ Android's floor is API 26; the pinned sample uses iOS 18.5 on arm64 devices/simu
 ## Recent Changes
 
 Added default platform factory aliases, known bundled/local layout helpers, scoped automatic cleanup and direct PCM transcription without adding weights, network access or UI.
+
+Native notice preparation also declares checksum-pinned vendored compiler texts under `scripts/notices/` as Gradle inputs. The release gate checks complete payload/component/compiler coverage and the separate compiler-evidence checksum. This does not add runtime SDK dependencies or model downloads.

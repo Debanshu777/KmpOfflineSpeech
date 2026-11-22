@@ -84,6 +84,7 @@ tasks.register<VerifyNativeRedistribution>("verifyNativeRedistribution") {
     downloadCache.set(speechCache)
     offline.set(gradle.startParameter.isOffline)
     reportFile.set(layout.buildDirectory.file("reports/native-redistribution.json"))
+    compilerEvidenceFile.set(layout.projectDirectory.file("scripts/native-compiler-evidence.json"))
 }
 
 apply(from = "gradle/release.gradle.kts")

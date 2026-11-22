@@ -15,7 +15,7 @@ The SDK has **no UI, Compose dependency, bundled weights or hidden downloads**.
 
 ## Get started
 
-**`0.1.0` is prepared locally, not published to Maven Central.** The dependency below is the intended future coordinate. Use the source/local staging until publication; see [release preparation](docs/releasing.md).
+**`0.1.0` is an unpublished candidate, not published to Maven Central.** The dependency below is the intended future coordinate. Use the source/local staging until publication; see [release preparation](docs/releasing.md).
 
 ### 1. Add the dependency
 
@@ -108,7 +108,10 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
-Added one-line platform engine creation, bundled/local layout helpers, automatic scoped cleanup and direct PCM transcription. Custom configuration remains optional; `0.1.0` stays local and unpublished.
+Completed the technical native inventory with 33 pinned notice texts and exact compiler evidence. Added authenticated read-only Central checks and a default nonpublishing release preflight; `0.1.0` remains unpublished.
+
+
+Added one-line platform engine creation, bundled/local layout helpers, automatic scoped cleanup and direct PCM transcription. Custom configuration remains optional; `0.1.0` remains unpublished.
 
 Added [read-only Central credential verification](validation/central-check/README.md), including namespace access and an unauthenticated control. It creates no deployment and publishes nothing.
 

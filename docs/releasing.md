@@ -1,6 +1,6 @@
 # Releasing Siren
 
-Version `0.1.0` is prepared locally and is not published. The release pipeline and installation examples are prepared for that coordinate; they do not establish that it resolves from Maven Central. The manual signing-only check is pushed to GitHub and can be dispatched independently. SDK release changes remain local; no release, tag, Central publication or Medium update is authorized.
+Version `0.1.0` is an unpublished release candidate. The release pipeline and installation examples are prepared for that coordinate; they do not establish that it resolves from Maven Central. The manual signing-only check is pushed to GitHub and can be dispatched independently. Source and nonpublishing CI preparation are authorized; no release, tag, Central upload/publication or Medium update is authorized.
 
 ## Signing-only verification
 
@@ -24,7 +24,7 @@ From the repository root:
 
 The consumer task stages publications, copies the fixture, repository and sample models outside the checkout, then tests the actual artifacts. It checks native JVM inference, Android compilation/APK packaging and, on macOS, both dynamic iOS framework links. The fixture contains no SDK project dependency, substitution or native checkout paths.
 
-The redistribution gate checks the exact runtime pins and notice inventory in `scripts/dependencies.json`. Its report is `build/reports/native-redistribution.json`. It currently rejects public publication because the complete Sherpa binary transitive/compiler-runtime inventory and source obligations remain unresolved. ONNX Runtime source correspondence and exact-commit license/third-party notices are now verified, including byte-matched Linux libraries; see [third-party status](../THIRD_PARTY_NOTICES.md). Updating an overall status flag cannot waive incomplete component or payload reviews. Ordinary local builds remain available.
+The redistribution gate checks the exact runtime pins and notice inventory in `scripts/dependencies.json`. Its report is `build/reports/native-redistribution.json`. The current technical inventory passes with 33 pinned texts and four compiler-runtime reviews. Original Windows build logs establish exact release toolsets; original ONNX Linux/Windows libraries byte-match their source-pinned archives. Vendored notice inputs and compiler evidence are hash-checked; see [third-party status](../THIRD_PARTY_NOTICES.md). Updating an overall status flag cannot waive incomplete component or payload reviews. Ordinary local builds remain available.
 
 Use `:siren:updateKotlinAbi` only after reviewing an intentional API change, then commit the reference diff. Do not regenerate baselines automatically to make CI pass.
 
@@ -63,9 +63,9 @@ gpg --armor --export-secret-keys YOUR_KEY_ID | pbcopy
 
 Paste the full private-key block only into `GPG_KEY_CONTENTS` in GitHub's secret form. Do not commit it or paste it into chat. An expired/lost Central token needs a replacement; a lost private key or passphrase requires a new signing setup and distribution of its public key. See [Sonatype's token instructions](https://central.sonatype.org/publish/generate-portal-token/), [GPG guidance](https://central.sonatype.org/publish/requirements/gpg/) and [publisher signing configuration](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
-After the native redistribution review is complete and CI passes, run **Release Siren** manually from `main`, entering the exact configured version as `confirmVersion`. Pushes and pull requests run checks; they do not publish.
+For verification, run **Release Siren** manually from `main` with `confirmVersion=0.1.0`, the matching key protection mode and `publishRelease=false` (the default). This runs the gates and signs candidates locally. Only a later explicitly authorized dispatch with `publishRelease=true` uploads to Central and creates a tag/release. Pushes and pull requests run checks; they do not publish.
 
-The release workflow validates the version, clean checkout, dispatched commit, curated changelog, absent release tag and absent Central coordinate. It checks credentials and native redistribution, tests source/API/sample builds, exercises native models and validates relocated artifact consumers. It then reserves the tag atomically, publishes signed artifacts, verifies public delivery and resolves them from a separate Central-only consumer before creating the GitHub release. Central propagation is polled with a bounded timeout. Reports are uploaded even when a step fails.
+The workflow defaults to verification-only (`publishRelease=false`). It validates the version, clean checkout, dispatched commit, curated changelog, absent release tag and absent Central coordinate. It checks credentials and native redistribution, tests source/API/sample builds, exercises native models and validates relocated artifact consumers. It signs all five candidate publications locally. Only when `publishRelease=true` does it reserve the tag atomically, publish signed artifacts, verify public delivery and resolve them from a separate Central-only consumer before creating the GitHub release. Central propagation is polled with a bounded timeout. Reports are uploaded even when a step fails.
 
 Both the workflow and direct Central Gradle commands depend on the redistribution gate. There is no release bypass property. The first release remains pending until the real public artifacts and consumer have passed; update the README and Medium dependency status at that point.
 
@@ -75,4 +75,4 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
-Added signing-only verification and matching explicit protected/unprotected modes to the locally prepared release workflow. Publication remains deferred.
+Added read-only Central authentication, completed compiler notice/evidence coverage and default nonpublishing preflight with local candidate signing. Publication remains deferred.

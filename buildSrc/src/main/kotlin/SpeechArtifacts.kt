@@ -37,6 +37,18 @@ object SpeechArtifacts {
         require(artifact.size == null || file.length() == artifact.size) { "Size mismatch: ${file.name}" }
         require(sha256(file) == artifact.sha256) { "SHA-256 mismatch: ${file.name}" }
     }
+    /** Vendored license texts retain original archive provenance and independent text pins. */
+    fun vendoredNotice(artifact: SpeechArtifact, repositoryRoot: File): File? {
+        val source = artifact.json["source_path"]?.asString ?: return null
+        val relative = relative(source)
+        require(relative.startsWith(Path.of("scripts/notices"))) { "Vendored notices must stay under scripts/notices" }
+        val file = repositoryRoot.resolve(relative.toString())
+        require(file.canonicalFile.toPath().startsWith(repositoryRoot.canonicalFile.resolve("scripts/notices").toPath())) {
+            "Vendored notice escapes its source directory"
+        }
+        verify(file, artifact)
+        return file
+    }
     fun fetch(artifact: SpeechArtifact, cache: File, offline: Boolean, open: (String) -> InputStream = ::openUrl): File {
         require(artifact.sha256.matches(Regex("[a-f0-9]{64}"))) { "Invalid SHA-256 pin" }
         require(relative(artifact.name).nameCount == 1) { "Artifact name must be a filename" }

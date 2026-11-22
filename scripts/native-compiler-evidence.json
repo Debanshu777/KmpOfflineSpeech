@@ -1,0 +1,267 @@
+{
+  "date": "2026-11-23",
+  "scope": "Pinned SDK binaries; compiler-runtime inventory and notice provenance, not general legal certification or execution on untested platforms",
+  "sherpaSourceCommit": "af2d8d81dbfa61c4cea4c568da78f3982edca005",
+  "sherpaSourceArchiveSha256": "24ecc0fccf6344c2556e7c229c849e9f61bf9456b915615197d85f35e3f177e7",
+  "ndk": [
+    {
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "archiveSize": 839006233,
+      "files": [
+        {
+          "name": "android-ndk-r27d/source.properties",
+          "bytes": 108,
+          "sha256": "fb5eec1ca5dac09442109cf79e9ce49faecd8b312dbc997e88903a394e14994a"
+        },
+        {
+          "name": "android-ndk-r27d/NOTICE.toolchain",
+          "bytes": 806124,
+          "sha256": "cbe3237be53c0a819f8df6aac5358fdee848eee3b6571b4e2ca20767ebd7465e"
+        },
+        {
+          "name": "android-ndk-r27d/NOTICE",
+          "bytes": 522923,
+          "sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323"
+        },
+        {
+          "name": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE",
+          "bytes": 130424,
+          "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1"
+        },
+        {
+          "name": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE",
+          "bytes": 501406,
+          "sha256": "d5f5557f82bc42ce657d0513ba9a7d0c55e64eb99d4998994d92f2b5c2b1fb3c"
+        }
+      ]
+    },
+    {
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+      "archiveBytes": 974984488,
+      "method": "HTTPS byte-range extraction; ZIP sizes/CRC checked; extracted text SHA-256 pinned",
+      "files": [
+        {
+          "archiveEntry": "android-ndk-r30/source.properties",
+          "filename": "source.properties",
+          "bytes": 107,
+          "sha256": "e73b7dc557cea2da9212c09ee1795434957d62e63b7550eef69fd1887a355d94"
+        },
+        {
+          "archiveEntry": "android-ndk-r30/NOTICE.toolchain",
+          "filename": "NOTICE.toolchain",
+          "bytes": 777125,
+          "sha256": "6b8633011d874b75629180e60de13ebfd546a10e56dc7d0380a35f6609f30617"
+        },
+        {
+          "archiveEntry": "android-ndk-r30/NOTICE",
+          "filename": "NOTICE",
+          "bytes": 493924,
+          "sha256": "a3c12eee897f63991da71464b690433a15d0d74a508ce0e275436279bdcaff58"
+        },
+        {
+          "archiveEntry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE",
+          "filename": "NOTICE.llvm",
+          "bytes": 130424,
+          "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1"
+        },
+        {
+          "archiveEntry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE",
+          "filename": "NOTICE.sysroot",
+          "bytes": 472407,
+          "sha256": "0ed879a95b81b7d73beb4bc8ca5d1899ce5e3d65cedecbb9b642fc34d00005e8"
+        }
+      ]
+    }
+  ],
+  "windowsBuilds": [
+    {
+      "url": "https://github.com/k2-fsa/sherpa-onnx/actions/runs/40348432501",
+      "capturedLogSha256": "ad9565b115bd973be83ee7a4e2a4c5eaf57c68e5db17202cfe27ad319482741e",
+      "buildLines": [
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:20:59.7766757Z Image Release: https://github.com/actions/runner-images/releases/tag/win11-vs2026-arm64%2F20261022.194",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:05.0901429Z -- The C compiler identification is MSVC 19.51.36260.0",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:08.5117220Z -- The CXX compiler identification is MSVC 19.51.36260.0",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:11.3434568Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostarm64/arm64/cl.exe - skipped",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:13.6784809Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostarm64/arm64/cl.exe - skipped",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:13.6935406Z -- SHERPA_ONNX_USE_STATIC_CRT: ON",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:59.8543655Z -- C++ compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostarm64/arm64/cl.exe",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:23:59.8544988Z -- C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostarm64/arm64/cl.exe",
+        "windows arm64 jni (windows-11-arm)\tUNKNOWN STEP\t2026-10-26T15:24:45.0451669Z -- Use MSVC CRT: MT"
+      ]
+    },
+    {
+      "url": "https://github.com/k2-fsa/sherpa-onnx/actions/runs/40348432082",
+      "capturedLogSha256": "fa34a4cb06835c0ef35ae1ef5bdd667253e0fc960435663e38e2d8d1c531550a",
+      "buildLines": [
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:00.3131967Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20261022.344",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:47.0202306Z -- The C compiler identification is MSVC 19.44.35229.0",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:48.8984419Z -- The CXX compiler identification is MSVC 19.44.35229.0",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:50.1829699Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:50.8035515Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:21:50.8077723Z -- SHERPA_ONNX_USE_STATIC_CRT: ON",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:22:03.8143055Z -- C++ compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:22:03.8144081Z -- C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "windows x64 jni (windows-2022)\tUNKNOWN STEP\t2026-10-26T15:22:17.3947148Z -- Use MSVC CRT: MT"
+      ]
+    },
+    {
+      "url": "https://github.com/csukuangfj/onnxruntime-libs/actions/runs/34078619639",
+      "capturedLogSha256": "7b41cd183c105ade87b01097db6447d3f06df204f4aacb0661034aa0b25a0e18",
+      "buildLines": [
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:08:35.2190954Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20260830.290",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:35.9362779Z -- The C compiler identification is MSVC 19.44.35228.0",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:37.2778964Z -- The CXX compiler identification is MSVC 19.44.35228.0",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:37.4607231Z -- The ASM compiler identification is MSVC",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:37.4650490Z -- Found assembler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:40.4797997Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:41.2678450Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:41.4082987Z -- The ASM_MASM compiler identification is MSVC",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:09:41.4127755Z -- Found assembler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/ml64.exe",
+        "x64 static CRT ON Release\tUNKNOWN STEP\t2026-09-07T03:10:22.4931531Z --   C++ compiler                      : C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe"
+      ]
+    },
+    {
+      "url": "https://github.com/csukuangfj/onnxruntime-libs/actions/runs/33892225080",
+      "capturedLogSha256": "afa650c6b404a47f111bfde148c99849204035fbe564eedad587a456e6904f4b",
+      "buildLines": [
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:55:18.9633910Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20260830.290",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:36.1205295Z -- The C compiler identification is MSVC 19.44.35228.0",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:37.9174506Z -- The CXX compiler identification is MSVC 19.44.35228.0",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:38.1166257Z -- The ASM compiler identification is MSVC",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:38.1209194Z -- Found assembler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/cl.exe",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:43.0953779Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/cl.exe - skipped",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:43.9967955Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/cl.exe - skipped",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:44.7212256Z -- The ASM_MARMASM compiler identification is MSVC",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:56:44.7260259Z -- Found assembler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/armasm64.exe",
+        "arm64 static CRT ON Release\tUNKNOWN STEP\t2026-09-04T15:57:23.7804834Z --   C++ compiler                      : C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/arm64/cl.exe"
+      ]
+    }
+  ],
+  "windowsOnnxRuntimeCorrespondence": [
+    {
+      "arch": "arm64",
+      "archiveSha256": "59877bc38b2c1eed1375597b9da2403b314b1103693d1dd0397c00cbcad1c1ab",
+      "sourceCommit": "33ca9628233dc8f002435e868d4c2e9f82766ca1",
+      "dllSha256": "968d081836cad9af537105f59e34d4997bca2ce6d78ff39d3e47660620e8a642",
+      "sameAsBundled": true
+    },
+    {
+      "arch": "x64",
+      "archiveSha256": "cd7f757f7a38ce14238bc9198bee197a9430b42ec3ecadea3408dd2e832eb02e",
+      "sourceCommit": "33ca9628233dc8f002435e868d4c2e9f82766ca1",
+      "dllSha256": "7f66f939a881baf4f46a2216496798edf4a1429878b646d12674aa62f27d8a25",
+      "sameAsBundled": true
+    }
+  ],
+  "compilerNotices": [
+    {
+      "name": "android-ndk-r27d-NOTICE",
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r27d/NOTICE",
+      "sha256": "4d5224d1c0b54ffa88b0dc0088191638fdbb7227835095dfb98f7f66b416a323",
+      "bytes": 522923,
+      "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE",
+      "archive_entry": "android-ndk-r27d/NOTICE"
+    },
+    {
+      "name": "android-ndk-r27d-NOTICE.toolchain",
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r27d/NOTICE.toolchain",
+      "sha256": "cbe3237be53c0a819f8df6aac5358fdee848eee3b6571b4e2ca20767ebd7465e",
+      "bytes": 806124,
+      "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.toolchain",
+      "archive_entry": "android-ndk-r27d/NOTICE.toolchain"
+    },
+    {
+      "name": "android-ndk-r27d-NOTICE.llvm",
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r27d/NOTICE.llvm",
+      "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+      "bytes": 130424,
+      "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.llvm",
+      "archive_entry": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE"
+    },
+    {
+      "name": "android-ndk-r27d-NOTICE.sysroot",
+      "url": "https://dl.google.com/android/repository/android-ndk-r27d-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r27d/NOTICE.sysroot",
+      "sha256": "d5f5557f82bc42ce657d0513ba9a7d0c55e64eb99d4998994d92f2b5c2b1fb3c",
+      "bytes": 501406,
+      "destination": "META-INF/siren/licenses/android-ndk-r27d/NOTICE.sysroot",
+      "archive_entry": "android-ndk-r27d/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE"
+    },
+    {
+      "name": "android-ndk-r30-NOTICE.toolchain",
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r30/NOTICE.toolchain",
+      "sha256": "6b8633011d874b75629180e60de13ebfd546a10e56dc7d0380a35f6609f30617",
+      "bytes": 777125,
+      "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.toolchain",
+      "archive_entry": "android-ndk-r30/NOTICE.toolchain"
+    },
+    {
+      "name": "android-ndk-r30-NOTICE",
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r30/NOTICE",
+      "sha256": "a3c12eee897f63991da71464b690433a15d0d74a508ce0e275436279bdcaff58",
+      "bytes": 493924,
+      "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE",
+      "archive_entry": "android-ndk-r30/NOTICE"
+    },
+    {
+      "name": "android-ndk-r30-NOTICE.llvm",
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r30/NOTICE.llvm",
+      "sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+      "bytes": 130424,
+      "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.llvm",
+      "archive_entry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/NOTICE"
+    },
+    {
+      "name": "android-ndk-r30-NOTICE.sysroot",
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-darwin.zip",
+      "source_path": "scripts/notices/android-ndk-r30/NOTICE.sysroot",
+      "sha256": "0ed879a95b81b7d73beb4bc8ca5d1899ce5e3d65cedecbb9b642fc34d00005e8",
+      "bytes": 472407,
+      "destination": "META-INF/siren/licenses/android-ndk-r30/NOTICE.sysroot",
+      "archive_entry": "android-ndk-r30/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/NOTICE"
+    },
+    {
+      "name": "msvc-stl-14.44-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/microsoft/STL/1f6e5b16ec02216665624c1e762f3732605cf2b4/LICENSE.txt",
+      "source_path": "scripts/notices/msvc-stl-14.44/LICENSE.txt",
+      "sha256": "1fc6b6db121d4555d8f661937d7f6013693cd8fd67495d5e5d98c1d18fb83eda",
+      "bytes": 12550,
+      "destination": "META-INF/siren/licenses/msvc-stl-14.44/LICENSE.txt",
+      "source_revision": "1f6e5b16ec02216665624c1e762f3732605cf2b4"
+    },
+    {
+      "name": "msvc-stl-14.51-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/microsoft/STL/edd1486e5fe753616b6fd3695da96f352b4092d2/LICENSE.txt",
+      "source_path": "scripts/notices/msvc-stl-14.51/LICENSE.txt",
+      "sha256": "1fc6b6db121d4555d8f661937d7f6013693cd8fd67495d5e5d98c1d18fb83eda",
+      "bytes": 12550,
+      "destination": "META-INF/siren/licenses/msvc-stl-14.51/LICENSE.txt",
+      "source_revision": "edd1486e5fe753616b6fd3695da96f352b4092d2"
+    },
+    {
+      "name": "visual-studio-2022-LICENSE.txt",
+      "url": "https://visualstudio.microsoft.com/wp-content/uploads/2021/11/Visual-Studio-2022-Enterprise-Professional-License-EN.docx",
+      "source_path": "scripts/notices/visual-studio-2022/LICENSE.txt",
+      "sha256": "b1a7e73590f2192abd1a06d7fd20887784d55177064c2d85714a3f1b1a8c2613",
+      "bytes": 27403,
+      "destination": "META-INF/siren/licenses/visual-studio-2022/LICENSE.txt",
+      "source_format": "Plain text extracted from the official DOCX using macOS textutil; source document retained by public URL"
+    },
+    {
+      "name": "visual-studio-2026-LICENSE.txt",
+      "url": "https://visualstudio.microsoft.com/wp-content/uploads/2025/10/Visual_Studio_2026-License-Enterprise_Professional_ENU.docx",
+      "source_path": "scripts/notices/visual-studio-2026/LICENSE.txt",
+      "sha256": "519514d9459cb485e5f248ec2aa3f5ffaa3ca99b8a64c904d38042106cbdb2f9",
+      "bytes": 32313,
+      "destination": "META-INF/siren/licenses/visual-studio-2026/LICENSE.txt",
+      "source_format": "Plain text extracted from the official DOCX using macOS textutil; source document retained by public URL"
+    }
+  ],
+  "redistributionScope": "Unmodified AI runtime DLLs with statically compiled release CRT; no standalone Microsoft runtime installers, debug CRT or preview toolset components. Microsoft/STL source licenses are Apache-2.0 with LLVM exception; original compiler terms remain applicable. First-party MIT does not relicense bundled components."
+}

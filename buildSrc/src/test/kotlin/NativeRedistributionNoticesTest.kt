@@ -5,6 +5,41 @@ import java.util.zip.ZipOutputStream
 import kotlin.test.*
 
 class NativeRedistributionNoticesTest {
+    @Test fun vendoredNoticesArePinnedAndCannotEscapeTheirDirectory() {
+        val root = Files.createTempDirectory("siren-vendored-notices-").toFile()
+        try {
+            val file = root.resolve("scripts/notices/compiler/NOTICE").apply { parentFile.mkdirs(); writeText("Exact compiler license") }
+            val json = com.google.gson.JsonObject().apply {
+                addProperty("name", "compiler-NOTICE")
+                addProperty("source_path", "scripts/notices/compiler/NOTICE")
+                addProperty("sha256", SpeechArtifacts.sha256(file))
+                addProperty("bytes", file.length())
+            }
+            assertEquals(file, SpeechArtifacts.vendoredNotice(SpeechArtifact(json), root))
+            file.appendText("tampered")
+            assertFailsWith<IllegalArgumentException> { SpeechArtifacts.vendoredNotice(SpeechArtifact(json), root) }
+            json.addProperty("source_path", "scripts/notices/../../outside")
+            assertFailsWith<IllegalArgumentException> { SpeechArtifacts.vendoredNotice(SpeechArtifact(json), root) }
+            json.addProperty("source_path", "build/NOTICE")
+            assertFailsWith<IllegalArgumentException> { SpeechArtifacts.vendoredNotice(SpeechArtifact(json), root) }
+        } finally { root.deleteRecursively() }
+    }
+
+    @Test fun vendoredNoticeSymlinkCannotReadOutsideItsDirectory() {
+        val root = Files.createTempDirectory("siren-vendored-symlink-").toFile()
+        try {
+            val source = root.resolve("outside.txt").apply { writeText("Not a notice") }
+            val link = root.resolve("scripts/notices/link").apply { parentFile.mkdirs() }
+            Files.createSymbolicLink(link.toPath(), source.toPath())
+            val json = com.google.gson.JsonObject().apply {
+                addProperty("name", "compiler-NOTICE")
+                addProperty("source_path", "scripts/notices/link")
+                addProperty("sha256", SpeechArtifacts.sha256(source))
+            }
+            assertFailsWith<IllegalArgumentException> { SpeechArtifacts.vendoredNotice(SpeechArtifact(json), root) }
+        } finally { root.deleteRecursively() }
+    }
+
     @Test fun klibEmbeddingPreservesNativeBytesAndUpdatesNoticesWithoutDuplicates() {
         val directory = Files.createTempDirectory("siren-klib-notices-").toFile()
         try {
@@ -59,5 +94,16 @@ class NativeRedistributionNoticesTest {
         assertTrue(blockers.any { it.startsWith("Incomplete component review: onnxruntime") })
         assertTrue(blockers.any { it.startsWith("Missing pinned component notices: onnxruntime") })
         assertTrue(blockers.any { it.startsWith("Missing immutable source identity: onnxruntime") })
+    }
+
+    @Test fun compilerEvidenceAndNoticesCannotBeWaivedByOverallStatus() {
+        val manifest = SpeechArtifacts.manifest(java.io.File("../scripts/dependencies.json"))
+        val audit = manifest["redistribution"].asJsonObject
+        audit.addProperty("status", "complete")
+        val review = audit["compiler_runtimes"].asJsonArray.first().asJsonObject
+        review.add("notice_destinations", com.google.gson.JsonArray())
+        assertTrue(NativeRedistributionNotices.blockers(manifest).any { it.startsWith("Incomplete compiler-runtime evidence/notices") })
+        audit.add("compiler_runtimes", com.google.gson.JsonArray())
+        assertTrue(NativeRedistributionNotices.blockers(manifest).any { it.startsWith("Compiler-runtime reviews must cover") })
     }
 }

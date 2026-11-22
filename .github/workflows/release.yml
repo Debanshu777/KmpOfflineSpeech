@@ -13,6 +13,11 @@ on:
         options: [passphrase, unprotected]
         default: passphrase
         required: true
+      publishRelease:
+        description: Publish to Central and create a tag/release (leave false for preflight)
+        type: boolean
+        default: false
+        required: true
 
 permissions:
   contents: read
@@ -43,6 +48,8 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-disabled: true
       - name: Install configured Android SDK packages
         shell: bash
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
@@ -72,6 +79,11 @@ jobs:
             echo "::error::A protected key requires SIGNING_PASSWORD"
             exit 1
           fi
+      - name: Verify Central authentication and namespace without uploading
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew -p validation/central-check verifyCentralCredentials --no-daemon --no-configuration-cache --no-build-cache --console=plain
       - name: Check native redistribution provenance and exact notices
         run: ./gradlew verifyNativeRedistribution --no-daemon --no-configuration-cache --console=plain
       - name: Test source, build tooling and public ABI; compile all sample hosts
@@ -90,12 +102,23 @@ jobs:
         run: ./gradlew validatePublishedSirenConsumer --no-daemon --max-workers=1 --no-configuration-cache --console=plain
       - name: Verify packaged Desktop application construction
         run: ./gradlew :sample:desktopApp:createDistributable --no-daemon --max-workers=1 --no-configuration-cache --console=plain
+      - name: Sign all candidate publications locally without uploading
+        env:
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+        run: >-
+          ./gradlew :siren:signAndroidPublication :siren:signJvmPublication
+          :siren:signIosArm64Publication :siren:signIosSimulatorArm64Publication
+          :siren:signKotlinMultiplatformPublication
+          --no-daemon --max-workers=1 --no-configuration-cache --no-build-cache --console=plain
       - name: Recheck coordinate and tag before immutable reservation
         env:
           CONFIRM_VERSION: ${{ inputs.confirmVersion }}
           GH_TOKEN: ${{ github.token }}
         run: ./gradlew validateSirenRelease --no-daemon --no-configuration-cache --console=plain
       - name: Reserve the release tag atomically
+        if: inputs.publishRelease
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
@@ -103,6 +126,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/git/refs" \
             -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA"
       - name: Publish signed artifacts through Central Portal
+        if: inputs.publishRelease
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -111,10 +135,13 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
         run: ./gradlew :siren:publishAndReleaseToMavenCentral --no-daemon --max-workers=1 --no-configuration-cache --console=plain
       - name: Verify public Central artifacts, metadata and signatures
+        if: inputs.publishRelease
         run: ./gradlew verifySirenCentralPublication --no-daemon --no-configuration-cache --console=plain
       - name: Resolve Central coordinates in an independent consumer and verify JVM native, Android and iOS
+        if: inputs.publishRelease
         run: ./gradlew validateCentralSirenConsumer --no-daemon --max-workers=1 --no-configuration-cache --console=plain
       - name: Create the GitHub release only after Central consumer validation
+        if: inputs.publishRelease
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
@@ -126,6 +153,9 @@ jobs:
           if [ -n "$PREVIOUS_TAG" ]; then args+=(--notes-start-tag "$PREVIOUS_TAG"); fi
           gh release create "$RELEASE_TAG" "${args[@]}"
           cat build/reports/release/siren-release-notes.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Record successful nonpublishing preflight
+        if: ${{ !inputs.publishRelease }}
+        run: echo 'Preflight passed. Candidate artifacts were signed locally; no Central upload, release or tag was created.' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload release verification reports
         if: always()
         uses: actions/upload-artifact@v5

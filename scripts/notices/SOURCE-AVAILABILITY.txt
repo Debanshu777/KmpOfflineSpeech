@@ -8,4 +8,4 @@ SHA-256: e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec
 
 Download the archive above and verify that SHA-256 before extracting it. The archive includes the source files and their MPL 2.0 and other applicable license notices. The included COPYING.README describes the licensing; COPYING.MPL2 contains the MPL 2.0 text. Siren also retains Eigen's LICENSE and COPYING.* files under META-INF/siren/licenses/eigen/.
 
-The inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; it does not change the incomplete status of the separate native-binary redistribution audit.
+The inspected sherpa-onnx 2.0.1 cmake/eigen.cmake downloads this exact archive without a source-patching step. Siren copies the upstream runtime binary bytes without modifying them. This statement supplies a source location; the separate native-binary inventory and compiler evidence are recorded in the accompanying audit metadata.

@@ -1,3 +1,8 @@
 # Kotlin ABI dumps preserve a blank line after the final JVM class.
 siren/api/android/*.api whitespace=-blank-at-eof
 siren/api/jvm/*.api whitespace=-blank-at-eof
+
+# Preserve checksum-pinned upstream notice bytes, including original whitespace.
+scripts/notices/android-ndk-*/** -text whitespace=-trailing-space,-blank-at-eof
+scripts/notices/msvc-stl-*/** -text whitespace=-trailing-space,-blank-at-eof
+scripts/notices/visual-studio-*/** -text whitespace=-trailing-space,-blank-at-eof

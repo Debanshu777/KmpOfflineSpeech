@@ -1,6 +1,6 @@
 # Changelog
 
-Release status: `0.1.0` is prepared locally and not published to Maven Central.
+Release status: `0.1.0` is an unpublished release candidate.
 
 ## [0.1.0]
 
@@ -11,3 +11,6 @@ Release status: `0.1.0` is prepared locally and not published to Maven Central.
 - Provides separate Android, iOS and desktop sample hosts with a sample wrapper around the known bundle layout and foreground capture/transcription/playback flows. The SDK helper adds no weights or downloader.
 - Verifies native JVM inference on macOS arm64 and Linux x64 CI, relocated Maven consumer inference/Android packaging/both iOS dynamic links, and the recorded Android physical audio/UI journey. Four other desktop native classifiers and desktop hardware audio remain unverified.
 - Documents built-in Whisper's 0.2–20-second input range, sample-only 500-character TTS limit and cancellation that waits for synchronous native inference before cleanup.
+
+- Retains 33 pinned native/compiler notice texts, corresponding source availability and exact compiler/runtime provenance; verifies vendored text and evidence hashes before any Central upload.
+- Adds read-only Central authentication/namespace checks and a release workflow that defaults to verification-only, including local signing of all target candidates.
