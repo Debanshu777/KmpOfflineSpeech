@@ -74,6 +74,10 @@ After the package rename on the same date, the Gradle checks passed: 10 preparat
 
 ## Signing-secret CI check
 
+The separate [Central credential workflow](../.github/workflows/central-check.yml)
+runs the [read-only Gradle check](../validation/central-check/README.md) to verify
+token authentication and namespace access with no deployment or publication.
+
 The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow
 runs from `main` with your full public signing fingerprint as input. Its isolated
 [Gradle fixture](../validation/signing-check/README.md) signs a harmless text probe

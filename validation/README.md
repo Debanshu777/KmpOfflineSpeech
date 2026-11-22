@@ -17,6 +17,8 @@ checkout framework paths; the Android APK included its JNI payload and no models
 
 ## Recent Changes
 
+Added a [Central credential check](central-check/README.md) using only read-only GET requests; authenticated namespace access is checked without uploading artifacts.
+
 Added an independent [signing-secret probe](signing-check/README.md) and manual
 workflow. It checks Gradle key/passphrase compatibility and public-key verification
 without publishing SDK artifacts or authenticating Maven Central credentials.

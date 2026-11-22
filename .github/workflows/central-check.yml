@@ -1,0 +1,46 @@
+name: Check Central credentials
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: siren-central-credential-check
+  cancel-in-progress: false
+
+jobs:
+  credentials:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Require main
+        shell: bash
+        run: test "$GITHUB_REF" = refs/heads/main
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-disabled: true
+      - name: Verify token and namespace using read-only requests
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew -p validation/central-check verifyCentralCredentials --no-daemon --no-configuration-cache --no-build-cache --console=plain
+      - name: Record nonsecret result
+        shell: bash
+        run: |
+          echo 'Central authentication and namespace access verified without creating a deployment.' >> "$GITHUB_STEP_SUMMARY"
+          cat validation/central-check/build/reports/central-credentials.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: central-credential-check
+          path: validation/central-check/build/reports/central-credentials.json
+          if-no-files-found: ignore
