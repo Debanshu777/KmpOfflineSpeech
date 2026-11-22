@@ -25,4 +25,4 @@ The JVM target also runs controller tests. Model-only native smoke checks do not
 
 ## Recent Changes
 
-Reduced the sample model descriptor to the SDK's bundled preset, retaining injected engines, existing model labels and platform audio ownership.
+The sample uses the SDK bundle-layout helper and retains its existing capability labels. Android minimum is 27, matching the pinned native runtime build.

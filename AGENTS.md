@@ -87,3 +87,5 @@ Update the root README, affected module READMEs and relevant docs with every cod
 Preserve the canonical formatting of Kotlin-generated ABI references. `.gitattributes` allows their generated final blank line for Android/JVM dumps; do not trim it to satisfy a general whitespace check.
 
 Preserve checksum-pinned upstream compiler notice bytes, including original CRLF, trailing whitespace and space-before-tab formatting. `.gitattributes` scopes the corresponding exceptions to those vendored notice directories; do not reformat them to satisfy general whitespace checks.
+
+Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.

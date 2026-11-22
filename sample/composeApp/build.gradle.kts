@@ -13,7 +13,7 @@ kotlin {
     android {
         namespace = "io.github.debanshu.siren.sample.shared"
         compileSdk = 37
-        minSdk = 26
+        minSdk = 27
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
         androidResources { enable = true }
     }

@@ -55,7 +55,7 @@ The original `createAndroidSpeechEngine`, `createIosSpeechEngine` and `createJvm
 
 SDK artifacts contain no model weights, UI or hardware audio. `prepareAndroidRuntime`, `prepareIosSpeech` and `prepareJvmRuntime` prepare runtimes only. Native consumers require no SDK-checkout linker paths.
 
-JVM payloads cover macOS/Linux/Windows arm64 and x64. Inference is verified on [macOS arm64](verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](verification/jvm-native-linux-x64-2026-11-22.json); the other four are packaged/hash-verified but execution-untested. Android starts at API 26; the pinned iOS sample uses 18.5. Desktop physical audio remains unverified. See [development evidence](../docs/development.md).
+JVM payloads cover macOS/Linux/Windows arm64 and x64. Inference is verified on [macOS arm64](verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](verification/jvm-native-linux-x64-2026-11-22.json); the other four are packaged/hash-verified but execution-untested. Android starts at API 27; the pinned iOS sample uses 18.5. Desktop physical audio remains unverified. See [development evidence](../docs/development.md).
 
 ## Source checks
 
@@ -70,7 +70,4 @@ First-party source is [MIT](../LICENSE); preserve [native/model notices and audi
 
 ## Recent Changes
 
-SDK artifacts now retain 33 pinned native/compiler notice texts, source availability and reviewed compiler provenance. Native redistribution verification remains mandatory before Central upload.
-
-
-Added default platform factories, bundled/local layout helpers, scoped automatic close and direct PCM transcription while preserving named factories, custom descriptors and SPI.
+Added simple factories, model-layout defaults, scoped close and direct PCM calls. SDK artifacts retain 33 pinned native/compiler notice texts and source availability; Android minimum 27 matches the pinned runtime build.

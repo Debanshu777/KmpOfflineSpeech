@@ -14,3 +14,4 @@ Release status: `0.1.0` is an unpublished release candidate.
 
 - Retains 33 pinned native/compiler notice texts, corresponding source availability and exact compiler/runtime provenance; verifies vendored text and evidence hashes before any Central upload.
 - Adds read-only Central authentication/namespace checks and a release workflow that defaults to verification-only, including local signing of all target candidates.
+- Sets Android minimum SDK 27 consistently with the pinned ONNX Runtime native build.

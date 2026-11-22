@@ -15,7 +15,7 @@ From the repository root:
 ANDROID_SERIAL=YOUR_SERIAL ./gradlew :sample:androidApp:connectedDebugAndroidTest
 ```
 
-The sample supports API 26+, arm64-v8a and x86_64. Assembly prepares SDK runtime inputs independently from sample model assets. The SDK embeds the pinned wrapper JAR, selected JNI libraries, notices and consumer rules; it carries no weights or Compose dependency. Do not introduce another ONNX Runtime/native copy without reconciling ownership.
+The sample supports API 27+, arm64-v8a and x86_64. Assembly prepares SDK runtime inputs independently from sample model assets. The SDK embeds the pinned wrapper JAR, selected JNI libraries, notices and consumer rules; it carries no weights or Compose dependency. Do not introduce another ONNX Runtime/native copy without reconciling ownership.
 
 Default model-only tests use SDK factories for a sample-preset roundtrip and a caller-selected Local-file configuration. They synthesize Kitten PCM and transcribe it with Whisper without opening the microphone. The post-extraction native/configuration cases passed on Pixel 9 / Android 17; see [current verification](../../docs/development.md). This establishes native inference, not physical audio quality or broad accuracy.
 
@@ -55,4 +55,4 @@ These records preserve original test identities. Current extraction/build eviden
 
 ## Recent Changes
 
-Reused the SDK bundled model layout without duplicating file mappings; documented the default Android engine factory while retaining explicit sample injection and existing hardware verification scope.
+Aligned the Android minimum to API 27 and retained the simple SDK bundle configuration. Earlier physical-device evidence remains linked separately.

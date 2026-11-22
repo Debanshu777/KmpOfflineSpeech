@@ -121,5 +121,4 @@ consumer; the fixture and SDK do not introduce Compose or UIKit-facing APIs.
 
 ## Recent Changes
 
-Exercised the default factory, standard bundled/local descriptors, scoped cleanup
-and raw PCM overload through published artifacts, while preserving legacy factory probes.
+Added default-factory, layout, scoped-close and direct-PCM probes while retaining legacy factory coverage. Android minimum 27 matches the pinned runtime; JVM native inference and both iOS links remain independent checks.

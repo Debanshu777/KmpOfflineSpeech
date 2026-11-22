@@ -55,7 +55,7 @@ The [recorded relocated consumer](../validation/published-consumer-verification.
 
 The [future release path](releasing.md) uses a main-only manual dispatch with configured credentials, then validates source/API, redistribution readiness and relocated artifacts before publication and public Central verification. Read-only credential checks and source CI are authorized; upload/publication remains deferred. The technical inventory now includes 33 notice texts, verified source correspondence and exact compiler build evidence. The [current audit](../THIRD_PARTY_NOTICES.md) is authoritative; `verifyNativeRedistribution` remains fail-closed. The release workflow defaults to `publishRelease=false` and signs the candidate locally.
 
-Android starts at API 26; the pinned sample uses iOS 18.5 arm64 targets. JVM inference is verified on [macOS arm64](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json). Other desktop targets and desktop hardware audio remain unverified. Wasm is unsupported.
+Android starts at API 27; the pinned sample uses iOS 18.5 arm64 targets. JVM inference is verified on [macOS arm64](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json). Other desktop targets and desktop hardware audio remain unverified. Wasm is unsupported.
 
 ## Recent Changes
 

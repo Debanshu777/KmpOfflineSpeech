@@ -118,8 +118,10 @@ For a screen that performs many separate operations, keep a lifecycle-owned engi
 
 Built-in Whisper accepts 0.2–20-second recordings. The sample's 500-character TTS limit is application policy. Streaming and background/audio-route behavior require application-specific work.
 
-Android's floor is API 26. The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributors use JDK 21. The pinned sample uses iOS 18.5 arm64 targets. Native JVM inference is verified on macOS arm64 and Linux x64; four other desktop payloads are packaged but execution-untested. See [evidence](development.md).
+Android's floor is API 27. The reference build uses Kotlin 2.4.21 and Java 17 bytecode; contributors use JDK 21. The pinned sample uses iOS 18.5 arm64 targets. Native JVM inference is verified on macOS arm64 and Linux x64; four other desktop payloads are packaged but execution-untested. See [evidence](development.md).
 
 ## Recent Changes
 
 Reduced the basic path to a model bundle, one-line engine creation and scoped calls. Bundled/local helpers, PCM transcription and automatic cleanup preserve custom APIs for advanced cases.
+
+Android minimum SDK is 27 throughout the library, samples and isolated consumer. The pinned ONNX Runtime Android build uses `--android_api 27`, corroborated by the bundled ELF Android API notes; declaring 26 would understate that build floor.

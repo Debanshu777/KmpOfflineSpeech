@@ -74,7 +74,7 @@ Your app still records and plays audio. See [the complete quickstart](docs/getti
 
 | Target | Runtime packaging | Observed verification |
 | --- | --- | --- |
-| Android API 26+ | arm64-v8a, x86_64 JNI | Pixel 9 native/physical audio/UI checks; x86_64 packaged, not device-tested |
+| Android API 27+ | arm64-v8a, x86_64 JNI | Pixel 9 native/physical audio/UI checks; x86_64 packaged, not device-tested |
 | iOS | arm64 device/simulator static archives in KLIBs | Both dynamic consumer links; simulator app/native check. Physical iPhone audio unverified |
 | JVM macOS arm64 | Native resources in JVM JAR | Native/relocated inference; packaged sample built and visually checked |
 | JVM Linux x64 | Native resources in JVM JAR | Native model roundtrip passed in CI |
@@ -108,14 +108,7 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 ## Recent Changes
 
-Completed the technical native inventory with 33 pinned notice texts and exact compiler evidence. Added authenticated read-only Central checks and a default nonpublishing release preflight; `0.1.0` remains unpublished.
-
-
-Added one-line platform engine creation, bundled/local layout helpers, automatic scoped cleanup and direct PCM transcription. Custom configuration remains optional; `0.1.0` remains unpublished.
-
-Added [read-only Central credential verification](validation/central-check/README.md), including namespace access and an unauthenticated control. It creates no deployment and publishes nothing.
-
-Added a manual [signing-secret CI check](validation/signing-check/README.md) with explicit protected/unprotected key modes. It signs a harmless probe with Gradle and verifies it against the published public key. It runs no SDK publication, release or tag commands. Maven credential presence is checked; authentication is not tested.
+Simplified model setup and scoped engine cleanup; completed the 33-text native/compiler inventory and aligned Android to API 27. Read-only credential checks and default nonpublishing preflight verify preparation while `0.1.0` remains unpublished.
 
 ## License
 

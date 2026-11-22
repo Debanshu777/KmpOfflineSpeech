@@ -109,13 +109,14 @@
     "outsideCheckout": true,
     "androidApk": true,
     "iosDeviceAndSimulatorDynamicLinks": true,
-    "nativeJvmInference": true
+    "nativeJvmInference": true,
+    "nativeResult": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=59566 matched=6/6 transcript=The quick brown fox jumps over the lazy dog."
   },
   "artifacts": [
     {
       "platform": "android",
       "path": "siren/build/outputs/aar/siren.aar",
-      "sha256": "3cc5d4b3ef8a2cd1d5949678703ed915162739cd528d10b9c642e8018dc6433b",
+      "sha256": "d1d74621435dc1ad65960c9167e668f6280916e9e4fab6eeb32b28337fae33da",
       "bytes": 25773990,
       "pinnedLicenseTexts": 33,
       "noticeHashesVerified": true,
@@ -155,5 +156,8 @@
     "androidTestApk": true,
     "desktopJvmJar": true,
     "iosSimulatorFramework": true
-  }
+  },
+  "androidMinimumSdk": 27,
+  "androidMinimumRationale": "Pinned ONNX Runtime --android_api 27 and ELF Android API notes",
+  "api27ConsumerPassed": true
 }

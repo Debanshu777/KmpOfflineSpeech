@@ -39,10 +39,7 @@ The desktop sample's `:sample:desktopApp:stageDesktopModels` task uses `prepareS
 
 ## Recent Changes
 
-Added declared vendored notice inputs with byte/hash/path/symlink checks, compiler evidence pins and required runtime review coverage. The current 33-text inventory passes the native gate.
-
-
-Added typed release/version guards, staged and Central-only relocated consumer validation, public artifact-delivery checks and the fail-closed native redistribution gate alongside runtime preparation.
+Added declared, checksum-verified vendored notices and compiler provenance checks. Release tooling defaults to nonpublishing validation; the 33-text technical inventory passes its mandatory native gate.
 
 ## Release tooling
 

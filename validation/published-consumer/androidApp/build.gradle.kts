@@ -5,7 +5,7 @@ android {
     compileSdk = 37
     defaultConfig {
         applicationId = "io.github.debanshu.siren.validation.android"
-        minSdk = 26
+        minSdk = 27
         targetSdk = 36
         versionCode = 1
         versionName = "1"

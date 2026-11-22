@@ -8,5 +8,4 @@ See the [fixture recipe](../README.md).
 
 ## Recent Changes
 
-Compiled the minimal Android factory alongside the original configurable factory,
-retaining the plain APK check for transitive native payload packaging.
+The plain consumer APK targets minimum API 27 and compiles the standard SDK defaults alongside legacy factory coverage.
