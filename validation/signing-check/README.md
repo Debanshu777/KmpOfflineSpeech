@@ -6,7 +6,7 @@ publishing plugin, publication repository, SDK/native build or model dependency.
 
 The manual [Check signing secrets](../../.github/workflows/signing-check.yml)
 workflow runs only from `main`. Supply your signing key's full public fingerprint.
-It checks all five secret names, requires `SIGNING_KEY_ID` to match the fingerprint's
+It checks the required secret names, requires `SIGNING_KEY_ID` to match the fingerprint's
 last eight characters, signs using `GPG_KEY_CONTENTS` and `SIGNING_PASSWORD`, then
 uses GnuPG to verify the signature with the public key downloaded from Ubuntu's
 keyserver. The private key stays in Gradle process memory, and no passphrase or key
@@ -17,7 +17,11 @@ The fixture requires these environment variables:
 - `EXPECTED_SIGNING_FINGERPRINT`: full 40-character hexadecimal public fingerprint.
 - `SIGNING_KEY_ID`: matching eight-character key ID.
 - `GPG_KEY_CONTENTS`: full ASCII-armored private-key export.
-- `SIGNING_PASSWORD`: its passphrase.
+- `SIGNING_KEY_PROTECTION`: `passphrase` (default) or explicitly `unprotected`.
+- `SIGNING_PASSWORD`: required only in passphrase mode; ignored in unprotected mode.
+
+Choose the matching protection mode when dispatching CI. Unprotected mode passes
+an empty password to Gradle and does not alter your key or any repository secret.
 
 From the repository root, after supplying those values privately:
 
@@ -34,5 +38,5 @@ private material is never an artifact.
 
 ## Recent Changes
 
-Added an isolated signing probe and manual CI verification against a published
-public key, without running a Siren release.
+Added explicit protected/unprotected key modes to the isolated signing probe and
+manual public-key verification, without running a Siren release.

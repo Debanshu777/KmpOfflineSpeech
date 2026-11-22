@@ -110,7 +110,7 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 
 Added one-line platform engine creation, bundled/local layout helpers, automatic scoped cleanup and direct PCM transcription. Custom configuration remains optional; `0.1.0` stays local and unpublished.
 
-Added a manual [signing-secret CI check](validation/signing-check/README.md) that signs a harmless probe with Gradle and verifies it against the published public key. It runs no SDK publication, release or tag commands. Maven credential presence is checked; authentication is not tested.
+Added a manual [signing-secret CI check](validation/signing-check/README.md) with explicit protected/unprotected key modes. It signs a harmless probe with Gradle and verifies it against the published public key. It runs no SDK publication, release or tag commands. Maven credential presence is checked; authentication is not tested.
 
 ## License
 

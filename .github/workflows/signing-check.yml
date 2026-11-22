@@ -7,6 +7,12 @@ on:
         description: Full 40-character fingerprint of your published signing key
         type: string
         required: true
+      keyProtection:
+        description: Whether the exported private key has a passphrase
+        type: choice
+        options: [passphrase, unprotected]
+        default: passphrase
+        required: true
 
 permissions:
   contents: read
@@ -21,6 +27,7 @@ jobs:
     timeout-minutes: 10
     env:
       EXPECTED_SIGNING_FINGERPRINT: ${{ inputs.expectedFingerprint }}
+      SIGNING_KEY_PROTECTION: ${{ inputs.keyProtection }}
     steps:
       - name: Require main and a valid public fingerprint
         shell: bash
@@ -44,14 +51,18 @@ jobs:
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_PASSWORD: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
         run: |
-          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS SIGNING_KEY_ID SIGNING_PASSWORD; do
+          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS SIGNING_KEY_ID; do
             if [ -z "${!name}" ]; then
               echo "::error::Missing repository secret: $name"
               exit 1
             fi
           done
+          if [ "$SIGNING_KEY_PROTECTION" = passphrase ] && [ -z "$SIGNING_PASSWORD" ]; then
+            echo '::error::A protected key requires SIGNING_PASSWORD'
+            exit 1
+          fi
           ./gradlew -p validation/signing-check signProbe --no-daemon --no-configuration-cache --no-build-cache --console=plain
       - name: Verify the signature using the published public key
         shell: bash
@@ -73,6 +84,7 @@ jobs:
             echo 'Signing secrets verified with Gradle and the published public key.'
             echo
             echo "Fingerprint: $fingerprint"
+            echo "Key protection: $SIGNING_KEY_PROTECTION"
             echo
             echo 'Both Maven Central credential names are present; their authentication was not tested.'
             echo 'No SDK publication, upload, release or tag task ran.'

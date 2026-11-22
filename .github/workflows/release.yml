@@ -7,6 +7,12 @@ on:
         description: Exact stable sirenVersion in gradle.properties (main only)
         type: string
         required: true
+      keyProtection:
+        description: Whether the exported private key has a passphrase
+        type: choice
+        options: [passphrase, unprotected]
+        default: passphrase
+        required: true
 
 permissions:
   contents: read
@@ -53,14 +59,19 @@ jobs:
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_PASSWORD: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
+          SIGNING_KEY_PROTECTION: ${{ inputs.keyProtection }}
         run: |
-          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS SIGNING_KEY_ID SIGNING_PASSWORD; do
+          for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD GPG_KEY_CONTENTS SIGNING_KEY_ID; do
             if [ -z "${!name}" ]; then
               echo "::error::Missing repository secret: $name"
               exit 1
             fi
           done
+          if [ "$SIGNING_KEY_PROTECTION" = passphrase ] && [ -z "$SIGNING_PASSWORD" ]; then
+            echo "::error::A protected key requires SIGNING_PASSWORD"
+            exit 1
+          fi
       - name: Check native redistribution provenance and exact notices
         run: ./gradlew verifyNativeRedistribution --no-daemon --no-configuration-cache --console=plain
       - name: Test source, build tooling and public ABI; compile all sample hosts
@@ -96,7 +107,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ inputs.keyProtection == 'passphrase' && secrets.SIGNING_PASSWORD || '' }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
         run: ./gradlew :siren:publishAndReleaseToMavenCentral --no-daemon --max-workers=1 --no-configuration-cache --console=plain
       - name: Verify public Central artifacts, metadata and signatures

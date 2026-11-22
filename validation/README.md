@@ -29,3 +29,4 @@ factory coverage and separate local-staging/Central gates.
 Added an independent [signing-secret probe](signing-check/README.md) and manual
 workflow. It checks Gradle key/passphrase compatibility and public-key verification
 without publishing SDK artifacts or authenticating Maven Central credentials.
+Protected keys require a passphrase; explicit unprotected mode uses none.

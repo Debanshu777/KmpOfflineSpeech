@@ -4,7 +4,7 @@ Version `0.1.0` is prepared locally and is not published. The release pipeline a
 
 ## Signing-only verification
 
-The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow uses an isolated [Gradle probe](../validation/signing-check/README.md), the saved signing secrets and your full public fingerprint. It verifies a signature against the published public key without publishing Siren. Maven credential presence is checked; authentication is not tested. Run this check after adding or rotating signing secrets. A green result does not waive the native redistribution or SDK artifact gates.
+The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow uses an isolated [Gradle probe](../validation/signing-check/README.md), the saved signing secrets and your full public fingerprint. It verifies a signature against the published public key without publishing Siren. Maven credential presence is checked; authentication is not tested. Select `passphrase` for a protected key or explicitly `unprotected` for a key without one. Unprotected mode ignores `SIGNING_PASSWORD` and supplies an empty password to Gradle. Run this check after adding or rotating signing secrets. A green result does not waive the native redistribution or SDK artifact gates.
 
 ## Release configuration
 
@@ -37,6 +37,8 @@ When the local changes are reviewed, push them to `main`. Configure these Action
 - `GPG_KEY_CONTENTS`
 - `SIGNING_KEY_ID`
 - `SIGNING_PASSWORD`
+
+The prepared release workflow uses the same explicit key-protection input as the signing check. `SIGNING_PASSWORD` is required only for protected keys and is ignored in unprotected mode.
 
 Keep values out of source, logs and issue/chat messages. ShaderX's repository secrets cannot be read back and copied through GitHub's API.
 
@@ -73,4 +75,4 @@ Inspect the uploaded reports and Central Portal deployment before retrying. A re
 
 ## Recent Changes
 
-Documented the origins of all five publishing secrets, including generated Central token credentials and the original GPG private key/passphrase. Publication remains deferred.
+Added signing-only verification and matching explicit protected/unprotected modes to the locally prepared release workflow. Publication remains deferred.
