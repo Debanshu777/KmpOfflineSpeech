@@ -5,6 +5,7 @@ Use [getting started](getting-started.md) to configure models and call Siren's e
 To understand the native integration itself, follow the [model integration tutorial](medium-draft.md). To run the completed application, use the [sample hosts](../sample/README.md). The [demo](demo.md) contains actual Android, iOS and desktop captures and their verification limits.
 
 - [Install and make the first inference call](getting-started.md)
+- [Optional build-time model packaging, available from source](optional-models.md)
 - [Configure or replace model providers](model-configuration.md)
 - [SDK and sample architecture](architecture.md)
 - [Native distribution and release status](library-design.md)

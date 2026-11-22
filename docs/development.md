@@ -59,6 +59,12 @@ adb -s YOUR_SERIAL shell am instrument -w -r -e demo true \
 
 It uses actual callbacks/inference/audio, without injecting text/phases, accessibility automation or volume changes. See [capture notes](demo.md) and [Android host instructions](../sample/androidApp/README.md) for separate acoustic opt-in behavior. Permission denial, cancellation, timeout, backgrounding and offline behavior should also be checked manually on supported devices.
 
+## Optional model-packaging add-on
+
+The standalone [Gradle plugin](../siren-models-gradle-plugin/README.md) is a local, unpublished add-on. Run `./gradlew -p siren-models-gradle-plugin check` for integrity/extraction and functional build regressions. The [independent consumer](../validation/models-consumer/README.md) tests actual generated resources against the published SDK. Its `verifyModelPackaging` task hashes the selected files inside the Android APK, JVM JAR and iOS resource output. The [model workflow](../.github/workflows/models-check.yml) consumes a staged plugin marker outside the checkout; it contains no publication step. Existing core release artifacts and their evidence remain unchanged.
+
+Local verification passed 16 plugin regressions and five relocated consumer tests, including real synthesis/transcription using automatically generated JVM resources. Both iOS dynamic frameworks linked. All seven model hashes matched in Android/JVM/iOS outputs; synthesis-only selection retained only its four files. The actual Kotlin Xcode embed task copied the selected models into an app resource directory, preserved another app resource and reused configuration cache. This was a packaging fixture, not an installed-app or physical-audio check. The new remote workflow has not run. See [recorded results](../validation/optional-models-verification.json).
+
 ## Artifact and release validation
 
 Version comes from `sirenVersion` in root `gradle.properties`. Version 0.1.0 is [published to Maven Central](https://central.sonatype.com/artifact/io.github.debanshu777/siren/0.1.0); see the [release verification](releasing.md). Repository-local staging remains usable:

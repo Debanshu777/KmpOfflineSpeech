@@ -20,7 +20,11 @@ checkout framework paths; the Android APK included its JNI payload and no models
 
 The earlier unpublished `0.1.0` candidate has separate [local release-preparation evidence](release-preparation-0.1.0.json), including API baselines, 20 build-tool tests, notice/source-availability packaging, four consumer JVM tests and both iOS links. Earlier snapshot evidence remains unchanged.
 
+The [optional model consumer](models-consumer/README.md) validates build-time acquisition/packaging with the public SDK. Its plugin can be resolved from staged implementation/marker artifacts outside this checkout. The add-on is unpublished.
+
 ## Recent Changes
+
+Added independent Android/JVM/iOS model-resource packaging checks and a real native roundtrip using automatically generated classpath resources.
 
 Siren 0.1.0 is published. [Publication evidence](central-publication-0.1.0.json) records public artifact delivery and the independent Central-only consumer; earlier local and preflight records remain historical.
 

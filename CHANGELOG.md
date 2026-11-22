@@ -2,6 +2,11 @@
 
 Release status: [0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) is published to Maven Central.
 
+## [Unreleased]
+
+- Adds a separate, unpublished Gradle model-packaging add-on. Opted-in app builds verify/cache selected Whisper and Kitten files and package Android/JVM resources or copy iOS resources through standard Xcode direct integration.
+- Keeps the published core SDK and its no-weights/runtime-download behavior unchanged. Source-only integration and independent model-resource checks are documented separately.
+
 ## [0.1.0]
 
 - Introduces a UI-free Kotlin Multiplatform speech SDK for Android, iOS and JVM, with no Compose dependency, audio-device handling or bundled model weights.

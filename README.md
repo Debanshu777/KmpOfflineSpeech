@@ -30,6 +30,8 @@ commonMain.dependencies {
 
 ### 2. Put the model bundle in your app
 
+For automatic build-time packaging, the [optional Gradle model helper](docs/optional-models.md) is available from source. It is a local, unpublished add-on; the published SDK dependency alone still requires app-owned model files.
+
 Use the [standard bundle](docs/getting-started.md#place-the-model-bundle): Whisper tiny INT8 and Kitten nano INT8 files under `models/whisper/` and `models/kitten/`. Android reads assets, iOS reads application resources, and JVM reads classpath resources. Siren already knows the seven filenames; you do not map them individually.
 
 The SDK does not include or download these weights. For an existing local bundle, use the [one-line local-directory override](docs/model-configuration.md#change-the-directory-or-capability).
@@ -92,6 +94,8 @@ See [Android](sample/androidApp/README.md), [iOS](sample/iosApp/README.md) and [
 [Getting started](docs/getting-started.md) · [Model configuration](docs/model-configuration.md) · [SDK](siren/README.md) · [Architecture](docs/architecture.md) · [Integration tutorial](docs/medium-draft.md) · [Development](docs/development.md) · [Release verification](docs/releasing.md)
 
 ## Recent Changes
+
+Prepared an optional Gradle add-on that verifies and packages selected models during app builds. The add-on remains unpublished; Siren 0.1.0 and its core runtime are unchanged.
 
 Published [Siren 0.1.0](https://github.com/Debanshu777/Siren/releases/tag/v0.1.0) to Maven Central with signed Android, iOS and JVM artifacts. The [release pipeline](https://github.com/Debanshu777/Siren/actions/runs/45062849601) verified public delivery and a separate Central-only consumer. The quickstart uses one scoped engine for transcription and synthesis.
 

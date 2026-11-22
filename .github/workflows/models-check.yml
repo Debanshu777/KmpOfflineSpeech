@@ -1,0 +1,77 @@
+name: Check optional model packaging
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'siren-models-gradle-plugin/**'
+      - 'validation/models-consumer/**'
+      - 'scripts/dependencies.json'
+      - '.github/workflows/models-check.yml'
+  pull_request:
+    paths:
+      - 'siren-models-gradle-plugin/**'
+      - 'validation/models-consumer/**'
+      - 'scripts/dependencies.json'
+      - '.github/workflows/models-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  models:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Install configured Android SDK
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0"'
+      - name: Test plugin and stage its implementation and marker publications
+        run: ./gradlew -p siren-models-gradle-plugin check publishAllPublicationsToStagingRepository --no-daemon --console=plain
+      - name: Copy independent fixture and plugin repository outside checkout
+        run: |
+          cp -R validation/models-consumer "$RUNNER_TEMP/siren-model-consumer"
+          cp -R siren-models-gradle-plugin/build/staging-repository "$RUNNER_TEMP/siren-model-plugin-repository"
+      - name: Verify generated model resources and native inference from staged plugin
+        run: >-
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer"
+          jvmTest verifyModelPackaging linkDebugFrameworkIosArm64 linkDebugFrameworkIosSimulatorArm64
+          -Pnative=true -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository"
+          --no-daemon --max-workers=1 --configuration-cache --console=plain
+      - name: Retain both-model packaging evidence
+        run: cp "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging.json" "$RUNNER_TEMP/siren-model-consumer/build/reports/model-packaging-both.json"
+      - name: Verify synthesis-only packaging from the offline cache
+        run: >-
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer"
+          :androidApp:clean verifyModelPackaging -Precognition=false
+          -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository"
+          --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
+      - name: Verify the actual Xcode integration resource hook
+        env:
+          CONFIGURATION: Debug
+          ARCHS: arm64
+          BUILT_PRODUCTS_DIR: ${{ runner.temp }}/siren-model-xcode
+          TARGET_BUILD_DIR: ${{ runner.temp }}/siren-model-xcode
+          FRAMEWORKS_FOLDER_PATH: SirenModelConsumer.app/Frameworks
+          UNLOCALIZED_RESOURCES_FOLDER_PATH: SirenModelConsumer.app
+          CODE_SIGNING_ALLOWED: 'NO'
+        run: |
+          export SDK_NAME="iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)"
+          ./gradlew -p "$RUNNER_TEMP/siren-model-consumer" embedAndSignAppleFrameworkForXcode verifyModelPackaging -Precognition=false -PmodelPluginRepository="$RUNNER_TEMP/siren-model-plugin-repository" --offline --no-daemon --max-workers=1 --configuration-cache --console=plain
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: optional-model-verification
+          path: |
+            siren-models-gradle-plugin/build/reports/
+            siren-models-gradle-plugin/build/test-results/
+            ${{ runner.temp }}/siren-model-consumer/build/reports/
+            ${{ runner.temp }}/siren-model-consumer/build/test-results/
+          if-no-files-found: ignore

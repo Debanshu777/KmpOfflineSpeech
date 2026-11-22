@@ -18,6 +18,8 @@ KMP selects the platform runtime artifact. You do not copy SDK native libraries 
 
 ## Place the model bundle
 
+A source-only [optional model helper](optional-models.md) can fetch and package the standard files during the Gradle build. This add-on is unpublished; manual placement below remains the path for the public SDK dependency alone.
+
 The default `createSpeechEngine` configuration knows this layout:
 
 ```text

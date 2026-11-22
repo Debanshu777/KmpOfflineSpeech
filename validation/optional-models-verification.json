@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-23",
+  "status": "Local unpublished optional Gradle add-on; staged artifact validation passed",
+  "plugin": {
+    "id": "io.github.debanshu777.siren.models",
+    "version": "0.1.0",
+    "published": false,
+    "jarBytes": 47492,
+    "jarSha256": "35c8db7dd3343072b206dfeb1df917d3b9c4f1664d1c8ee7f3cdef380baa1369",
+    "containsWeights": false
+  },
+  "publicSDKVersion": "0.1.0",
+  "sdkSourceOrPublishedArtifactsChanged": false,
+  "independentConsumer": {
+    "outsideCheckout": true,
+    "pluginResolvedFromStagedMavenMarker": true,
+    "sdkResolvedFromCentral": true,
+    "nativeOutput": "PUBLISHED_JVM_NATIVE api=createSpeechEngine/use/transcribe(samples,rate) rate=24000 samples=60009 matched=6/6 transcript=The quick brown fox jumps over the lazy dog.",
+    "tests": [
+      {
+        "name": "PublishedApiTest[jvm]",
+        "tests": 4,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "PublishedJvmNativeTest[jvm]",
+        "tests": 1,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "iosDeviceAndSimulatorDynamicLinksPassed": true
+  },
+  "pluginTests": [
+    {
+      "name": "io.github.debanshu.siren.gradle.ModelArtifactsTest",
+      "tests": 11,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "name": "io.github.debanshu.siren.gradle.SirenModelsPluginTest",
+      "tests": 5,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "bothModels": {
+    "passed": true,
+    "modelFiles": 7,
+    "recognition": true,
+    "synthesis": true,
+    "rawModelBytes": 137564418,
+    "androidApkCompressedModelBytes": 90608967,
+    "jvmJarCompressedModelBytes": 85709167,
+    "androidApkBytes": 160193972,
+    "jvmJarBytes": 85720286,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "synthesisOnlyCleanApk": {
+    "passed": true,
+    "modelFiles": 4,
+    "recognition": false,
+    "synthesis": true,
+    "rawModelBytes": 33954515,
+    "androidApkCompressedModelBytes": 25509533,
+    "jvmJarCompressedModelBytes": 24964290,
+    "androidApkBytes": 95093294,
+    "jvmJarBytes": 24974123,
+    "iosResourcesVerified": true,
+    "sdkVersion": "0.1.0"
+  },
+  "xcodeIntegration": {
+    "actualKotlinEmbedTaskPassed": true,
+    "configurationCacheReused": true,
+    "modelHashesVerified": true,
+    "frameworkEmbedded": true,
+    "otherAppResourcesPreserved": true,
+    "recognition": false,
+    "synthesis": true,
+    "installedAppOrPhysicalAudioTested": false
+  },
+  "workflowAdded": ".github/workflows/models-check.yml",
+  "remoteWorkflowExecuted": false
+}

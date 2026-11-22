@@ -14,6 +14,8 @@ See [getting started](../docs/getting-started.md) for model-bundle placement and
 
 Put the known Whisper tiny INT8/Kitten nano INT8 bundle under your application's `models/` resources. Siren knows its filenames through `SherpaModels.bundled()`; no path-by-path configuration is required.
 
+The source-only [optional Gradle helper](../docs/optional-models.md) can acquire and package those app-owned files automatically. It is an unpublished add-on, separate from the public Siren 0.1.0 artifact.
+
 In an Android coroutine:
 
 ```kotlin
@@ -69,6 +71,8 @@ Local staging writes `build/staging-repository`, not Central. For opt-in native 
 First-party source is [MIT](../LICENSE); preserve [native/model notices and audit status](../THIRD_PARTY_NOTICES.md). [Release verification](../docs/releasing.md) records public delivery and Central-only consumer checks.
 
 ## Recent Changes
+
+Documented the optional, unpublished build-time model helper. Core API and published runtime artifacts are unchanged.
 
 Published 0.1.0 to Maven Central; independent Central-only consumers verify JVM native inference, Android packaging and both iOS dynamic links.
 

@@ -4,6 +4,9 @@ Siren is a UI-free Kotlin Multiplatform speech SDK with a separate teaching samp
 
 ## Modules and packages
 
+- `siren-models-gradle-plugin/`: standalone optional build plugin, not part of `:siren` or its published 0.1.0 artifact. Kotlin package `io.github.debanshu.siren.gradle`. Pinned model catalog is generated from `scripts/dependencies.json`; weights are acquired only for opted-in app builds. Preserve resource packaging, checksums, offline behavior and notices. iOS resources require app integration; KLIB publication alone is insufficient.
+- `validation/models-consumer/`: independent model-packaging consumer of Central SDK 0.1.0, with optional staged plugin-marker resolution and real model packaging checks.
+
 - `:siren` / `siren/src`: explicit public API, PCM, model configuration, providers and Android/iOS/JVM inference. Root package `io.github.debanshu.siren`; `audio` holds PCM and `speech` holds contracts/engines. SDK C bindings use `.internal.native`.
 - `:sample:composeApp` / `sample/composeApp`: controller, Compose screen, permissions and hardware audio; packages `.sample` and `.sample.platform`. Sample C bindings use `.sample.internal.audio`.
 - `:sample:androidApp`: launcher and tests in `.sample.android`.

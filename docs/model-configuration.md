@@ -2,7 +2,7 @@
 
 The quick path uses Siren's standard Whisper tiny INT8 + Kitten nano INT8 folder layout. Put the application-owned files under `models/`, then call `createSpeechEngine(context)` on Android or `createSpeechEngine()` on iOS/JVM. No individual path mapping is needed.
 
-The SDK includes the layout helper and native inference runtime, **not model weights or a downloader**. Files are resolved when their model is used. See [getting started](getting-started.md) for the bundle tree and platform resource locations.
+The SDK includes the layout helper and native inference runtime, **not model weights or a downloader**. A separate source-only [optional Gradle helper](optional-models.md) can prepare selected model files during the app build; it does not change engine configuration or introduce runtime downloads. Files are resolved when their model is used. See [getting started](getting-started.md) for the bundle tree and platform resource locations.
 
 ## Change the directory or capability
 
