@@ -107,7 +107,7 @@ First-party Kotlin packages use `io.github.debanshu.siren`. The Android applicat
 
 ## Recent Changes
 
-Added JVM native inference and a separate desktop/JavaSound sample alongside Android/iOS. SDK publications embed runtime payloads without weights or UI; default sample models remain explicitly configured and sample-only.
+Added a manual [signing-secret CI check](validation/signing-check/README.md) that signs a harmless probe with Gradle and verifies it against the published public key. It runs no SDK publication, release or tag commands. Maven credential presence is checked; authentication is not tested.
 
 ## License
 

@@ -17,5 +17,6 @@ checkout framework paths; the Android APK included its JNI payload and no models
 
 ## Recent Changes
 
-Added a relocated published-artifact consumer with JVM SPI tests, Android builds
-and dynamic iOS framework linking, plus an opt-in published JVM native/model-resource check.
+Added an independent [signing-secret probe](signing-check/README.md) and manual
+workflow. It checks Gradle key/passphrase compatibility and public-key verification
+without publishing SDK artifacts or authenticating Maven Central credentials.

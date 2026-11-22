@@ -72,6 +72,27 @@ Device microphone/playback observations are recorded separately in the Android h
 
 After the package rename on the same date, the Gradle checks passed: 10 preparation regressions, 3 shared controller tests, Android app and instrumentation APK builds, and the full iOS simulator host build. The class-filtered native test also passed on Pixel 9 under the package recorded in its [new result](../sample/androidApp/verification/package-rename-native-smoke-2026-11-21.json). Microphone/playback was not repeated for this namespace refactor; the earlier acoustic and UI evidence above remains the record of those checks.
 
+## Signing-secret CI check
+
+The manual [Check signing secrets](../.github/workflows/signing-check.yml) workflow
+runs from `main` with your full public signing fingerprint as input. Its isolated
+[Gradle fixture](../validation/signing-check/README.md) signs a harmless text probe
+using the saved key ID, ASCII-armored private key and passphrase. GnuPG independently
+verifies it against the key downloaded from Ubuntu's keyserver and checks the exact
+fingerprint. All five required secret names must be nonempty. The Central token's
+authentication is not tested.
+
+This check has read-only repository permissions, disables Gradle build/configuration
+caches, scopes secrets to the signing step and runs no publication, tag or release
+commands. It does not build the SDK/native runtimes or establish release readiness.
+See the workflow run's job summary for the observed result. The full SDK release
+pipeline remains separately prepared locally until publication work resumes.
+
+## Recent Changes
+
+Added a manually dispatched signing-secret verification path with a public-key
+fingerprint check and no SDK publication.
+
 ## Updating dependencies
 
 Update URL, hash and size together in `scripts/dependencies.json`, verify upstream provenance/licenses, then run the Gradle preparation and platform checks. Arbitrary ONNX graphs cannot replace these bundles solely because they end in `.onnx`.

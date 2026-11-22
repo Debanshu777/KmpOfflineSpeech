@@ -55,4 +55,11 @@ Require an unlocked phone, built-in audio devices and an existing audible media 
 
 Every native allocation needs clear ownership and paired destruction. Cancellation must wait for synchronous native work before teardown. Do not claim microphone/speaker verification, accuracy or performance from compilation or an in-memory model roundtrip.
 
+`validation/signing-check` is an independent Gradle signing-only probe. Its manual
+`signing-check.yml` workflow runs from main with an expected public fingerprint,
+checks the five secret names, signs using in-memory PGP credentials, and verifies
+against the published public key. It has no publishing plugin or repositories.
+Keep credential values out of logs/artifacts/caches. Maven credential presence is
+not authentication verification, and a passed probe is not SDK release readiness.
+
 Update the root README, affected module READMEs and relevant docs with every code/build/tooling change, including concise Recent Changes entries. Report checks actually run and distinguish pre-extraction evidence from checks of current artifacts.
