@@ -56,7 +56,7 @@ Siren currently uses Gradle `maven-publish` for local staging. Vanniktech's [KMP
 3. **Establish compatibility.** Add target-specific API/ABI checks and preserved public consumer contracts; document model-format and toolchain support. Earlier sample/hardware evidence must not substitute for checks of extracted artifacts.
 4. **Decide a public release.** Complete release documentation, native redistribution review and signing/publication configuration. Local staging does not authorize a public release.
 
-The baseline is Android API 26 and arm64 iOS targets, with iOS 18.5 for the pinned sample. JVM packages macOS/Linux/Windows arm64/x64 natives; only [macOS arm64 inference](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) is execution-verified. Other five payloads and desktop audio hardware remain untested. Wasm is not supported.
+The baseline is Android API 26 and arm64 iOS targets, with iOS 18.5 for the pinned sample. JVM packages macOS/Linux/Windows arm64/x64 natives; [macOS arm64 inference](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) and [Linux x64 inference in CI](../siren/verification/jvm-native-linux-x64-2026-11-22.json) are verified. The other four payloads and desktop audio hardware remain untested. Wasm is not supported.
 
 ## Recent Changes
 

@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-22",
+  "platform": {
+    "os": "Linux",
+    "architecture": "x64",
+    "runner": "ubuntu-latest"
+  },
+  "commit": "8eb37bb9c452a184d45e0180ce43ad437580aeb9",
+  "workflow": "Check Siren",
+  "run": "https://github.com/Debanshu777/Siren/actions/runs/45044942797",
+  "job": "android-and-shared",
+  "step": "Verify Linux desktop model roundtrip",
+  "command": "./gradlew :siren:jvmTest -Pnative=true -PmodelsDir=\"$GITHUB_WORKSPACE/models\" --console=plain",
+  "conclusion": "success",
+  "buildSeconds": 6,
+  "taskExecuted": ":siren:jvmTest",
+  "scope": "Opt-in native JVM fixture synthesizes Kitten PCM and transcribes it with Whisper using the packaged Linux x64 runtime; validates finite non-silent samples and at least four expected content words.",
+  "modelSource": "Gradle-prepared explicit Local model files",
+  "microphoneOpened": false,
+  "speakerOpened": false,
+  "limitations": [
+    "Not a packaged Linux GUI or installer check",
+    "Does not verify JavaSound hardware",
+    "Does not verify other desktop OS/architectures"
+  ]
+}

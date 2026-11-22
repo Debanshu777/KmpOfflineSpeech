@@ -20,7 +20,7 @@ Models are independently optional. Android, iOS and JVM factories require explic
 
 Android `prepareAndroidRuntime` embeds the pinned upstream wrapper JAR, arm64-v8a/x86_64 JNI payloads and notices in the SDK. `prepareAndroidSpeech` supplies only sample model assets. Do not reintroduce an app-local AAR dependency or a second ONNX Runtime payload without reconciling ownership.
 
-`prepareJvmRuntime` embeds the official JVM wrapper classes, notices and six native resource sets under `sherpa-onnx/native/`: osx-aarch64/osx-x64, linux-aarch64/linux-x64 and win-arm64/win-x64. Upstream code selects/extracts the runtime without checkout-native paths. macOS arm64 native inference is verified; packaging/hash checks do not establish execution on the other five targets.
+`prepareJvmRuntime` embeds the official JVM wrapper classes, notices and six native resource sets under `sherpa-onnx/native/`: osx-aarch64/osx-x64, linux-aarch64/linux-x64 and win-arm64/win-x64. Upstream code selects/extracts the runtime without checkout-native paths. macOS arm64 and Linux x64 (CI) native inference are verified; packaging/hash checks do not establish execution on the other four targets.
 
 SDK iOS cinterop KLIBs embed sherpa/ONNX static archives. Sample audio cinterop embeds its AVFoundation archive. Keep generated definitions and archive inputs declared in Gradle; the Xcode host must not depend on raw native checkout paths. Do not infer portable distribution from an in-repository link alone.
 

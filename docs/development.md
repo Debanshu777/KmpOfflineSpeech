@@ -52,6 +52,8 @@ Capture the actual app. See [demo and capture notes](demo.md); generated mockups
 
 - Desktop: the shared screen compiled and the macOS arm64 distributable built using full JBR 21. A classpath-model smoke and a second check using only the packaged app’s JARs passed (24 kHz, 59,936 and 59,898 samples respectively, exact test sentence). The packaged app launched and its actual screen was inspected; [evidence](../sample/desktopApp/verification/macos-arm64-2026-11-22.json) and [screenshot](demo.md). Desktop microphone and speaker hardware remain unverified.
 
+- [GitHub CI](https://github.com/Debanshu777/Siren/actions/runs/45044942797) passed the Android/shared gate and the separate Linux x64 native model roundtrip on commit `8eb37bb`; [recorded result](../siren/verification/jvm-native-linux-x64-2026-11-22.json). It opens no audio devices.
+
 ### Earlier sample verification — 2026-11-21
 
 Verified before the SDK extraction:

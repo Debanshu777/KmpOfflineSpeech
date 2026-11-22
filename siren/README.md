@@ -21,7 +21,7 @@ Other model families implement the provider interfaces with their own model-spec
 
 `prepareJvmRuntime` verifies the official Java wrapper and six native JAR inputs. `jvmJar` embeds wrapper classes, notices and `sherpa-onnx/native/<classifier>` resources for `osx-aarch64`, `osx-x64`, `linux-aarch64`, `linux-x64`, `win-arm64` and `win-x64`. The upstream loader selects OS/architecture, extracts temporary runtime files and loads ONNX before JNI. There are no checkout-native paths or model weights in this JAR.
 
-JVM `ModelFile.Bundled` resolves through the supplied/context class loader and materializes temporary model files owned by the engine; close removes those copies. Absolute Local files remain caller-owned. The [macOS arm64 native check](verification/jvm-native-macos-arm64-2026-11-22.json) passed; other five desktop payloads are packaged/hash-verified but execution-untested. Physical desktop microphone/speaker behavior is a sample/manual check, not SDK verification.
+JVM `ModelFile.Bundled` resolves through the supplied/context class loader and materializes temporary model files owned by the engine; close removes those copies. Absolute Local files remain caller-owned. The [macOS arm64 native check](verification/jvm-native-macos-arm64-2026-11-22.json) passed; [Linux x64 inference passed in CI](verification/jvm-native-linux-x64-2026-11-22.json). The other four desktop payloads are packaged/hash-verified but execution-untested. Physical desktop microphone/speaker behavior is a sample/manual check, not SDK verification.
 
 Targets include Android API 26+ with arm64-v8a/x86_64 JNI, arm64 iOS devices/simulators and JVM with the six packaged runtime classifiers. The pinned sample's iOS baseline is 18.5. Wasm is not supported.
 

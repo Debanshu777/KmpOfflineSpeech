@@ -47,7 +47,7 @@ State paths include `Idle -> Starting -> Recording -> Transcribing -> Idle` and 
 
 `:siren` uses explicit API mode and repository-local Maven staging at `io.github.debanshu777:siren:0.1.0-SNAPSHOT`. There is no public release. The [relocated consumer](../validation/published-consumer-verification.json) passed four JVM tests including native macOS arm64 inference, plain Android packaging and both iOS dynamic links. It used a copied fixture, Maven repository and separate classpath model inputs outside this checkout, without project substitution or native checkout paths. See [distribution status](library-design.md).
 
-Android's floor is API 26; the pinned sample uses iOS 18.5 on arm64 devices/simulators. JVM supports native inference with six packaged desktop classifiers. The [macOS arm64 native check](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; the other five payloads are packaged/hash-verified but execution-untested. Desktop physical microphone/speaker behavior remains manually unverified. Wasm, background audio, streaming and automatic route recovery are not claimed. All UI and hardware concerns remain sample-only.
+Android's floor is API 26; the pinned sample uses iOS 18.5 on arm64 devices/simulators. JVM supports native inference with six packaged desktop classifiers. The [macOS arm64 native check](../siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; Linux x64 inference also passed in CI; the other four payloads are packaged/hash-verified but execution-untested. Desktop physical microphone/speaker behavior remains manually unverified. Wasm, background audio, streaming and automatic route recovery are not claimed. All UI and hardware concerns remain sample-only.
 
 ## Recent Changes
 

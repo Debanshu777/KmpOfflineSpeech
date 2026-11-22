@@ -58,7 +58,7 @@ macOS arm64 application-image creation passed using a full JBR 21 toolchain. Its
 ./gradlew :sample:desktopApp:nativeSpeechSmoke
 ```
 
-This checks classpath models/runtime without opening audio hardware. The [macOS arm64 SDK native check](siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; the other five desktop payloads are packaged and verified by hash, not execution-tested. Desktop microphone/speaker behavior remains a separate manual check.
+This checks classpath models/runtime without opening audio hardware. The [macOS arm64 SDK native check](siren/verification/jvm-native-macos-arm64-2026-11-22.json) passed; [Linux x64 inference also passed in CI](siren/verification/jvm-native-linux-x64-2026-11-22.json). The other four desktop payloads are packaged and hash-verified, with execution untested. Desktop microphone/speaker behavior remains a separate manual check.
 
 ## SDK builds and local staging
 
@@ -89,7 +89,7 @@ First-party Kotlin packages use `io.github.debanshu.siren`. The Android applicat
 ## Scope and limits
 
 - Android API 26+, arm64-v8a and x86_64; arm64 iOS device/simulator targets. The pinned sample uses iOS 18.5+.
-- JVM packages native resources for macOS arm64/x64, Linux arm64/x64 and Windows arm64/x64. Native inference is execution-verified only on macOS arm64; the other five payloads remain untested. Wasm is not supported.
+- JVM packages native resources for macOS arm64/x64, Linux arm64/x64 and Windows arm64/x64. Native inference is verified on macOS arm64 and Linux x64 (CI); the other four payloads remain untested. Wasm is not supported.
 - Built-in Whisper adapters accept 0.2–20-second clips; the sample records at most 20 seconds and limits TTS input to 500 characters.
 - The sample's default models use English recognition and an English voice, speaker zero. Explicit configurations can select compatible files and supported settings.
 - Cancellation suppresses obsolete results and waits for synchronous native inference before teardown; it does not forcibly interrupt decoding.

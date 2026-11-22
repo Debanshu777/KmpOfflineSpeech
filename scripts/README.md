@@ -18,7 +18,7 @@ The first three prepare SDK runtime inputs only. JVM preparation pins the offici
 
 `ios_native_smoke.cpp` is an optional direct C API diagnostic on an already booted arm64 iOS simulator: Kitten generates PCM and Whisper transcribes it. See [iOS notes](../docs/ios-notes.md#native-runtime-smoke-test) for exact commands and [historical output](../docs/ios-native-smoke.json). This diagnostic does not exercise the Kotlin SDK API, microphone or speaker hardware.
 
-Run `./gradlew checkSpeechSetup` for checksum/cache/safe-extraction regressions. SDK JVM native inference can be checked with `:siren:jvmTest -Pnative=true -PmodelsDir=/absolute/model/root`; desktop `:sample:desktopApp:nativeSpeechSmoke` uses the actual classpath sample models without audio devices. See [development](../docs/development.md) and [distribution status](../docs/library-design.md) for evidence. Model weights are never part of the SDK publication; five of six desktop native payloads remain execution-untested.
+Run `./gradlew checkSpeechSetup` for checksum/cache/safe-extraction regressions. SDK JVM native inference can be checked with `:siren:jvmTest -Pnative=true -PmodelsDir=/absolute/model/root`; desktop `:sample:desktopApp:nativeSpeechSmoke` uses the actual classpath sample models without audio devices. See [development](../docs/development.md) and [distribution status](../docs/library-design.md) for evidence. Model weights are never part of the SDK publication; macOS arm64 and Linux x64 (CI) native inference are verified; the other four desktop payloads remain execution-untested.
 
 ## Recent Changes
 
